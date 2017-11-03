@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class AccountInvoice(models.Model):
@@ -16,4 +16,9 @@ class AccountInvoice(models.Model):
         ('rental​', 'Rental​ (Car​ park​ etc)'),
         ('stock', 'Stock'),
         ('marketing​', 'Marketing​ ​ Material')
-        ], string='Purchase Type', required=True, default='it')
+        ], string='Purchase Type', default='it')
+
+    @api.onchange('purchase_id')
+    def purchase_order_change(self):
+        self.purchase_type = self.purchase_id.purchase_type
+        super(AccountInvoice, self).purchase_order_change()
