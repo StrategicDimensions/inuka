@@ -6,6 +6,12 @@ from odoo import fields, models
 class PurchaseOrder(models.Model):
     _inherit = "purchase.order"
 
+    READONLY_STATES = {
+        'purchase': [('readonly', True)],
+        'done': [('readonly', True)],
+        'cancel': [('readonly', True)],
+    }
+
     purchase_type = fields.Selection([
         ('it', 'IT'),
         ('​stationery', '​Stationery'),
@@ -16,4 +22,4 @@ class PurchaseOrder(models.Model):
         ('rental​', 'Rental​ (Car​ park​ etc)'),
         ('stock', 'Stock'),
         ('marketing​', 'Marketing​ ​ Material')
-        ], string='Purchase Type', default='it')
+        ], string='Purchase Type', default='it', states=READONLY_STATES)
