@@ -3,3 +3,5 @@
 from . import purchase
 from . import invoice
 from . import partner
+from . import product
+from . import sale

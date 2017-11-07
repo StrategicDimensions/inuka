@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_product_categ_form_inuka" model="ir.ui.view">
+        <field name="name">product.categ.form.inuka.view</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/group[1]" position="replace">
+                <group>
+                    <group name="first">
+                        <field name="parent_id" class="oe_inline"/>
+                    </group>
+                    <group>
+                        <field name="category_pv" required="1"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+	<record id="view_sale_form_inuka_inherit" model="ir.ui.view">
+        <field name="name">sale.form.inuka.view</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="pv" required="True"/>
+            </xpath>
+            <xpath expr="//sheet/group" position="after">
+                <group>
+                    <group>
+                        <field name="order_sent_by" required="True"/>
+                        <field name="sale_date" required="True"/>
+                        <field name="order_type" required="True"/>
+                    </group>
+                    <group>
+                        <field name="order_total" required="True"/>
+                        <field name="product_cost"/>
+                        <field name="shipping_cost"/>
+                    </group>
+                </group>
+            </xpath>
+            <xpath expr="//notebook/page[1]/field[@name='order_line']/tree/field[@name='qty_to_invoice']" position="after">
+                <field name="pv" string="PV's" readonly="1" force_save="1"/>
+            </xpath>
+            <xpath expr="//field[@name='amount_total']" position="after">
+                <label for="total_pv" string="Total PV's" style="color: red;"/>
+                <div>
+                    <field name="total_pv" style="color: red;"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+ </odoo>
+ 

@@ -9,11 +9,12 @@
     'summary': 'Inuka',
     'description': "",
     'website': 'https://www.odoo.com/',
-    'depends': ['purchase', 'account_invoicing'],
+    'depends': ['purchase', 'sale_management'],
     'data': [
         'views/purchase_views.xml',
         'views/account_invoice_views.xml',
         'views/res_partner_views.xml',
+        'views/sale_views.xml',
     ],
     'test': [
     ],
