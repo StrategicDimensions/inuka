@@ -4,7 +4,8 @@ from odoo import fields, models
 
 
 class PurchaseOrder(models.Model):
-    _inherit = "purchase.order"
+    _name = 'purchase.order'
+    _inherit = ['purchase.order', 'portal.mixin']
 
     READONLY_STATES = {
         'purchase': [('readonly', True)],
@@ -23,3 +24,6 @@ class PurchaseOrder(models.Model):
         ('stock', 'Stock'),
         ('marketing​', 'Marketing​ ​ Material')
         ], string='Purchase Type', default='it', states=READONLY_STATES)
+
+    def get_mail_url(self):
+        return self.get_share_url()

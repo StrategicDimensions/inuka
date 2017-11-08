@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="rule_purchase_order_it_to_approve" model="base.automation">
+        <field name="name">Purchase Order IT (To Approve)</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="state">email</field>
+        <field name="trigger">on_write</field>
+        <field name="active" eval="True"/>
+        <field name="template_id" ref="inuka.email_template_purchase_order_it"/>
+        <field name="filter_domain">[('state', '=', 'to approve'), ('purchase_type', '=', 'it')]</field>
+        <field name="filter_pre_domain">[]</field>
+    </record>
+
+    <record id="rule_purchase_order_non_it_to_approve" model="base.automation">
+        <field name="name">Purchase Order Non-IT (To Approve)</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="state">email</field>
+        <field name="trigger">on_write</field>
+        <field name="active" eval="True"/>
+        <field name="template_id" ref="inuka.email_template_purchase_order_non_it"/>
+        <field name="filter_domain">[('state', '=', 'to approve'), ('purchase_type', '!=', 'it')]</field>
+        <field name="filter_pre_domain">[]</field>
+    </record>
+
+    <record id="rule_purchase_order_it_add_follower" model="base.automation">
+        <field name="name">Purchase Order IT (Add Follower)</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="state">followers</field>
+        <field name="trigger">on_write</field>
+        <field name="active" eval="True"/>
+        <field name="partner_ids">[]</field>
+        <field name="filter_domain">[('state', '=', 'to approve'), ('purchase_type', '=', 'it')]</field>
+        <field name="filter_pre_domain">[]</field>
+    </record>
+
+    <record id="rule_purchase_order_non_it_add_follower" model="base.automation">
+        <field name="name">Purchase Order Non-IT (Add Follower)</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="state">followers</field>
+        <field name="trigger">on_write</field>
+        <field name="active" eval="True"/>
+        <field name="partner_ids">[]</field>
+        <field name="filter_domain">[('state', '=', 'to approve'), ('purchase_type', '!=', 'it')]</field>
+        <field name="filter_pre_domain">[]</field>
+    </record>
+
+</odoo>
