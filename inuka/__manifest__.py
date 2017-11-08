@@ -17,6 +17,8 @@
         'views/sale_views.xml',
         'data/mail_template_data.xml',
         'data/base_automation_data.xml',
+        'views/report_invoice_document_inherited_for_pv.xml',
+        'views/report_saleorder_document_inherited_for_pv.xml',
     ],
     'test': [
     ],
