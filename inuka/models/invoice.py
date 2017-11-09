@@ -18,6 +18,7 @@ class AccountInvoice(models.Model):
         ('marketing​', 'Marketing​ ​ Material')
         ], string='Purchase Type', default='it', readonly=True, states={'draft': [('readonly', False)]})
     total_pv = fields.Float(compute='_compute_tot_pv', store=True)
+    payment_reference = fields.Char("Payment Reference", states={'draft': [('readonly', False)]})
 
     @api.depends('invoice_line_ids','invoice_line_ids.pv')
     def _compute_tot_pv(self):
@@ -30,6 +31,7 @@ class AccountInvoice(models.Model):
     @api.onchange('purchase_id')
     def purchase_order_change(self):
         self.purchase_type = self.purchase_id.purchase_type
+        self.payment_reference = self.purchase_id.payment_reference
         super(AccountInvoice, self).purchase_order_change()
 
 

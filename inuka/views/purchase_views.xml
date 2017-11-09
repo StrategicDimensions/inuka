@@ -9,6 +9,9 @@
             <field name="company_id" position="after">
                 <field name="purchase_type" required="1"/>
             </field>
+            <field name="partner_ref" position="after">
+                <field name="payment_reference"/>
+            </field>
             <field name="incoterm_id" position="after">
                 <field name="sent_for_approval"/>
             </field>
