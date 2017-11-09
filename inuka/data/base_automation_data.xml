@@ -1,48 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="rule_purchase_order_it_to_approve" model="base.automation">
-        <field name="name">Purchase Order IT (To Approve)</field>
-        <field name="model_id" ref="purchase.model_purchase_order"/>
+    <record id="action_send_approval_email_it" model="ir.actions.server">
+        <field name="name">Send Email (IT)</field>
+        <field name="type">ir.actions.server</field>
         <field name="state">email</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="template_id" ref="inuka.email_template_purchase_order_it"/>
+    </record>
+
+    <record id="action_add_followers_it" model="ir.actions.server">
+        <field name="name">Add Followers (IT)</field>
+        <field name="type">ir.actions.server</field>
+        <field name="state">followers</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="partner_ids">[]</field>
+    </record>
+
+    <record id="action_update_sent_for_approval_it" model="ir.actions.server">
+        <field name="name">Update Sent For Approval</field>
+        <field name="type">ir.actions.server</field>
+        <field name="state">object_write</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+    </record>
+
+    <record id="action_update_sent_for_approval_line_it" model="ir.server.object.lines">
+        <field name="type">value</field>
+        <field name="col1" search="[('model', '=', 'purchase.order'), ('name', '=', 'sent_for_approval')]"/>
+        <field name="value">1</field>
+        <field name="server_id" ref="inuka.action_update_sent_for_approval_it"/>
+    </record>
+
+    <record id="action_send_approval_email_non_it" model="ir.actions.server">
+        <field name="name">Send Email (Non IT)</field>
+        <field name="type">ir.actions.server</field>
+        <field name="state">email</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="template_id" ref="inuka.email_template_purchase_order_non_it"/>
+    </record>
+
+    <record id="action_add_followers_non_it" model="ir.actions.server">
+        <field name="name">Add Followers (Non IT)</field>
+        <field name="type">ir.actions.server</field>
+        <field name="state">followers</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="partner_ids">[]</field>
+    </record>
+
+    <record id="rule_purchase_order_it_to_approve" model="base.automation">
+        <field name="name">Send Approval Request (IT)</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="state">multi</field>
         <field name="trigger">on_write</field>
         <field name="active" eval="True"/>
-        <field name="template_id" ref="inuka.email_template_purchase_order_it"/>
-        <field name="filter_domain">[('state', '=', 'to approve'), ('purchase_type', '=', 'it')]</field>
-        <field name="filter_pre_domain">[]</field>
+        <field name="filter_domain">[('state', '=', 'to approve'), ('sent_for_approval', '=', False), ('purchase_type', '=', 'it')]</field>
+        <field name="filter_pre_domain">['|', ("state", "=", "draft"), ("state", "=", "sent")]</field>
+        <field name="child_ids" eval="[(6, 0, [ref('action_send_approval_email_it'), ref('action_add_followers_it'), ref('action_update_sent_for_approval_it')])]"/>
     </record>
 
     <record id="rule_purchase_order_non_it_to_approve" model="base.automation">
-        <field name="name">Purchase Order Non-IT (To Approve)</field>
+        <field name="name">Send Approval Request (Non IT)</field>
         <field name="model_id" ref="purchase.model_purchase_order"/>
-        <field name="state">email</field>
+        <field name="state">multi</field>
         <field name="trigger">on_write</field>
         <field name="active" eval="True"/>
-        <field name="template_id" ref="inuka.email_template_purchase_order_non_it"/>
-        <field name="filter_domain">[('state', '=', 'to approve'), ('purchase_type', '!=', 'it')]</field>
-        <field name="filter_pre_domain">[]</field>
-    </record>
-
-    <record id="rule_purchase_order_it_add_follower" model="base.automation">
-        <field name="name">Purchase Order IT (Add Follower)</field>
-        <field name="model_id" ref="purchase.model_purchase_order"/>
-        <field name="state">followers</field>
-        <field name="trigger">on_write</field>
-        <field name="active" eval="True"/>
-        <field name="partner_ids">[]</field>
-        <field name="filter_domain">[('state', '=', 'to approve'), ('purchase_type', '=', 'it')]</field>
-        <field name="filter_pre_domain">[]</field>
-    </record>
-
-    <record id="rule_purchase_order_non_it_add_follower" model="base.automation">
-        <field name="name">Purchase Order Non-IT (Add Follower)</field>
-        <field name="model_id" ref="purchase.model_purchase_order"/>
-        <field name="state">followers</field>
-        <field name="trigger">on_write</field>
-        <field name="active" eval="True"/>
-        <field name="partner_ids">[]</field>
-        <field name="filter_domain">[('state', '=', 'to approve'), ('purchase_type', '!=', 'it')]</field>
-        <field name="filter_pre_domain">[]</field>
+        <field name="filter_domain">[("state", "=", "to approve"), ("sent_for_approval", "=", False), ("purchase_type", "!=", "it")]</field>
+        <field name="filter_pre_domain">["|", ("state", "=", "draft"), ("state", "=", "sent")]</field>
+        <field name="child_ids" eval="[(6, 0, [ref('action_send_approval_email_non_it'), ref('action_add_followers_non_it'), ref('action_update_sent_for_approval_it')])]"/>
     </record>
 
 </odoo>
