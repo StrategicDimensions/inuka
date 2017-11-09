@@ -9,6 +9,9 @@
             <field name="currency_id" position="after">
                 <field name="purchase_type" required="1"/>
             </field>
+            <field name="reference" position="after">
+                <field name="payment_reference"/>
+            </field>
         </field>
     </record>
 

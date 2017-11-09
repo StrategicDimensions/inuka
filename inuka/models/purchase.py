@@ -24,7 +24,8 @@ class PurchaseOrder(models.Model):
         ('stock', 'Stock'),
         ('marketing​', 'Marketing​ ​ Material')
         ], string='Purchase Type', default='it', states=READONLY_STATES)
-    sent_for_approval = fields.Boolean("Sent for Approval")
+    sent_for_approval = fields.Boolean("Sent for Approval", states=READONLY_STATES)
+    payment_reference = fields.Char("Payment Reference", states=READONLY_STATES)
 
     def get_mail_url(self):
         return self.get_share_url()
