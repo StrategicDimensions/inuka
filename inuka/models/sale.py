@@ -38,6 +38,15 @@ class SaleOrder(models.Model):
     shipping_cost = fields.Float('Shipping Cost', readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
     pv = fields.Float('PV', readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
     total_pv = fields.Float(compute='_compute_tot_pv', store=True)
+    reserve = fields.Monetary(string='Available Funds', compute="_compute_reserve")
+
+    def _compute_reserve(self):
+        for order in self:
+            order.reserve = - (order.partner_id.credit - order.partner_id.debit)
+
+    @api.multi
+    def dummy_redirect(self):
+        return
 
     @api.multi
     def action_confirm(self):

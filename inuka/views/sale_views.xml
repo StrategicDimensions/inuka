@@ -24,6 +24,14 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
+            <button name="action_view_invoice" position="after">
+                <button name="dummy_redirect" type="object" class="oe_stat_button disabled" icon="fa-pencil-square-o">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value"><field name="reserve" widget='monetary'/></span>
+                        <span class="o_stat_text">Available Funds</span>
+                    </div>
+                </button>
+            </button>
             <xpath expr="//field[@name='payment_term_id']" position="after">
                 <field name="pv" required="True"/>
             </xpath>
