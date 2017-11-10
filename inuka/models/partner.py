@@ -2,6 +2,7 @@
 
 import random
 import string
+import re
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 from random import randint
@@ -89,6 +90,14 @@ class ResPartner(models.Model):
                 age = relativedelta(today, dob)
                 if age.years < 18:
                     raise ValidationError(_('Member should be 18 years and above.'))
+
+    @api.constrains('mobile')
+    def _check_mobile(self):
+        for partner in self:
+            if partner.mobile:
+                mobile = partner.mobile.replace(' ', '')
+                if len(mobile) < 11:
+                    raise ValidationError(_('Mobile Number should not be less than 11 digits.'))
 
     @api.onchange('first_name', 'last_name')
     def _onchange_first_name(self):
