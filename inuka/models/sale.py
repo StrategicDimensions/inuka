@@ -70,3 +70,9 @@ class SaleOrderLine(models.Model):
     @api.onchange('product_uom_qty')
     def _onchange_product_uom_qty(self):
         self.pv = self.product_id.categ_id.category_pv * self.product_uom_qty
+
+
+class SaleAdvancePaymentInv(models.TransientModel):
+    _inherit = "sale.advance.payment.inv"
+
+    advance_payment_method = fields.Selection(default='delivered')

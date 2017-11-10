@@ -96,7 +96,7 @@ class ResPartner(models.Model):
         for partner in self:
             if partner.mobile:
                 if ' ' in partner.mobile:
-                    raise ValidationError(_('Mobile Number should not not have any spaces.'))
+                    raise ValidationError(_('Mobile Number should not have any space.'))
                 mobile = partner.mobile.replace(' ', '')
                 if len(mobile) < 11:
                     raise ValidationError(_('Mobile Number should not be less than 11 digits.'))
