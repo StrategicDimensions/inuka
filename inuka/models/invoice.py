@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 
 
 class AccountInvoice(models.Model):
@@ -33,6 +33,25 @@ class AccountInvoice(models.Model):
         self.purchase_type = self.purchase_id.purchase_type
         self.payment_reference = self.purchase_id.payment_reference
         super(AccountInvoice, self).purchase_order_change()
+
+    @api.multi
+    def action_invoice_open(self):
+        context = dict(self.env.context or {})
+        for invoice in self:
+            purchase_ids = invoice.invoice_line_ids.mapped('purchase_id')
+            total = sum(purchase_ids.mapped('amount_total'))
+            if purchase_ids and invoice.amount_total != total:
+                context['active_id'] = invoice.id
+                return {
+                    'name': _('Warning'),
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'account.invoice.validate',
+                    'type': 'ir.actions.act_window',
+                    'context': context,
+                    'target': 'new'
+                }
+        return super(AccountInvoice, self).action_invoice_open()
 
 
 class AccountInvoiceLine(models.Model):

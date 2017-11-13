@@ -19,6 +19,7 @@
         'data/base_automation_data.xml',
         'views/report_invoice_document_inherited_for_pv.xml',
         'views/report_saleorder_document_inherited_for_pv.xml',
+        'wizard/account_invoice_validate_view.xml',
     ],
     'test': [
     ],
