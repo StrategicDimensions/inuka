@@ -54,7 +54,8 @@ class ResPartner(models.Model):
         ('medium', 'Medium Kit'),
         ('large', 'Large Kit'),
         ('junior', 'Junior kit'),
-        ('senior', 'Senior kit')
+        ('senior', 'Senior kit'),
+        ('not_indicated', 'Kit Not Indicated')
         ], string='Kit', required=True, default='small')
     source = fields.Selection([
         ('email', 'Email'),
