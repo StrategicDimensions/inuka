@@ -114,6 +114,60 @@ class ResPartner(models.Model):
                 name += ' (' + (self.ref) +')'
             self.name = name
 
+    def _prepare_sale_order(self):
+        self.ensure_one()
+
+        kit = self.kit
+        vals = {
+            'small': 600.00,
+            'medium': 1300.00,
+            'large': 1800.00,
+            'junior': 3000.00,
+            'senior': 6000.00,
+            'not_indicated': 0.00,
+        }
+        order_total = vals.get(kit, 0.00)
+
+        return {
+            'partner_id': self.id,
+            'order_sent_by': self.source,
+            'sale_date': self.join_date,
+            'order_type': 'single',
+            'pricelist_id': self.property_product_pricelist.id,
+            'carrier_id': False,
+            'payment_term_id': self.env.ref('account.account_payment_term_immediate').id,
+            'order_total': order_total,
+            'product_cost': order_total,
+            'picking_policy': 'one',
+            'user_id': self.create_uid.id,
+            'team_id': False,
+            'client_order_ref': kit,
+            'company_id': self.company_id.id,
+        }
+
+    def _prepare_sale_order_line(self, order):
+        self.ensure_one()
+
+        vals = {
+            'small': 'KITSM',
+            'medium': 'KITMD',
+            'large': 'KITLG',
+            'junior': 'KITJR',
+            'senior': 'KITSR'
+        }
+        default_code = vals.get(self.kit)
+        product = self.env['product.product']
+        if default_code:
+            product = product.search([('default_code', '=', default_code)], limit=1)
+
+        if not product:
+            return {}
+        return {
+            'product_id': product.id,
+            'product_uom_qty': 1.0,
+            'order_id': order.id,
+        }
+
     @api.model
     def create(self, vals):
         if vals.get('customer'):
@@ -127,7 +181,14 @@ class ResPartner(models.Model):
                 vals['name'] += ' ' + (last_name)
             if vals['ref']:
                  vals['name'] += ' (' + (vals['ref']) +')'
-        return super(ResPartner, self).create(vals)
+        res = super(ResPartner, self).create(vals)
+        if res.customer:
+            sale_order_vals = res._prepare_sale_order()
+            order = self.env['sale.order'].create(sale_order_vals)
+            sale_order_line_vals = res._prepare_sale_order_line(order)
+            if sale_order_line_vals:
+                self.env['sale.order.line'].create(sale_order_line_vals)
+        return res
 
     @api.model
     def name_search(self, name='', args=None, operator='ilike', limit=100):
