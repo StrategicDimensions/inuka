@@ -114,3 +114,9 @@ class ResPartner(models.Model):
             vals['ref'] = ''.join(random.choice(string.ascii_letters).upper() for x in range(3)) + (str(randint(100,999)))
             vals['name'] = (first_name or '') + ' ' + (last_name or '') + ' (' + (vals['ref'] or '') +')'
         return super(ResPartner, self).create(vals)
+
+    @api.model
+    def name_search(self, name='', args=None, operator='ilike', limit=100):
+        args = args or []
+        recs = self.search(['|', '|', '|', '|', ('ref', operator, name), ('name', operator, name), ('mobile', operator, name), ('passport_no', operator, name), ('email', operator, name)] + args, limit=limit)
+        return recs.name_get()
