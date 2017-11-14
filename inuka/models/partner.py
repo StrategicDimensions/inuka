@@ -105,7 +105,14 @@ class ResPartner(models.Model):
     @api.onchange('first_name', 'last_name')
     def _onchange_first_name(self):
         if self.customer:
-            self.name = (self.first_name or '') + ' ' + (self.last_name or '') + ' (' + (self.ref or '') +')'
+            name = ''
+            if self.first_name:
+                name += (self.first_name)
+            if self.last_name:
+                name += ' ' + (self.last_name)
+            if self.ref:
+                name += ' (' + (self.ref) +')'
+            self.name = name
 
     @api.model
     def create(self, vals):
@@ -113,7 +120,13 @@ class ResPartner(models.Model):
             first_name = vals.get('first_name', '')
             last_name = vals.get('last_name', '')
             vals['ref'] = ''.join(random.choice(string.ascii_letters).upper() for x in range(3)) + (str(randint(100,999)))
-            vals['name'] = (first_name or '') + ' ' + (last_name or '') + ' (' + (vals['ref'] or '') +')'
+            vals['name'] = ''
+            if first_name:
+                vals['name'] += (first_name)
+            if last_name:
+                vals['name'] += ' ' + (last_name)
+            if vals['ref']:
+                 vals['name'] += ' (' + (vals['ref']) +')'
         return super(ResPartner, self).create(vals)
 
     @api.model
