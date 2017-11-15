@@ -57,6 +57,7 @@
                         <field name="order_total" required="True"/>
                         <field name="product_cost"/>
                         <field name="shipping_cost"/>
+                        <field name="order_status"/>
                     </group>
                 </group>
             </xpath>
