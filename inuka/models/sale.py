@@ -47,7 +47,12 @@ class SaleOrder(models.Model):
         ('general', 'Snag General'),
         ('payment', 'Snag Payment Option'),
         ('unreadable', 'Snag Unreadable')
-    ], string="Order Status", default="new", readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
+    ], string="Order Status", default="new", readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)], 'open': [('readonly', False)], 'snagged': [('readonly', False)]})
+    state = fields.Selection(selection_add=[
+        ('draft', 'New'),
+        ('open', 'Open'),
+        ('snagged', 'Snagged')
+    ], readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)], 'open': [('readonly', False)], 'snagged': [('readonly', False)]})
 
     def _compute_reserve(self):
         ReservedFund = self.env['reserved.fund']
@@ -55,6 +60,16 @@ class SaleOrder(models.Model):
             res_funds = self.env['reserved.fund'].search([('customer_id', '=', order.partner_id.id)])
             amount_reserve = sum([x.amount for x in res_funds])
             order.reserve = - (order.partner_id.credit - order.partner_id.debit) - amount_reserve
+
+    @api.onchange('order_status')
+    def _onchange_order_status(self):
+        status = self.order_status
+        if status == 'new':
+            self.state = 'draft'
+        elif status == 'open':
+            self.state = 'open'
+        else:
+            self.state = 'snagged'
 
     @api.multi
     def dummy_redirect(self):
