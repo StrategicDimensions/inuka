@@ -128,6 +128,18 @@ class ResPartner(models.Model):
         }
         order_total = vals.get(kit, 0.00)
 
+        product_vals = {
+            'small': 'KITSM',
+            'medium': 'KITMD',
+            'large': 'KITLG',
+            'junior': 'KITJR',
+            'senior': 'KITSR'
+        }
+        default_code = product_vals.get(kit)
+        product = self.env['product.product']
+        if default_code:
+            product = product.search([('default_code', '=', default_code)], limit=1)
+
         return {
             'partner_id': self.id,
             'order_sent_by': self.source,
@@ -136,6 +148,7 @@ class ResPartner(models.Model):
             'pricelist_id': self.property_product_pricelist.id,
             'carrier_id': False,
             'payment_term_id': self.env.ref('account.account_payment_term_immediate').id,
+            'pv': product.categ_id.category_pv,
             'order_total': order_total,
             'product_cost': order_total,
             'picking_policy': 'one',
@@ -166,6 +179,7 @@ class ResPartner(models.Model):
             'product_id': product.id,
             'product_uom_qty': 1.0,
             'order_id': order.id,
+            'pv': product.categ_id.category_pv,
         }
 
     @api.model

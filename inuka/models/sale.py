@@ -40,7 +40,14 @@ class SaleOrder(models.Model):
     pv = fields.Float('PV', readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
     total_pv = fields.Float(compute='_compute_tot_pv', store=True)
     reserve = fields.Monetary(string='Available Funds', compute="_compute_reserve")
-    paid = fields.Boolean()
+    paid = fields.Boolean(readonly=True)
+    order_status = fields.Selection([
+        ('new', 'New Order'),
+        ('open', 'Open'),
+        ('general', 'Snag General'),
+        ('payment', 'Snag Payment Option'),
+        ('unreadable', 'Snag Unreadable')
+    ], string="Order Status", default="new", readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
 
     def _compute_reserve(self):
         ReservedFund = self.env['reserved.fund']
@@ -58,6 +65,8 @@ class SaleOrder(models.Model):
         super(SaleOrder, self).action_confirm()
         for order in self:
             order.write({'pv': order.total_pv, 'order_total': order.amount_total})
+        self.action_unlink_reserved_fund()
+        self.write({'paid': True})
         return True
 
     @api.multi
@@ -69,7 +78,7 @@ class SaleOrder(models.Model):
     def action_add_reserved_fund(self):
         ReservedFund = self.env['reserved.fund']
         for order in self:
-            if order.reserve >= order.order_total:
+            if order.reserve >= order.amount_total:
                 ReservedFund.create({
                     'date': fields.Datetime.now(),
                     'desctiption': 'Reservation for %s for Order %s for an amount of %d by %s' % (order.partner_id.name, order.name, order.amount_total, order.user_id.name),
@@ -134,4 +143,4 @@ class ReservedFund(models.Model):
     amount = fields.Float(readonly=True, requied=True)
     order_id = fields.Many2one('sale.order', readonly=True, requied=True)
     customer_id = fields.Many2one('res.partner', readonly=True, requied=True)
-    active = fields.Boolean(default=True)
+    active = fields.Boolean(default=True, readonly=True)
