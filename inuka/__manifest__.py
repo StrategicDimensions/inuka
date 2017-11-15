@@ -11,6 +11,7 @@
     'website': 'https://www.odoo.com/',
     'depends': ['purchase', 'delivery', 'base_automation'],
     'data': [
+        'security/ir.model.access.csv',
         'views/purchase_views.xml',
         'views/account_invoice_views.xml',
         'views/res_partner_views.xml',

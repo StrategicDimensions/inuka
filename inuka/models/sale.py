@@ -1,7 +1,8 @@
 # -*- coding:utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import api, fields, models
+from odoo import api, fields, models, _
+from odoo.exceptions import UserError
 
 
 class SaleOrder(models.Model):
@@ -39,10 +40,14 @@ class SaleOrder(models.Model):
     pv = fields.Float('PV', readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
     total_pv = fields.Float(compute='_compute_tot_pv', store=True)
     reserve = fields.Monetary(string='Available Funds', compute="_compute_reserve")
+    paid = fields.Boolean()
 
     def _compute_reserve(self):
+        ReservedFund = self.env['reserved.fund']
         for order in self:
-            order.reserve = - (order.partner_id.credit - order.partner_id.debit)
+            res_funds = self.env['reserved.fund'].search([('customer_id', '=', order.partner_id.id)])
+            amount_reserve = sum([x.amount for x in res_funds])
+            order.reserve = - (order.partner_id.credit - order.partner_id.debit) - amount_reserve
 
     @api.multi
     def dummy_redirect(self):
@@ -54,6 +59,46 @@ class SaleOrder(models.Model):
         for order in self:
             order.write({'pv': order.total_pv, 'order_total': order.amount_total})
         return True
+
+    @api.multi
+    def action_cancel(self):
+        super(SaleOrder, self).action_cancel()
+        self.action_unlink_reserved_fund()
+
+    @api.multi
+    def action_add_reserved_fund(self):
+        ReservedFund = self.env['reserved.fund']
+        for order in self:
+            if order.reserve >= order.order_total:
+                ReservedFund.create({
+                    'date': fields.Datetime.now(),
+                    'desctiption': 'Reservation for %s for Order %s for an amount of %d by %s' % (order.partner_id.name, order.name, order.amount_total, order.user_id.name),
+                    'amount': order.amount_total,
+                    'order_id': order.id,
+                    'customer_id': order.partner_id.id,
+                })
+                order.paid = True
+                msg = "<b>Fund Reserved</b><ul>"
+                msg += "<li>Reservation for %s <br/> for Order %s for an amount of <br/> %s %d by %s" % (order.partner_id.name, order.name, order.company_id.currency_id.symbol, order.amount_total, order.user_id.name)
+                msg += "</ul>"
+                order.message_post(body=msg)
+            else:
+                raise UserError(_('Insufficient Funds Available'))
+
+    @api.multi
+    def action_unlink_reserved_fund(self):
+        ReservedFund = self.env['reserved.fund']
+        for order in self:
+            res_funds = ReservedFund.search([('order_id', '=', order.id)])
+            # res_funds.unlink()
+            res_funds.write({
+                'active': False,
+            })
+            order.paid = False
+            msg = "<b>Fund unreserved</b><ul>"
+            msg += "<li>Reservation Reversed for %s <br/> for Order %s for an amount of <br/> %s %d by %s" % (order.partner_id.name, order.name, order.company_id.currency_id.symbol, order.amount_total, order.user_id.name)
+            msg += "</ul>"
+            order.message_post(body=msg)
 
 
 class SaleOrderLine(models.Model):
@@ -76,3 +121,17 @@ class SaleAdvancePaymentInv(models.TransientModel):
     _inherit = "sale.advance.payment.inv"
 
     advance_payment_method = fields.Selection(default='delivered')
+
+
+class ReservedFund(models.Model):
+    """Master should be added which will be used to reserve funds on a quotation"""
+    _name = "reserved.fund"
+    _description = "Reserved Fund"
+    _rec_name = 'order_id'
+
+    date = fields.Datetime(readonly=True, requied=True, default=lambda self: fields.Datetime.now())
+    desctiption = fields.Char(readonly=True, requied=True)
+    amount = fields.Float(readonly=True, requied=True)
+    order_id = fields.Many2one('sale.order', readonly=True, requied=True)
+    customer_id = fields.Many2one('res.partner', readonly=True, requied=True)
+    active = fields.Boolean(default=True)
