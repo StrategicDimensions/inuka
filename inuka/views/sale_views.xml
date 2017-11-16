@@ -37,10 +37,10 @@
             <button name="action_unlock" position="after">
                 <button name="action_add_reserved_fund"
                     string="Reserve Funds" type="object"
-                    attrs="{'invisible': ['|', ('state', 'in', ['sent', 'sale', 'done', 'cancel']), ('paid', '=', True)]}"/>
+                    attrs="{'invisible': ['|', ('state', 'in', ['sale', 'done', 'cancel']), ('paid', '=', True)]}"/>
                 <button name="action_unlink_reserved_fund"
                     string="Unreserve Funds" type="object"
-                    attrs="{'invisible': ['|', ('state', 'in', ['sent', 'sale', 'done', 'cancel']), ('paid', '=', False)]}"/>
+                    attrs="{'invisible': ['|', ('state', 'in', ['sale', 'done', 'cancel']), ('paid', '=', False)]}"/>
             </button>
 
             <button name="action_view_invoice" position="after">
