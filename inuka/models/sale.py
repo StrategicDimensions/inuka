@@ -27,7 +27,7 @@ class SaleOrder(models.Model):
         ('portal', 'Portal')],
         string="Order Sent By", default="email", readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
     order_type = fields.Selection([
-        ('collect', 'Collect / No Shopping'),
+        ('collect', 'Collect / No Shipping'),
         ('bulk', 'Part of Bulk'),
         ('single', 'Single'),
         ('upfront', 'Upfront'),
@@ -40,7 +40,7 @@ class SaleOrder(models.Model):
     pv = fields.Float('PV', readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
     total_pv = fields.Float(compute='_compute_tot_pv', store=True)
     reserve = fields.Monetary(string='Available Funds', compute="_compute_reserve")
-    paid = fields.Boolean(readonly=True)
+    paid = fields.Boolean(readonly=True, copy=False)
     order_status = fields.Selection([
         ('new', 'New Order'),
         ('open', 'Open'),
@@ -48,11 +48,21 @@ class SaleOrder(models.Model):
         ('payment', 'Snag Payment Option'),
         ('unreadable', 'Snag Unreadable')
     ], string="Order Status", default="new", readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)], 'open': [('readonly', False)], 'snagged': [('readonly', False)]})
-    state = fields.Selection(selection_add=[
+    state = fields.Selection([
         ('draft', 'New'),
         ('open', 'Open'),
-        ('snagged', 'Snagged')
-    ], readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)], 'open': [('readonly', False)], 'snagged': [('readonly', False)]})
+        ('snagged', 'Snagged'),
+        ('sent', 'Quotation Sent'),
+        ('sale', 'Sales Order'),
+        ('done', 'Locked'),
+        ('cancel', 'Cancelled'),
+        ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
+    delivery_status = fields.Selection([
+        ('to_deliver', 'To Deliver'),
+        ('partially', 'Partially Delivered'),
+        ('fully', 'Fully Delivered'),
+        ('cancelled', 'Cancelled')
+    ], string="Delivery Status", readonly=True)
 
     def _compute_reserve(self):
         ReservedFund = self.env['reserved.fund']
