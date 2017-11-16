@@ -24,14 +24,24 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <button name="action_view_invoice" position="after">
-                <button name="dummy_redirect" type="object" class="oe_stat_button disabled" icon="fa-pencil-square-o">
-                    <div class="o_field_widget o_stat_info">
-                        <span class="o_stat_value"><field name="reserve" widget='monetary'/></span>
-                        <span class="o_stat_text">Available Funds</span>
-                    </div>
-                </button>
-            </button>
+            <xpath expr="//button[@name='action_quotation_send'][1]" position="replace">
+                <button name="action_quotation_send" string="Send by Email" type="object" invisible="1" class="btn-primary"/>
+            </xpath>
+            <xpath expr="//button[@name='action_quotation_send'][2]" position="replace">
+                <button name="action_quotation_send" type="object" string="Send PRO-FORMA Invoice" class="btn-primary" invisible="1" context="{'proforma': True}"/>
+            </xpath>
+            <xpath expr="//button[@name='action_quotation_send'][3]" position="replace">
+                <button name="action_quotation_send" type="object" string="Send PRO-FORMA Invoice" invisible="1" context="{'proforma': True}"/>
+            </xpath>
+            <xpath expr="//button[@name='action_quotation_send'][4]" position="replace">
+                <button name="action_quotation_send" string="Send by Email" type="object" invisible="1"/>
+            </xpath>
+            <xpath expr="//button[@name='print_quotation'][2]" position="attributes">
+                 <attribute name="states">open,snagged,sale,done</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_cancel']" position="attributes">
+                 <attribute name="states">draft,open,snagged,sale,done</attribute>
+            </xpath>
             <xpath expr="//button[@name='action_confirm'][1]" position="replace">
                 <button name="action_confirm" id="action_confirm"
                     string="Confirm Sale" class="btn-primary" type="object"
@@ -42,6 +52,26 @@
                     string="Confirm Sale" type="object"
                     attrs="{'invisible': ['|', ('state', 'not in', ['draft']), ('paid', '=', False)]}"/>
             </xpath>
+            <button name="action_unlock" position="after">
+                <button name="action_add_reserved_fund"
+                    string="Reserve Funds" type="object"
+                    attrs="{'invisible': ['|', ('state', 'in', ['sent', 'sale', 'done', 'cancel']), ('paid', '=', True)]}"/>
+                <button name="action_unlink_reserved_fund"
+                    string="Unreserve Funds" type="object"
+                    attrs="{'invisible': ['|', ('state', 'in', ['sent', 'sale', 'done', 'cancel']), ('paid', '=', False)]}"/>
+            </button>
+            <field name="state" position="replace">
+                <field name="state" widget="statusbar" statusbar_visible="draft,open,snagged,sale" force_save="1"/>
+            </field>
+
+            <button name="action_view_invoice" position="after">
+                <button name="dummy_redirect" type="object" class="oe_stat_button disabled" icon="fa-pencil-square-o">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value"><field name="reserve" widget='monetary'/></span>
+                        <span class="o_stat_text">Available Funds</span>
+                    </div>
+                </button>
+            </button>
             <xpath expr="//field[@name='payment_term_id']" position="after">
                 <field name="pv" required="True"/>
             </xpath>
@@ -89,16 +119,17 @@
                     type="action"
                     attrs="{'invisible': ['|',('invoice_status', '!=', 'no'), ('state', '!=', 'sale')]}"/>
             </xpath>
-            <field name="state" widget="statusbar" statusbar_visible="draft,sent,sale" position="before">
-                <button name="action_add_reserved_fund"
-                    string="Reserve Fund" type="object"
-                    attrs="{'invisible': ['|', ('state', 'in', ['sale', 'done', 'cancel']), ('paid', '=', True)]}"/>
+        </field>
+    </record>
 
-                <button name="action_unlink_reserved_fund"
-                    string="Unreserve Fund" type="object"
-                    attrs="{'invisible': ['|', ('state', 'in', ['sale', 'done', 'cancel']), ('paid', '=', False)]}"/>
-            </field>
-
+    <record id="view_sale_order_form_inherit_inuka" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.inuka</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_stock.view_order_form_inherit_sale_stock"/>
+        <field name="arch" type="xml">
+            <group name="sale_shipping" position="inside">
+                <field name="delivery_status"/>
+            </group>
         </field>
     </record>
 
