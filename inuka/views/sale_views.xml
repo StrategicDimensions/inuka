@@ -116,7 +116,7 @@
         <field name="name">reserved.fund.form</field>
         <field name="model">reserved.fund</field>
         <field name="arch" type="xml">
-            <form string="Reserved Fund" create="false" delete="false">
+            <form string="Reserved Funds" create="false" delete="false">
                 <sheet>
                     <group>
                         <group>
@@ -142,7 +142,7 @@
         <field name="name">reserved.fund.tree</field>
         <field name="model">reserved.fund</field>
         <field name="arch" type="xml">
-            <tree string="Reserved Fund" create="false" delete="false">
+            <tree string="Reserved Funds" create="false" delete="false">
                 <field name="date" readonly="True"/>
                 <field name="desctiption" readonly="True"/>
                 <field name="amount" readonly="True"/>
@@ -154,7 +154,7 @@
     </record>
 
     <record id="action_reserved_fund_form" model="ir.actions.act_window">
-        <field name="name">Reserved Fund</field>
+        <field name="name">Reserved Funds</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">reserved.fund</field>
         <field name="view_type">form</field>
@@ -168,7 +168,7 @@
     </record>
 
     <menuitem id="reserved_fund_menu"
-        name="Reserved Fund"
+        name="Reserved Funds"
         parent="sale.sale_order_menu"
         action="inuka.action_reserved_fund_form"
         sequence="9"/>
