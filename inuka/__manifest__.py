@@ -9,7 +9,7 @@
     'summary': 'Inuka',
     'description': "",
     'website': 'https://www.odoo.com/',
-    'depends': ['purchase', 'delivery', 'base_automation'],
+    'depends': ['purchase', 'delivery', 'base_automation', 'sms_frame'],
     'data': [
         'security/ir.model.access.csv',
         'views/purchase_views.xml',
