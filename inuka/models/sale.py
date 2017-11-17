@@ -3,6 +3,7 @@
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
+from odoo.tools.float_utils import float_compare
 
 
 class SaleOrder(models.Model):
@@ -52,8 +53,22 @@ class SaleOrder(models.Model):
         ('to_deliver', 'To Deliver'),
         ('partially', 'Partially Delivered'),
         ('fully', 'Fully Delivered'),
-        ('cancelled', 'Cancelled')
-    ], string="Delivery Status", readonly=True)
+    ], compute="_compute_delivery_status", string="Delivery Status", store=True)
+
+    @api.depends('state', 'order_line', 'order_line.qty_delivered', 'order_line.product_uom_qty')
+    def _compute_delivery_status(self):
+        precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+        for order in self:
+            if order.state not in ('sale', 'done'):
+                order.delivery_status = 'to_deliver'
+                continue
+
+            if any(float_compare(line.qty_delivered, line.product_uom_qty, precision_digits=precision) != 0 for line in order.order_line if line.qty_delivered):
+                order.delivery_status = 'partially'
+            elif all(float_compare(line.qty_delivered, line.product_uom_qty, precision_digits=precision) == 0 for line in order.order_line):
+                order.delivery_status = 'fully'
+            else:
+                order.delivery_status = 'to_deliver'
 
     def _compute_reserve(self):
         ReservedFund = self.env['reserved.fund']
