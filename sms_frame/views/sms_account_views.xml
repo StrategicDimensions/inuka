@@ -52,6 +52,13 @@
                             <button name="twilio_quick_setup" type="object" string="Quick Setup" help="Points Twilio to your odoo server"/>
                         </group>
                     </div>
+                    <div attrs="{'invisible': [('gateway_model', '!=', 'sms.gateway.clickatell')]}">
+                        <group>
+                            <field name="clicKatell_username"/>
+                            <field name="clicKatell_password"/>
+                            <field name="clicKatell_api"/>
+                        </group>
+                    </div>
                 </xpath>
             </field>
         </record>

@@ -18,7 +18,7 @@ class SmsCompose(models.Model):
     sms_content = fields.Text(string='SMS Content')
     media_id = fields.Binary(string="Media (MMS)")
     media_filename = fields.Char(string="Media Filename")
-    
+
     @api.onchange('sms_template_id')
     def _onchange_sms_template_id(self):
         """Prefills from mobile, sms_account and sms_content but allow them to manually change the content after"""
@@ -35,17 +35,11 @@ class SmsCompose(models.Model):
         self.ensure_one()
 
         gateway_model = self.from_mobile_id.account_id.account_gateway_id.gateway_model_name
-        my_sms = self.from_mobile_id.account_id.send_message(self.from_mobile_id.mobile_number, self.to_number, self.sms_content.encode('utf-8'), self.model, self.record_id, self.media_id)
-
-        #use the human readable error message if present
-        error_message = ""
-        if my_sms.human_read_error != "":
-            error_message = my_sms.human_read_error
-        else:
-            error_message = my_sms.response_string
+        my_sms = self.from_mobile_id.account_id.send_message(self.from_mobile_id.mobile_number, self.to_number, self.sms_content.encode('utf-8'), self.model, self.record_id, self.media_id)[0]
+        error_message = my_sms['error']
 
         #display the screen with an error code if the sms/mms was not successfully sent
-        if my_sms.delivary_state == "failed":
+        if my_sms['errorCode'] != False:
             return {
                'type':'ir.actions.act_window',
                'res_model':'sms.compose',
@@ -65,11 +59,11 @@ class SmsCompose(models.Model):
             'from_mobile': self.from_mobile_id.mobile_number,
             'to_mobile': self.to_number,
             'sms_content': self.sms_content,
-            'status_string': my_sms.response_string,
+            'status_string': my_sms['error'],
             'direction': 'O',
             'message_date': datetime.utcnow(),
-            'status_code': my_sms.delivary_state,
-            'sms_gateway_message_id': my_sms.message_id, 
+            'status_code': my_sms['errorCode'],
+            'sms_gateway_message_id': my_sms['id'], 
             'by_partner_id': self.env.user.partner_id.id
         })
         sms_subtype = self.env['ir.model.data'].get_object('sms_frame', 'sms_subtype')

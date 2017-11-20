@@ -12,3 +12,4 @@ from . import sms_compose
 from . import sms_template
 from . import sms_gateway_twilio
 from . import ir_attachment
+from . import sms_clickatell

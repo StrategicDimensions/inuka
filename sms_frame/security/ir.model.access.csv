@@ -9,3 +9,4 @@
 "access_sms_template","access_sms_template","model_sms_template",,1,1,1,1
 "access_sms_compose","access_sms_compose","model_sms_compose",,1,1,1,1
 "access_sms_gateway_twilio","access_sms_gateway_twilio","model_sms_gateway_twilio",,1,0,0,0
+"access_sms_gateway_clickatell","access_sms_gateway_clickatell","model_sms_gateway_clickatell",,1,0,0,0
