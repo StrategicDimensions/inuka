@@ -17,6 +17,7 @@
         'data/sms.gateway.csv',
         'data/mail.message.subtype.csv',
         'data/sms_data.xml',
+        'data/clickatell_data.xml',
         'views/sms_views.xml',
         'views/res_partner_views.xml',
         'views/sms_message_views.xml',
