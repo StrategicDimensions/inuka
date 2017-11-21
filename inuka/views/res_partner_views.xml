@@ -80,4 +80,23 @@
         </field>
     </record>
 
+    <record id="view_res_partner_tree_inherit_inuka" model="ir.ui.view">
+        <field name="name">res.partner.tree.inherit.inuka</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <field name="display_name" position="before">
+                <field name="ref" string="Member ID"/>
+            </field>
+            <field name="display_name" position="after">
+                <field name="status"/>
+            </field>
+            <field name="email" position="after">
+                <field name="mobile"/>
+                <field name="state_id" string="Region"/>
+            </field>
+            <field name="phone" position="replace"/>
+        </field>
+    </record>
+
 </odoo>
