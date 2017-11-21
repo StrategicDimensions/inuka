@@ -112,6 +112,32 @@
         </field>
     </record>
 
+    <record id="view_sale_quotation_tree_inherit_inuka" model="ir.ui.view">
+        <field name="name">sale.quotation.tree.inherit.inuka</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree"/>
+        <field name="arch" type="xml">
+            <field name="name" position="attributes">
+                <attribute name="string">Order Number</attribute>
+            </field>
+            <field name="date_order" position="attributes">
+                <attribute name="string">Order Date</attribute>
+            </field>
+            <field name="date_order" position="after">
+                <field name="order_type" string="Type"/>
+            </field>
+            <field name="user_id" position="replace"/>
+            <field name="amount_total" position="after">
+                <field name="shipping_cost" string="Ship"/>
+                <field name="reserve"/>
+                <field name="paid"/>
+                <field name="order_status"/>
+                <field name="invoice_status"/>
+                <field name="delivery_status"/>
+            </field>
+        </field>
+    </record>
+
     <record id="view_reserved_fund_form" model="ir.ui.view">
         <field name="name">reserved.fund.form</field>
         <field name="model">reserved.fund</field>
