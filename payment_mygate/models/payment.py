@@ -22,7 +22,7 @@ class PaymentAcquirerMygate(models.Model):
     def _get_mygate_urls(self, environment):
         """ mygate URLs"""
         if environment == 'prod':
-            return {'mygate_form_url': ''}
+            return {'mygate_form_url': 'https://virtual.mygateglobal.com/PaymentPage.cfm'}
         else:
             return {'mygate_form_url': 'https://virtual.mygateglobal.com/PaymentPage.cfm'}
 
@@ -31,7 +31,7 @@ class PaymentAcquirerMygate(models.Model):
         self.ensure_one()
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         mygate_values = dict(values,
-                            mode=0,
+                            mode=0 if self.environment == 'test' else 1,
                             merchantID=self.mygate_merchant_id,
                             applicationID=self.mygate_application_id,
                             merchantReference=values['reference'],
@@ -62,64 +62,47 @@ class PaymentTransactionmygate(models.Model):
     def _mygate_form_get_tx_from_data(self, data):
         """ Given a data dict coming from mygate, verify it and find the related
         transaction record. """
-        reference = data.get('txnid')
-        pay_id = data.get('mihpayid')
-        shasign = data.get('hash')
+        reference = data.get('_MERCHANTREFERENCE')
+        pay_id = data.get('_TRANSACTIONINDEX')
+        shasign = data.get('_PANHASHED')
         if not reference or not pay_id or not shasign:
-            raise ValidationError(_('mygate: received data with missing reference (%s) or pay_id (%s) or shashign (%s)') % (reference, pay_id, shasign))
+            _logger.warning(_('mygate: received data with missing reference (%s) or pay_id (%s) or shashign (%s)') % (reference, pay_id, shasign))
 
         transaction = self.search([('reference', '=', reference)])
 
         if not transaction:
-            error_msg = (_('mygate: received data for reference %s; no order found') % (reference))
-            raise ValidationError(error_msg)
+            _logger.warning(_('mygate: received data for reference %s; no order found') % (reference))
         elif len(transaction) > 1:
-            error_msg = (_('mygate: received data for reference %s; multiple orders found') % (reference))
-            raise ValidationError(error_msg)
-
-        #verify shasign
-        shasign_check = transaction.acquirer_id._mygate_generate_sign('out', data)
-        if shasign_check.upper() != shasign.upper():
-            raise ValidationError(_('mygate: invalid shasign, received %s, computed %s, for data %s') % (shasign, shasign_check, data))
+            _logger.warning(_('mygate: received data for reference %s; multiple orders found') % (reference))
         return transaction
 
     @api.multi
     def _mygate_form_get_invalid_parameters(self, data):
         invalid_parameters = []
 
-        if self.acquirer_reference and data.get('mihpayid') != self.acquirer_reference:
+        if self.acquirer_reference and data.get('_TRANSACTIONINDEX') != self.acquirer_reference:
             invalid_parameters.append(
-                ('Transaction Id', data.get('mihpayid'), self.acquirer_reference))
+                ('Transaction Id', data.get('_TRANSACTIONINDEX'), self.acquirer_reference))
         #check what is buyed
-        if float_compare(float(data.get('amount', '0.0')), self.amount, 2) != 0:
+        if float_compare(float(data.get('_AMOUNT', '0.0')), self.amount, 2) != 0:
             invalid_parameters.append(
-                ('Amount', data.get('amount'), '%.2f' % self.amount))
+                ('Amount', data.get('_AMOUNT'), '%.2f' % self.amount))
 
         return invalid_parameters
 
     @api.multi
     def _mygate_form_validate(self, data):
-        status = data.get('status')
+        status = data.get('_RESULT')
         transaction_status = {
-            'success': {
+            '0': {
                 'state': 'done',
-                'acquirer_reference': data.get('mygateId'),
+                'acquirer_reference': data.get('_TRANSACTIONINDEX'),
                 'date_validate': fields.Datetime.now(),
             },
-            'pending': {
-                'state': 'pending',
-                'acquirer_reference': data.get('mygateId'),
-                'date_validate': fields.Datetime.now(),
-            },
-            'failure': {
-                'state': 'cancel',
-                'acquirer_reference': data.get('mygateId'),
-                'date_validate': fields.Datetime.now(),
-            },
-            'error': {
+            '-1': {
                 'state': 'error',
-                'state_message': data.get('error_Message') or _('mygate: feedback error'),
-                'acquirer_reference': data.get('mygateId'),
+                'state_message': data.get('_ERROR_MESSAGE') or _('mygate: feedback error'),
+                'acquirer_reference': data.get('_TRANSACTIONINDEX'),
                 'date_validate': fields.Datetime.now(),
             }
         }

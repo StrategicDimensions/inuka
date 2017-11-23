@@ -10,7 +10,7 @@
 
     MygateGlobal payment gateway supports only INR currency.
     """,
-    'depends': ['payment'],
+    'depends': ['payment', 'website_sale'],
     'data': [
         'views/payment_views.xml',
         'views/payment_mygateglobal_templates.xml',
