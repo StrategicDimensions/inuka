@@ -6,6 +6,7 @@
             <field name="name">SMS Partner</field>
             <field name="model_id" ref="model_res_partner"/>
             <field name="state">code</field>
+            <field name="binding_model_id" ref="base.model_res_partner" />
             <field name="code">action = record.sms_action()</field>
         </record>
 

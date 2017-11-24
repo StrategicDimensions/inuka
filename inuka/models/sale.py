@@ -34,7 +34,7 @@ class SaleOrder(models.Model):
         ('upfront', 'Upfront'),
         ('stock', 'Stock (for Up front)')],
         string='Order Type', default="collect", readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
-    sale_date = fields.Date('Sale Date', readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
+    sale_date = fields.Date('Sale Date', readonly=True, default=fields.Date.context_today, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
     order_total = fields.Float('Order Total', readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
     product_cost = fields.Float('Product Cost', readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
     shipping_cost = fields.Float('Shipping Cost', readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
