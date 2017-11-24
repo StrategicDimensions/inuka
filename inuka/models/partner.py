@@ -12,6 +12,13 @@ from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 from odoo.exceptions import ValidationError
 
 
+class Users(models.Model):
+    _inherit = "res.users"
+
+    @api.model
+    def create(self, vals):
+        return super(Users, self.with_context(from_user=True)).create(vals)
+
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
@@ -184,7 +191,8 @@ class ResPartner(models.Model):
 
     @api.model
     def create(self, vals):
-        if vals.get('customer'):
+        context = dict(self.env.context or {})
+        if vals.get('customer') and not context.get('from_user', False):
             first_name = vals.get('first_name', '')
             last_name = vals.get('last_name', '')
             vals['ref'] = ''.join(random.choice(string.ascii_letters).upper() for x in range(3)) + (str(randint(100,999)))
@@ -196,7 +204,7 @@ class ResPartner(models.Model):
             if vals['ref']:
                  vals['name'] += ' (' + (vals['ref']) +')'
         res = super(ResPartner, self).create(vals)
-        if res.customer:
+        if res.customer and not context.get('from_user', False):
             sale_order_vals = res._prepare_sale_order()
             order = self.env['sale.order'].create(sale_order_vals)
             sale_order_line_vals = res._prepare_sale_order_line(order)
