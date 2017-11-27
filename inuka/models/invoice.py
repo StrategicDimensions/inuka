@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import api, fields, models, _
+from odoo.exceptions import UserError
 
 
 class AccountInvoice(models.Model):
@@ -19,6 +20,7 @@ class AccountInvoice(models.Model):
         ], string='Purchase Type', default='it', readonly=True, states={'draft': [('readonly', False)]})
     total_pv = fields.Float(compute='_compute_tot_pv', store=True)
     payment_reference = fields.Char("Payment Reference", states={'draft': [('readonly', False)]})
+    approved_for_payment = fields.Boolean("Approved for Payment", readonly=True, copy=False)
 
     @api.depends('invoice_line_ids','invoice_line_ids.pv')
     def _compute_tot_pv(self):
@@ -51,6 +53,23 @@ class AccountInvoice(models.Model):
                     'context': context,
                     'target': 'new'
                 }
+        return super(AccountInvoice, self).action_invoice_open()
+
+    @api.multi
+    def action_approve_bill(self):
+        for invoice in self:
+            if invoice.type == 'in_invoice':
+                if not (self.user_has_groups('purchase.group_purchase_manager') or invoice.user_id.id == invoice.env._uid):
+                    raise UserError(_('Only the PO Requestor or Purchase Managers can Approve for Payment.'))
+                invoice.approved_for_payment = True
+                invoice.action_invoice_open()
+        return True
+
+    @api.multi
+    def action_invoice_open(self):
+        for invoice in self:
+            if invoice.type == 'in_invoice' and not invoice.approved_for_payment:
+                raise UserError(_('Vendor bill should be approved for payment before you Validate.'))
         return super(AccountInvoice, self).action_invoice_open()
 
 
