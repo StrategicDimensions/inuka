@@ -38,6 +38,9 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="account.view_partner_property_form"/>
         <field name="arch" type="xml">
+            <field name="trust" position="after">
+                <field name="credit_limit"/>
+            </field>
             <page name="accounting_disabled" position="after">
                 <page string="Roles" name="roles" attrs="{'invisible': [('customer', '=', False)]}">
                     <group>

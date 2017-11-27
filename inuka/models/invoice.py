@@ -76,12 +76,14 @@ class AccountInvoice(models.Model):
 class AccountInvoiceLine(models.Model):
     _inherit = "account.invoice.line"
 
+    unit_pv = fields.Float("Unit PV")
     pv = fields.Float("PV's")
 
     @api.onchange('product_id')
     def _onchange_product_id(self):
         super(AccountInvoiceLine, self)._onchange_product_id()
         self.pv = self.product_id.categ_id.category_pv * self.quantity
+        self.unit_pv = self.product_id.categ_id.category_pv
 
     @api.onchange('quantity')
     def _onchange_quantity(self):
@@ -89,4 +91,5 @@ class AccountInvoiceLine(models.Model):
 
     def _set_additional_fields(self, invoice):
         self.pv = self.product_id.categ_id.category_pv * self.quantity
+        self.unit_pv = self.product_id.categ_id.category_pv
         super(AccountInvoiceLine, self)._set_additional_fields(invoice)

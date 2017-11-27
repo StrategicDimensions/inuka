@@ -3,10 +3,12 @@
 
     <template id="report_invoice_document_inherited_for_pv" inherit_id="account.report_invoice_document">
         <xpath expr="//table/thead/tr/th[5]" position="before">
+            <th class="text-right">Unit PV</th>
             <th class="text-right">PV's</th>
         </xpath>
 
         <xpath expr="//table/tbody/tr/td[5]" position="before">
+            <td class="text-right"><span t-field="l.unit_pv"/></td>
             <td class="text-right"><span t-field="l.pv"/></td>
         </xpath>
 

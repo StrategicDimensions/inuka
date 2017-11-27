@@ -71,6 +71,7 @@
                 </group>
             </xpath>
             <xpath expr="//notebook/page[1]/field[@name='order_line']/tree/field[@name='qty_to_invoice']" position="after">
+                <field name="unit_pv" string="Unit PV" readonly="1" force_save="1"/>
                 <field name="pv" string="PV's" readonly="1" force_save="1"/>
             </xpath>
             <xpath expr="//field[@name='amount_total']" position="after">
