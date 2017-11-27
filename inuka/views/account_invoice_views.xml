@@ -26,6 +26,7 @@
         <field name="inherit_id" ref="account.invoice_form"/>
         <field name="arch" type="xml">
             <xpath expr="//notebook/page[1]/field[@name='invoice_line_ids']/tree/field[@name='quantity']" position="after">
+                <field name="unit_pv" string="Unit PV" readonly="1" force_save="1"/>
                 <field name="pv" string="PV's" readonly="1" force_save="1"/>
             </xpath>
             <xpath expr="//field[@name='amount_total']" position="after">

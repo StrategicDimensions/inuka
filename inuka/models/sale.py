@@ -75,7 +75,12 @@ class SaleOrder(models.Model):
         for order in self:
             res_funds = self.env['reserved.fund'].search([('customer_id', '=', order.partner_id.id)])
             amount_reserve = sum([x.amount for x in res_funds])
-            order.reserve = - (order.partner_id.credit - order.partner_id.debit) - amount_reserve
+            order.reserve = - (order.partner_id.credit - order.partner_id.debit) + order.partner_id.credit_limit - amount_reserve
+
+    @api.onchange('partner_id')
+    def onchange_partner_id(self):
+        super(SaleOrder, self).onchange_partner_id()
+        self.partner_shipping_id = False
 
     @api.multi
     def dummy_redirect(self):
@@ -103,7 +108,7 @@ class SaleOrder(models.Model):
                 ReservedFund.create({
                     'date': fields.Datetime.now(),
                     'desctiption': 'Reservation for %s for Order %s for an amount of %d by %s' % (order.partner_id.name, order.name, order.amount_total, order.user_id.name),
-                    'amount': order.amount_total,
+                    'amount': order.order_total,
                     'order_id': order.id,
                     'customer_id': order.partner_id.id,
                 })
@@ -135,12 +140,14 @@ class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
     pv = fields.Float("PV's")
+    unit_pv = fields.Float("Unit PV")
 
     @api.multi
     @api.onchange('product_id')
     def product_id_change(self):
         super(SaleOrderLine, self).product_id_change()
         self.pv = self.product_id.categ_id.category_pv * self.product_uom_qty
+        self.unit_pv = self.product_id.categ_id.category_pv
 
     @api.onchange('product_uom_qty')
     def _onchange_product_uom_qty(self):
