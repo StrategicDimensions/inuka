@@ -6,8 +6,13 @@
         <field name="model">account.invoice</field>
         <field name="inherit_id" ref="account.invoice_supplier_form"/>
         <field name="arch" type="xml">
+            <button name="action_invoice_open" position="before">
+                <button name="action_approve_bill" type="object" string="Approve for Payment" class="oe_highlight"
+                    attrs="{'invisible': ['|',('approved_for_payment', '==', True), ('state', '!=', 'draft')]}"/>
+            </button>
             <field name="currency_id" position="after">
                 <field name="purchase_type" required="1"/>
+                <field name="approved_for_payment"/>
             </field>
             <field name="reference" position="after">
                 <field name="payment_reference"/>

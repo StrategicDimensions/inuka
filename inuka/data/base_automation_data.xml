@@ -69,4 +69,22 @@
         <field name="child_ids" eval="[(6, 0, [ref('action_send_approval_email_non_it'), ref('action_add_followers_non_it'), ref('action_update_sent_for_approval_it')])]"/>
     </record>
 
+    <record id="action_send_approval_email_account_invoice" model="ir.actions.server">
+        <field name="name">Send Email (Vendor Bill To Approve)</field>
+        <field name="type">ir.actions.server</field>
+        <field name="state">email</field>
+        <field name="model_id" ref="account.model_account_invoice"/>
+        <field name="template_id" ref="inuka.email_template_account_invoice_to_approve"/>
+    </record>
+
+    <record id="rule_vendor_bill_to_approve" model="base.automation">
+        <field name="name">Send Approval Request (Vendor Bill)</field>
+        <field name="model_id" ref="account.model_account_invoice"/>
+        <field name="state">multi</field>
+        <field name="trigger">on_create</field>
+        <field name="active" eval="True"/>
+        <field name="filter_domain">[('state', '=', 'draft'), ('type', '=', 'in_invoice'), ('approved_for_payment', '=', False)]</field>
+        <field name="child_ids" eval="[(6, 0, [ref('action_send_approval_email_account_invoice')])]"/>
+    </record>
+
 </odoo>
