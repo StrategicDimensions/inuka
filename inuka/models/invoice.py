@@ -38,6 +38,7 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def action_invoice_open(self):
+        SaleOrder = self.env['sale.order']
         context = dict(self.env.context or {})
         for invoice in self:
             purchase_ids = invoice.invoice_line_ids.mapped('purchase_id')
@@ -53,6 +54,12 @@ class AccountInvoice(models.Model):
                     'context': context,
                     'target': 'new'
                 }
+            if invoice.type == 'in_invoice' and not invoice.approved_for_payment:
+                raise UserError(_('Vendor bill should be approved for payment before you Validate.'))
+            if invoice.type == 'out_invoice' and invoice.origin:
+                order = SaleOrder.search([('name', '=', invoice.origin)], limit=1)
+                order.action_unlink_reserved_fund()
+                order.write({'paid': True})
         return super(AccountInvoice, self).action_invoice_open()
 
     @api.multi
@@ -64,13 +71,6 @@ class AccountInvoice(models.Model):
                 invoice.approved_for_payment = True
                 invoice.action_invoice_open()
         return True
-
-    @api.multi
-    def action_invoice_open(self):
-        for invoice in self:
-            if invoice.type == 'in_invoice' and not invoice.approved_for_payment:
-                raise UserError(_('Vendor bill should be approved for payment before you Validate.'))
-        return super(AccountInvoice, self).action_invoice_open()
 
 
 class AccountInvoiceLine(models.Model):
