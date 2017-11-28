@@ -56,10 +56,6 @@ class AccountInvoice(models.Model):
                 }
             if invoice.type == 'in_invoice' and not invoice.approved_for_payment:
                 raise UserError(_('Vendor bill should be approved for payment before you Validate.'))
-            if invoice.type == 'out_invoice' and invoice.origin:
-                order = SaleOrder.search([('name', '=', invoice.origin)], limit=1)
-                order.action_unlink_reserved_fund()
-                order.write({'paid': True})
         return super(AccountInvoice, self).action_invoice_open()
 
     @api.multi

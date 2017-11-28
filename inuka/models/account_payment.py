@@ -12,5 +12,6 @@ class AccountPayment(models.Model):
         for payment in self:
             if payment.payment_type == 'inbound':
                 sale_orders = SaleOrder.search([('partner_id', '=', payment.partner_id.id), ('order_status', '=', 'payment')])
-                sale_orders.write({'order_status': 'open'})
+                if sale_orders and sale_orders[0].reserve >= 0:
+                    sale_orders.write({'order_status': 'open'})
         return super(AccountPayment, self).post()
