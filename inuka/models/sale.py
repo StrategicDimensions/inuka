@@ -82,6 +82,21 @@ class SaleOrder(models.Model):
         super(SaleOrder, self).onchange_partner_id()
         self.partner_shipping_id = False
 
+    @api.model
+    def create(self, vals):
+        res = super(SaleOrder, self).create(vals)
+        sms_template = self.env.ref('sms_frame.sms_template_inuka_international')
+        msg_compose = self.env['sms.compose'].create({
+            'record_id': res.id,
+            'model': 'sale.order',
+            'sms_template_id': sms_template.id,
+            'from_mobile_id': self.env.ref('sms_frame.sms_number_inuka_international').id,
+            'to_number': res.partner_id.mobile,
+            'sms_content': """ INUKA thanks you for your order %s, an SMS with details will follow when your order (Ref: %s) is dispatched^More info on 27219499850""" %(res.partner_id.name, res.name)
+        })
+        msg_compose.send_entity()
+        return res
+
     @api.multi
     def dummy_redirect(self):
         return
@@ -91,8 +106,6 @@ class SaleOrder(models.Model):
         super(SaleOrder, self).action_confirm()
         for order in self:
             order.write({'pv': order.total_pv, 'order_total': order.amount_total})
-        self.action_unlink_reserved_fund()
-        self.write({'paid': True})
         return True
 
     @api.multi
