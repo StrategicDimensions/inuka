@@ -117,17 +117,17 @@ class SaleOrder(models.Model):
     def action_add_reserved_fund(self):
         ReservedFund = self.env['reserved.fund']
         for order in self:
-            if order.reserve >= order.amount_total:
+            if order.reserve >= order.order_total:
                 ReservedFund.create({
                     'date': fields.Datetime.now(),
-                    'desctiption': 'Reservation for %s for Order %s for an amount of %d by %s' % (order.partner_id.name, order.name, order.amount_total, order.user_id.name),
+                    'desctiption': 'Reservation for %s for Order %s for an amount of %d by %s' % (order.partner_id.name, order.name, order.order_total, order.user_id.name),
                     'amount': order.order_total,
                     'order_id': order.id,
                     'customer_id': order.partner_id.id,
                 })
                 order.paid = True
                 msg = "<b>Fund Reserved</b><ul>"
-                msg += "<li>Reservation for %s <br/> for Order %s for an amount of <br/> %s %d by %s" % (order.partner_id.name, order.name, order.company_id.currency_id.symbol, order.amount_total, order.user_id.name)
+                msg += "<li>Reservation for %s <br/> for Order %s for an amount of <br/> %s %d by %s" % (order.partner_id.name, order.name, order.company_id.currency_id.symbol, order.order_total, order.user_id.name)
                 msg += "</ul>"
                 order.message_post(body=msg)
             else:
@@ -144,7 +144,7 @@ class SaleOrder(models.Model):
             })
             order.paid = False
             msg = "<b>Fund unreserved</b><ul>"
-            msg += "<li>Reservation Reversed for %s <br/> for Order %s for an amount of <br/> %s %d by %s" % (order.partner_id.name, order.name, order.company_id.currency_id.symbol, order.amount_total, order.user_id.name)
+            msg += "<li>Reservation Reversed for %s <br/> for Order %s for an amount of <br/> %s %d by %s" % (order.partner_id.name, order.name, order.company_id.currency_id.symbol, order.order_total, order.user_id.name)
             msg += "</ul>"
             order.message_post(body=msg)
 
