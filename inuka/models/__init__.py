@@ -6,3 +6,4 @@ from . import partner
 from . import product
 from . import sale
 from . import account_payment
+from . import bulk_master

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_bulk_master_form" model="ir.ui.view">
+        <field name="name">bulk.master.form</field>
+        <field name="model">bulk.master</field>
+        <field name="arch" type="xml">
+            <form string="Bulk Master" class="o_sale_order">
+            <header>
+                <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,ready,done"/>
+            </header>
+            <sheet>
+                <div class="oe_button_box" name="button_box">
+                    <button class="oe_stat_button" type="object" name="view_sale_orders"
+                        icon="fa-usd">
+                        <field string="Sales" name="sale_order_count" widget="statinfo"/>
+                    </button>
+                    <button
+                        name="view_delivery_orders"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-truck">
+                        <field name="delivery_count" widget="statinfo" string="Delivery"/>
+                    </button>
+                </div>
+                <div class="oe_title">
+                    <h1>
+                        <field name="name" readonly="1"/>
+                    </h1>
+                </div>
+                <group>
+                    <group>
+                        <field name="user_id"/>
+                        <field name="partner_id" domain="[('customer','=',True)]" context="{'search_default_customer':1, 'show_address': 1}" options='{"always_reload": True}'/>
+                        <field name="partner_shipping_id" context="{'default_type':'delivery'}" options='{"always_reload": True}'/>
+                    </group>
+                    <group>
+                        <field name="bulk_type"/>
+                        <field name="member_id"/>
+                        <field name="carrier_id"/>
+                    </group>
+                </group>
+                <group>
+                    <group>
+                        <field name="date"/>
+                    </group>
+                    <group>
+                        <field name="schedule_date"/>
+                    </group>
+                </group>
+                <group>
+                    <group>
+                        <field name="product_total"/>
+                        <field name="unpaid_total"/>
+                    </group>
+                    <group>
+                        <field name="shipping_total"/>
+                        <field name="unpaid_pv"/>
+                    </group>
+                </group>
+                <group>
+                    <group>
+                        <field name="bulk_lock"/>
+                    </group>
+                    <group>
+                        <field name="pack_lock"/>
+                    </group>
+                </group>
+                <notebook>
+                    <page string="Orders">
+                        <field name="sale_orders">
+                            <tree string="Orders">
+                                <field name="name" string="Order Number"/>
+                                <field name="date_order"/>
+                                <field name="partner_id"/>
+                                <field name="user_id"/>
+                                <field name="amount_total"/>
+                                <field name="invoice_status"/>
+                                <field name="state" invisible="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Other Info">
+                        <group>
+                            <group>
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                    </page>
+                </notebook>
+            </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_bulk_master_tree" model="ir.ui.view">
+        <field name="name">bulk.master.tree</field>
+        <field name="model">bulk.master</field>
+        <field name="arch" type="xml">
+            <tree string="Bulk Master">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="schedule_date"/>
+                <field name="pv_total"/>
+                <field name="shipping_total"/>
+                <field name="waybill"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_bulk_master_form" model="ir.actions.act_window">
+        <field name="name">Bulks</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">bulk.master</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add Bulk Master.
+          </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_bulk_master" name="Bulks" action="action_bulk_master_form" parent="stock.menu_stock_warehouse_mgmt" sequence="7"/>
+
+</odoo>
