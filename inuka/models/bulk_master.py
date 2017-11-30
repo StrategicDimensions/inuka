@@ -16,7 +16,7 @@ class BulkMaster(models.Model):
         ('bulk', 'Bulk'),
         ('consolidated', 'Consolidated')
         ], string='Type', required=True, readonly=True, states={'draft': [('readonly', False)]})
-    date = fields.Datetime("Date", readonly=True, required=True, default=fields.Datetime.now())
+    date = fields.Datetime("Date", readonly=True, required=True, default=fields.Datetime.now(), copy=False)
     schedule_date = fields.Datetime("Scheduled Date", readonly=True, states={'draft': [('readonly', False)]})
     user_id = fields.Many2one("res.users", string="Managed By", required=True, default=lambda self: self.env.uid, track_visibility='always', readonly=True, states={'draft': [('readonly', False)]})
     product_total = fields.Float(compute="_compute_order_totals", string="Products Total", track_visibility='onchange')
@@ -36,7 +36,7 @@ class BulkMaster(models.Model):
         ('done', 'Done'),
         ('cancelled', 'Cancelled')
         ], string='Status', default='draft', track_visibility='onchange')
-    sale_orders = fields.Many2many('sale.order', 'bulk_master_sale_order_rel', 'bulk_master_id', 'sale_order_id', string="Orders", readonly=True, states={'draft': [('readonly', False)]})
+    sale_orders = fields.Many2many('sale.order', 'bulk_master_sale_order_rel', 'bulk_master_id', 'sale_order_id', string="Orders", readonly=True, states={'draft': [('readonly', False)]}, copy=False)
     sale_order_count = fields.Integer(compute="_compute_sale_order_count", string="Sale Orders")
     delivery_count = fields.Integer(compute='_compute_picking_ids', string='Delivery Orders')
 
