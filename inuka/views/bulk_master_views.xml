@@ -166,12 +166,23 @@
         </field>
     </record>
 
+    <record id="view_bulk_master_calendar" model="ir.ui.view">
+        <field name="name">bulk.master.calendar</field>
+        <field name="model">bulk.master</field>
+        <field name="arch" type="xml">
+            <calendar string="Bulk Master" date_start="schedule_date" color="partner_id">
+                <field name="name"/>
+                <field name="partner_id"/>
+            </calendar>
+        </field>
+    </record>
+
     <record id="action_bulk_master_form" model="ir.actions.act_window">
         <field name="name">Bulks</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">bulk.master</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,kanban,form</field>
+        <field name="view_mode">tree,kanban,form,calendar</field>
         <field name="help" type="html">
           <p class="oe_view_nocontent_create">
             Click to add Bulk Master.
