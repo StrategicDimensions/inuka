@@ -9,26 +9,26 @@ class BulkMaster(models.Model):
     _description = 'Bulk Master'
 
     name = fields.Char(string="Reference")
-    partner_id = fields.Many2one("res.partner", string="Member", required=True, track_visibility='always')
-    member_id = fields.Char(related="partner_id.ref", string="Member ID", required=True)
-    partner_shipping_id = fields.Many2one("res.partner", string="Delivery Address")
+    partner_id = fields.Many2one("res.partner", string="Member", required=True, track_visibility='always', readonly=True, states={'draft': [('readonly', False)]})
+    member_id = fields.Char(related="partner_id.ref", string="Member ID", required=True, readonly=True, states={'draft': [('readonly', False)]})
+    partner_shipping_id = fields.Many2one("res.partner", string="Delivery Address", readonly=True, states={'draft': [('readonly', False)]})
     bulk_type = fields.Selection([
         ('bulk', 'Bulk'),
         ('consolidated', 'Consolidated')
-        ], string='Type', required=True)
+        ], string='Type', required=True, readonly=True, states={'draft': [('readonly', False)]})
     date = fields.Datetime("Date", readonly=True, required=True, default=fields.Datetime.now())
-    schedule_date = fields.Datetime("Scheduled Date")
-    user_id = fields.Many2one("res.users", string="Managed By", required=True, default=lambda self: self.env.uid, track_visibility='always')
+    schedule_date = fields.Datetime("Scheduled Date", readonly=True, states={'draft': [('readonly', False)]})
+    user_id = fields.Many2one("res.users", string="Managed By", required=True, default=lambda self: self.env.uid, track_visibility='always', readonly=True, states={'draft': [('readonly', False)]})
     product_total = fields.Float(compute="_compute_order_totals", string="Products Total", track_visibility='onchange')
     shipping_total = fields.Float(compute="_compute_order_totals", string="Shipping Total", track_visibility='onchange')
     unpaid_total = fields.Float(compute="_compute_order_totals", string="Unpaid Amount")
     pv_total = fields.Float(compute="_compute_order_totals", string="Total PV", track_visibility='onchange')
-    waybill = fields.Char("Waybill")
-    carrier_id = fields.Many2one("delivery.carrier", string="Dispatch Method", required=True)
+    waybill = fields.Char("Waybill", readonly=True, states={'draft': [('readonly', False)]})
+    carrier_id = fields.Many2one("delivery.carrier", string="Dispatch Method", required=True, readonly=True, states={'draft': [('readonly', False)]})
     unpaid_pv = fields.Float(compute="_compute_order_totals", string="Unpaid PV")
     bulk_lock = fields.Boolean("Bulk Lock", readonly=True)
     pack_lock = fields.Boolean("Pack Lock", readonly=True)
-    description = fields.Text("Comment")
+    description = fields.Text("Comment", readonly=True, states={'draft': [('readonly', False)]})
     state = fields.Selection([
         ('draft', 'Draft'),
         ('confirmed', 'Waiting'),
@@ -36,7 +36,7 @@ class BulkMaster(models.Model):
         ('done', 'Done'),
         ('cancelled', 'Cancelled')
         ], string='Status', default='draft', track_visibility='onchange')
-    sale_orders = fields.Many2many('sale.order', 'bulk_master_sale_order_rel', 'bulk_master_id', 'sale_order_id', string="Orders")
+    sale_orders = fields.Many2many('sale.order', 'bulk_master_sale_order_rel', 'bulk_master_id', 'sale_order_id', string="Orders", readonly=True, states={'draft': [('readonly', False)]})
     sale_order_count = fields.Integer(compute="_compute_sale_order_count", string="Sale Orders")
     delivery_count = fields.Integer(compute='_compute_picking_ids', string='Delivery Orders')
 
