@@ -5,10 +5,11 @@ from odoo import api, fields, models
 
 class BulkMaster(models.Model):
     _name = 'bulk.master'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Bulk Master'
 
     name = fields.Char(string="Reference")
-    partner_id = fields.Many2one("res.partner", string="Member", required=True)
+    partner_id = fields.Many2one("res.partner", string="Member", required=True, track_visibility='always')
     member_id = fields.Char(related="partner_id.ref", string="Member ID", required=True)
     partner_shipping_id = fields.Many2one("res.partner", string="Delivery Address")
     bulk_type = fields.Selection([
@@ -17,11 +18,11 @@ class BulkMaster(models.Model):
         ], string='Type', required=True)
     date = fields.Datetime("Date", readonly=True, required=True, default=fields.Datetime.now())
     schedule_date = fields.Datetime("Scheduled Date")
-    user_id = fields.Many2one("res.users", string="Managed By", required=True, default=lambda self: self.env.uid)
-    product_total = fields.Float(compute="_compute_order_totals", string="Products Total")
-    shipping_total = fields.Float(compute="_compute_order_totals", string="Shipping Total")
+    user_id = fields.Many2one("res.users", string="Managed By", required=True, default=lambda self: self.env.uid, track_visibility='always')
+    product_total = fields.Float(compute="_compute_order_totals", string="Products Total", track_visibility='onchange')
+    shipping_total = fields.Float(compute="_compute_order_totals", string="Shipping Total", track_visibility='onchange')
     unpaid_total = fields.Float(compute="_compute_order_totals", string="Unpaid Amount")
-    pv_total = fields.Float(compute="_compute_order_totals", string="Total PV")
+    pv_total = fields.Float(compute="_compute_order_totals", string="Total PV", track_visibility='onchange')
     waybill = fields.Char("Waybill")
     carrier_id = fields.Many2one("delivery.carrier", string="Dispatch Method", required=True)
     unpaid_pv = fields.Float(compute="_compute_order_totals", string="Unpaid PV")
@@ -34,7 +35,7 @@ class BulkMaster(models.Model):
         ('ready', 'Ready'),
         ('done', 'Done'),
         ('cancelled', 'Cancelled')
-        ], string='Status', default='draft')
+        ], string='Status', default='draft', track_visibility='onchange')
     sale_orders = fields.Many2many('sale.order', 'bulk_master_sale_order_rel', 'bulk_master_id', 'sale_order_id', string="Orders")
     sale_order_count = fields.Integer(compute="_compute_sale_order_count", string="Sale Orders")
     delivery_count = fields.Integer(compute='_compute_picking_ids', string='Delivery Orders')
