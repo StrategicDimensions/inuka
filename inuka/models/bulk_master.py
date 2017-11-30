@@ -39,6 +39,7 @@ class BulkMaster(models.Model):
     sale_orders = fields.Many2many('sale.order', 'bulk_master_sale_order_rel', 'bulk_master_id', 'sale_order_id', string="Orders", readonly=True, states={'draft': [('readonly', False)]})
     sale_order_count = fields.Integer(compute="_compute_sale_order_count", string="Sale Orders")
     delivery_count = fields.Integer(compute='_compute_picking_ids', string='Delivery Orders')
+    schedule_date_passed = fields.Boolean(compute="_compute_schedule_date_passed")
 
     def _compute_order_totals(self):
         for bulk in self:
@@ -66,6 +67,16 @@ class BulkMaster(models.Model):
             for order in bulk.sale_orders:
                 count += len(order.picking_ids)
             bulk.delivery_count = count
+
+    def _compute_schedule_date_passed(self):
+        today = fields.Datetime.from_string(fields.Datetime.now())
+        for bulk in self:
+            flag = False
+            if bulk.schedule_date:
+                schedule_date = fields.Datetime.from_string(bulk.schedule_date)
+                if today > schedule_date:
+                    flag = True
+            bulk.schedule_date_passed = flag
 
     @api.model
     def create(self, vals):

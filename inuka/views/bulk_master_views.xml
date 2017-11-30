@@ -119,13 +119,14 @@
         <field name="name">bulk.master.tree</field>
         <field name="model">bulk.master</field>
         <field name="arch" type="xml">
-            <tree string="Bulk Master">
+            <tree string="Bulk Master" decoration-info="state in ['draft', 'confirmed', 'ready'] and not schedule_date_passed" decoration-danger="state in ['draft', 'confirmed', 'ready'] and schedule_date_passed" decoration-muted="state == 'cancel'" decoration-success="state == 'done'">
                 <field name="name"/>
                 <field name="partner_id"/>
                 <field name="schedule_date"/>
                 <field name="pv_total"/>
                 <field name="shipping_total"/>
                 <field name="waybill"/>
+                <field name="schedule_date_passed" invisible="1"/>
                 <field name="state"/>
             </tree>
         </field>
