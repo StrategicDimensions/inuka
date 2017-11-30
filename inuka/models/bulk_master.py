@@ -26,8 +26,8 @@ class BulkMaster(models.Model):
     waybill = fields.Char("Waybill", readonly=True, states={'draft': [('readonly', False)]})
     carrier_id = fields.Many2one("delivery.carrier", string="Dispatch Method", required=True, readonly=True, states={'draft': [('readonly', False)]})
     unpaid_pv = fields.Float(compute="_compute_order_totals", string="Unpaid PV")
-    bulk_lock = fields.Boolean("Bulk Lock", readonly=True)
-    pack_lock = fields.Boolean("Pack Lock", readonly=True)
+    bulk_lock = fields.Boolean("Bulk Lock", readonly=True, copy=False)
+    pack_lock = fields.Boolean("Pack Lock", readonly=True, copy=False)
     description = fields.Text("Comment", readonly=True, states={'draft': [('readonly', False)]})
     state = fields.Selection([
         ('draft', 'Draft'),
@@ -87,3 +87,51 @@ class BulkMaster(models.Model):
         pickings = self.sale_orders.mapped('picking_ids')
         action['domain'] = [('id', 'in', pickings.ids)]
         return action
+
+    @api.multi
+    def button_confirm(self):
+        self.write({'state': 'confirmed'})
+
+    @api.multi
+    def button_print(self):
+        self.ensure_one()
+        pickings = self.sale_orders.mapped('picking_ids')
+        return self.env.ref('stock.action_report_delivery').report_action(pickings)
+
+    @api.multi
+    def button_bulk_lock(self):
+        self.write({'bulk_lock': True})
+
+    @api.multi
+    def button_pack_lock(self):
+        self.write({'pack_lock': True, 'state': 'ready'})
+
+    @api.multi
+    def button_bulk_unlock(self):
+        self.write({'bulk_lock': False})
+
+    @api.multi
+    def button_pack_unlock(self):
+        self.write({'pack_lock': False, 'state': 'confirmed'})
+
+    @api.multi
+    def button_validate(self):
+        self.ensure_one()
+        pickings = self.sale_orders.mapped('picking_ids')
+
+        # Done the picking
+        pickings.action_confirm()
+        pickings.force_assign()
+        view = self.env.ref('stock.view_immediate_transfer')
+        for picking in pickings:
+            wiz = self.env['stock.immediate.transfer'].create({'pick_ids': [(4, picking.id)]})
+            wiz.process()
+        self.write({'state': 'done'})
+
+    @api.multi
+    def button_cancel(self):
+        self.write({'state': 'cancelled'})
+
+    @api.multi
+    def button_reset(self):
+        self.write({'state': 'draft', 'bulk_lock': False, 'pack_lock': False})
