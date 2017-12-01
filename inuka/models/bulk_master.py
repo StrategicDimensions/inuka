@@ -152,6 +152,7 @@ class BulkMaster(models.Model):
         for picking in pickings:
             wiz = self.env['stock.immediate.transfer'].create({'pick_ids': [(4, picking.id)]})
             wiz.process()
+        pickings.write({'carrier_tracking_ref': self.waybill})
         self.write({'state': 'done'})
 
     @api.multi
