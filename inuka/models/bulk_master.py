@@ -37,7 +37,7 @@ class BulkMaster(models.Model):
         ('done', 'Done'),
         ('cancelled', 'Cancelled')
         ], string='Status', default='draft', track_visibility='onchange')
-    sale_orders = fields.One2many('sale.order', 'bulk_master_id', string="Orders", readonly=True, states={'draft': [('readonly', False)]}, copy=False)
+    sale_orders = fields.One2many('sale.order', 'bulk_master_id', string="Orders", readonly=True, copy=False)
     sale_order_count = fields.Integer(compute="_compute_sale_order_count", string="Sale Orders")
     delivery_count = fields.Integer(compute='_compute_picking_ids', string='Delivery Orders')
 
@@ -124,7 +124,7 @@ class BulkMaster(models.Model):
     @api.multi
     def button_pack_lock(self):
         for bulk in self:
-            if not bulk.shipping_total > 1 or not (bulk.pv_total == 45 or bulk.pv_total > 50):
+            if not (bulk.shipping_total > 1 or bulk.pv_total == 45 or bulk.pv_total > 50):
                 raise UserError(_('Minimum PV’s required not met / Shipping required.'))
             if not bulk.waybill:
                 raise UserError(_('Please enter a waybill number.'))
