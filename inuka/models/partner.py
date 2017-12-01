@@ -31,7 +31,7 @@ class ResPartner(models.Model):
     status = fields.Selection([
         ('candidate', 'Candidate'),
         ('new', 'New'),
-        ('junior​', 'Junior'),
+        ('junior', 'Junior'),
         ('senior', 'Senior'),
         ('pearl', 'Pearl'),
         ('ruby', 'Ruby'),
@@ -149,6 +149,7 @@ class ResPartner(models.Model):
 
         return {
             'partner_id': self.id,
+            'kit_order': True,
             'order_sent_by': self.source,
             'sale_date': self.join_date,
             'order_type': 'single',

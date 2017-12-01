@@ -58,6 +58,6 @@ class Picking(models.Model):
     @api.multi
     def button_validate(self):
         context = dict(self.env.context or {})
-        if not (context.get('from_bulk') and any(picking.bulk_master_id for picking in self)):
+        if not context.get('from_bulk') and any(picking.bulk_master_id.id != False for picking in self):
             raise UserError(_("You cannot validate if part of bulk."))
         return super(Picking, self).button_validate()

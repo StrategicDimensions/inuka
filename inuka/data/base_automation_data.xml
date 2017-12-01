@@ -101,4 +101,34 @@ records.write({'paid': True})
         </field>
     </record>
 
+    <record id="rule_kit_order_fully_invoiced" model="base.automation">
+        <field name="name">Kit Order (Fully Invoiced)</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="state">code</field>
+        <field name="trigger">on_write</field>
+        <field name="active" eval="True"/>
+        <field name="filter_pre_domain">[("state", "=", "sale"), ("invoice_status", "!=", "invoiced"), ("kit_order", "=", True)]</field>
+        <field name="filter_domain">[("state", "=", "sale"), ("invoice_status", "=", "invoiced"), ("kit_order", "=", True)]</field>
+        <field name="code">
+Pricelist = env['product.pricelist']
+for order in records:
+    kit = order.partner_id.kit
+    country= order.partner_id.country_id.name
+    if order.partner_id.status == 'candidate':
+        if kit in ('small', 'medium', 'large'):
+            if country != 'Namibia':
+                pricelist = Pricelist.search([('name', '=', 'New Pricelist')], limit=1)
+            else:
+                pricelist = Pricelist.search([('name', '=', 'New Pricelist (Namibia)')], limit=1)
+            order.partner_id.write({'status': 'new', 'property_product_pricelist': pricelist.id})
+
+        elif kit in ('junior', 'senior'):
+            if country != 'Namibia':
+                pricelist = Pricelist.search([('name', '=', 'Established Pricelist')], limit=1)
+            else:
+                pricelist = Pricelist.search([('name', '=', 'Established Pricelist (Namibia)')], limit=1)
+            order.partner_id.write({'status': kit, 'property_product_pricelist': pricelist.id})
+        </field>
+    </record>
+
 </odoo>

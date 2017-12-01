@@ -55,7 +55,8 @@ class SaleOrder(models.Model):
         ('partially', 'Partially Delivered'),
         ('fully', 'Fully Delivered'),
     ], compute="_compute_delivery_status", string="Delivery Status", store=True)
-    bulk_master_id = fields.Many2one("bulk.master", string="Bulk")
+    bulk_master_id = fields.Many2one("bulk.master", string="Bulk", readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
+    kit_order = fields.Boolean("Kit Order", readonly=True)
 
     @api.depends('state', 'order_line', 'order_line.qty_delivered', 'order_line.product_uom_qty')
     def _compute_delivery_status(self):
