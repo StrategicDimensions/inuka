@@ -148,10 +148,10 @@ class BulkMaster(models.Model):
         # Done the picking
         pickings.action_confirm()
         pickings.force_assign()
-        view = self.env.ref('stock.view_immediate_transfer')
         for picking in pickings:
-            wiz = self.env['stock.immediate.transfer'].create({'pick_ids': [(4, picking.id)]})
-            wiz.process()
+            for move in picking.move_lines:
+                move.write({'quantity_done': move.product_uom_qty})
+        pickings.with_context(from_bulk=True).button_validate()
         pickings.write({'carrier_tracking_ref': self.waybill})
         self.write({'state': 'done'})
 

@@ -1,7 +1,8 @@
 # -*- coding:utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import api, fields, models
+from odoo import api, fields, models, _
+from odoo.exceptions import UserError
 
 
 class PickingType(models.Model):
@@ -53,3 +54,10 @@ class Picking(models.Model):
     _inherit = 'stock.picking'
 
     bulk_master_id = fields.Many2one("bulk.master", string="Bulk")
+
+    @api.multi
+    def button_validate(self):
+        context = dict(self.env.context or {})
+        if not (context.get('from_bulk') and any(picking.bulk_master_id for picking in self)):
+            raise UserError(_("You cannot validate if part of bulk."))
+        return super(Picking, self).button_validate()
