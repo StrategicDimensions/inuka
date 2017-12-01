@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from odoo import api, fields, models
+from odoo import api, fields, models, _
+from odoo.exceptions import UserError
 
 
 class BulkMaster(models.Model):
@@ -90,6 +91,9 @@ class BulkMaster(models.Model):
 
     @api.multi
     def button_confirm(self):
+        for bulk in self:
+            if bulk.bulk_type == 'bulk' and not bulk.partner_id.bulk_custodian:
+                raise UserError(_('Member is not a Bulk Custodian.'))
         self.write({'state': 'confirmed'})
 
     @api.multi
@@ -104,6 +108,13 @@ class BulkMaster(models.Model):
 
     @api.multi
     def button_pack_lock(self):
+        for bulk in self:
+            if not bulk.shipping_total > 1 or not (bulk.pv_total == 45 or bulk.pv_total > 50):
+                raise UserError(_('Minimum PV’s required not met / Shipping required.'))
+            if not bulk.waybill:
+                raise UserError(_('Please enter a waybill number.'))
+            if any(order.state == 'draft' for order in bulk.sale_orders):
+                raise UserError(_("All orders should be paid and confirmed to continue."))
         self.write({'pack_lock': True, 'state': 'ready'})
 
     @api.multi
