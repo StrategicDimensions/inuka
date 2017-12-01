@@ -60,6 +60,7 @@
                         <field name="order_sent_by" required="True"/>
                         <field name="sale_date" required="True"/>
                         <field name="order_type" required="True"/>
+                        <field name="bulk_master_id" context="{'order_type': order_type, 'partner_id': partner_id}" attrs="{'invisible': [('order_type', 'not in', ['bulk', 'consolidated'])], 'required': [('order_type', 'in', ['bulk', 'consolidated'])]}"/>
                         <field name="paid"/>
                     </group>
                     <group>

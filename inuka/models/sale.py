@@ -30,6 +30,7 @@ class SaleOrder(models.Model):
     order_type = fields.Selection([
         ('collect', 'Collect / No Shipping'),
         ('bulk', 'Part of Bulk'),
+        ('consolidated', 'Consolidated'),
         ('single', 'Single'),
         ('upfront', 'Upfront'),
         ('stock', 'Stock (for Up front)')],
@@ -54,6 +55,7 @@ class SaleOrder(models.Model):
         ('partially', 'Partially Delivered'),
         ('fully', 'Fully Delivered'),
     ], compute="_compute_delivery_status", string="Delivery Status", store=True)
+    bulk_master_id = fields.Many2one("bulk.master", string="Bulk")
 
     @api.depends('state', 'order_line', 'order_line.qty_delivered', 'order_line.product_uom_qty')
     def _compute_delivery_status(self):
@@ -85,16 +87,17 @@ class SaleOrder(models.Model):
     @api.model
     def create(self, vals):
         res = super(SaleOrder, self).create(vals)
-        sms_template = self.env.ref('sms_frame.sms_template_inuka_international')
-        msg_compose = self.env['sms.compose'].create({
-            'record_id': res.id,
-            'model': 'sale.order',
-            'sms_template_id': sms_template.id,
-            'from_mobile_id': self.env.ref('sms_frame.sms_number_inuka_international').id,
-            'to_number': res.partner_id.mobile,
-            'sms_content': """ INUKA thanks you for your order %s, an SMS with details will follow when your order (Ref: %s) is dispatched^More info on 27219499850""" %(res.partner_id.name, res.name)
-        })
-        msg_compose.send_entity()
+        if res.partner_id.mobile:
+            sms_template = self.env.ref('sms_frame.sms_template_inuka_international')
+            msg_compose = self.env['sms.compose'].create({
+                'record_id': res.id,
+                'model': 'sale.order',
+                'sms_template_id': sms_template.id,
+                'from_mobile_id': self.env.ref('sms_frame.sms_number_inuka_international').id,
+                'to_number': res.partner_id.mobile,
+                'sms_content': """ INUKA thanks you for your order %s, an SMS with details will follow when your order (Ref: %s) is dispatched^More info on 27219499850""" %(res.partner_id.name, res.name)
+            })
+            msg_compose.send_entity()
         return res
 
     @api.multi
@@ -106,6 +109,7 @@ class SaleOrder(models.Model):
         super(SaleOrder, self).action_confirm()
         for order in self:
             order.write({'pv': order.total_pv, 'order_total': order.amount_total})
+            order.picking_ids.write({'bulk_master_id': order.bulk_master_id.id})
         return True
 
     @api.multi

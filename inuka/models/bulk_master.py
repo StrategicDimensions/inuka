@@ -37,7 +37,7 @@ class BulkMaster(models.Model):
         ('done', 'Done'),
         ('cancelled', 'Cancelled')
         ], string='Status', default='draft', track_visibility='onchange')
-    sale_orders = fields.Many2many('sale.order', 'bulk_master_sale_order_rel', 'bulk_master_id', 'sale_order_id', string="Orders", readonly=True, states={'draft': [('readonly', False)]}, copy=False)
+    sale_orders = fields.One2many('sale.order', 'bulk_master_id', string="Orders", readonly=True, states={'draft': [('readonly', False)]}, copy=False)
     sale_order_count = fields.Integer(compute="_compute_sale_order_count", string="Sale Orders")
     delivery_count = fields.Integer(compute='_compute_picking_ids', string='Delivery Orders')
 
@@ -72,6 +72,21 @@ class BulkMaster(models.Model):
     def create(self, vals):
         vals['name'] = self.env.ref('inuka.seq_bulk_master').next_by_id()
         return super(BulkMaster, self).create(vals)
+
+    @api.model
+    def name_search(self, name='', args=None, operator='ilike', limit=100):
+        args = args or []
+        context = dict(self.env.context or {})
+        order_type = context.get('order_type')
+
+        if order_type and order_type == 'bulk':
+            recs = self.search([('bulk_type', '=', 'bulk'), ('state', '=', 'confirmed')] + args, limit=limit)
+        elif order_type and order_type == 'consolidated':
+            partner_id = context.get('partner_id')
+            recs = self.search([('bulk_type', '=', 'consolidated'), ('state', '=', 'confirmed'), ('partner_id', '=', partner_id)] + args, limit=limit)
+        else:
+            recs = self.search(args, limit=limit)
+        return recs.name_get()
 
     @api.multi
     def view_sale_orders(self):
