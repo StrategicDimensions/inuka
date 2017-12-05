@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+<odoo>
+
+    <record id="master_account_bank_statement_import_view" model="ir.ui.view">
+        <field name="name">Master Import Bank Statements</field>
+        <field name="model">master.account.bank.statement.import</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <form string="Import Master Bank Statements">
+                <h2>Select a master bank statement file to import</h2>
+                <p>Download a bank statement from your bank and import it here. Supported formats:</p>
+                <ul id="statement_format">
+
+                </ul>
+                <field name="data_file" filename="filename" placeholder="Choose a file to import..."/>
+                <field name="filename" invisible="1"/>
+                <footer>
+                    <button name="import_file" string="_Import" type="object" class="btn-primary" />
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_master_account_bank_statement_import" model="ir.actions.act_window">
+        <field name="name">Import</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">master.account.bank.statement.import</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="master_account_bank_statement_import_view"/>
+    </record>
+
+    <record id="journal_dashboard_view_inherit_inuka" model="ir.ui.view">
+        <field name="name">account.journal.dashboard.kanban.inherit.inuka</field>
+        <field name="model">account.journal</field>
+        <field name="inherit_id" ref="account.account_journal_dashboard_kanban_view"/>
+        <field name="arch" type="xml">
+            <xpath expr='//div[@name="bank_journal_cta"]' position='inside'>
+                <button t-if="dashboard.bank_statements_source == 'file_import' &amp;&amp; dashboard.number_to_reconcile == 0" type="object" name="import_master_statement" class="btn btn-primary btn-sm">Import Final Statement</button>
+                <a t-if="dashboard.bank_statements_source == 'file_import' &amp;&amp; dashboard.number_to_reconcile > 0" type="object" name="import_master_statement" class="oe_inline">Import Final Statement</a>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
