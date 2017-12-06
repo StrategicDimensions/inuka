@@ -4,6 +4,7 @@ import base64
 import datetime
 import io
 import logging
+import hashlib
 import re
 from xml.etree import ElementTree
 
@@ -130,10 +131,11 @@ class MasterAccountBankStatementImport(models.TransientModel):
                 if partner_bank:
                     bank_account_id = partner_bank.id
                     partner_id = partner_bank.partner_id.id
+                reference = str(transaction.date) + str(transaction.amount) + transaction.id
                 vals_line = {
                     'date': transaction.date,
                     'name': transaction.memo or '',
-                    'ref': str(transaction.date) + str(transaction.amount) + transaction.id,
+                    'ref': hashlib.md5(reference.encode('utf-8')).hexdigest(),
                     'fitid': transaction.id,
                     'branch': transaction.memo,
                     'amount': transaction.amount,
