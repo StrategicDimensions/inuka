@@ -29,10 +29,13 @@ from odoo.exceptions import UserError, ValidationError
 
 
 class AccountBankStatementLine(models.Model):
-    _inherit = "account.bank.statement.line"
+    _inherit = 'account.bank.statement.line'
+    _rec_name = 'ref'
 
     fitid = fields.Char("FITID")
     branch = fields.Char("Branch")
+    statement_reconciled = fields.Boolean("Reconciled")
+    master_bank_stmt_line_id = fields.Many2one('master.account.bank.statement.line', string='Master Statement Line')
 
 
 class AccountBankStatementImport(models.TransientModel):
@@ -367,11 +370,22 @@ class MasterAccountBankStatement(models.Model):
                 if st_line.bank_account_id and st_line.partner_id and st_line.bank_account_id.partner_id != st_line.partner_id:
                     st_line.bank_account_id.partner_id = st_line.partner_id
 
+    @api.multi
+    def reconcile_master_statement(self):
+        BankStatementLine = self.env['account.bank.statement.line']
+        for statement in self:
+            for line in statement.line_ids:
+                statment_line = BankStatementLine.search([('ref', '=', line.ref)], limit=1)
+                if statment_line:
+                    statment_line.write({'statement_reconciled': True, 'master_bank_stmt_line_id': line.id})
+                    line.write({'statement_reconciled': True, 'bank_stmt_line_id': statment_line.id})
+
 
 class MasterAccountBankStatementLine(models.Model):
     _name = "master.account.bank.statement.line"
     _description = "Bank Statement Line"
     _order = "statement_id desc, sequence, id desc"
+    _rec_name = "ref"
 
     name = fields.Char(string='Label', required=True)
     date = fields.Date(required=True, default=lambda self: self._context.get('date', fields.Date.context_today(self)))
@@ -400,6 +414,8 @@ class MasterAccountBankStatementLine(models.Model):
         help="Technical field holding the number given to the journal entry, automatically set when the statement line is reconciled then stored to set the same number again if the line is cancelled, set to draft and re-processed again.")
     fitid = fields.Char("FITID")
     branch = fields.Char("Branch")
+    statement_reconciled = fields.Boolean("Reconciled")
+    bank_stmt_line_id = fields.Many2one("account.bank.statement.line", "Statement Line")
 
     @api.one
     @api.constrains('amount')
