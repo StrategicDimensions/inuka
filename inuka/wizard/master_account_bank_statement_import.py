@@ -108,7 +108,29 @@ class MasterAccountBankStatementImport(models.TransientModel):
         except ElementTree.ParseError:
             return False
 
+    def _get_branch(self, memo):
+        if memo[21:21] == "":
+           return memo[:21].strip()
+        else:
+            bank_list = ["ABSA BANK", "CAPITEC", "SPEEDPOINT"]
+            for bank in bank_list:
+                if memo.find(bank) > 0:
+                    return bank
+        if len(memo) < 21:
+            return memo.strip()
+        else:
+            return memo[:21].strip()
+
+    def _get_label(self, memo, bank):
+        result = memo
+        if memo.strip() != bank.strip():
+            if bank:
+                result = memo.replace(bank, "").strip()
+        return result
+
     def _parse_file(self, data_file):
+        journal_id = self.env.context.get('journal_id', [])
+        bank_name = self.env['account.journal'].browse(journal_id).bank_id.name or ""
         if not self._check_ofx(data_file):
             return super(MasterAccountBankStatementImport, self)._parse_file(data_file)
         if OfxParser is None:
@@ -134,10 +156,10 @@ class MasterAccountBankStatementImport(models.TransientModel):
                 reference = str(transaction.date) + str(transaction.amount) + transaction.id
                 vals_line = {
                     'date': transaction.date,
-                    'name': transaction.memo or '',
+                    'name': self._get_label(transaction.memo, bank_name),
                     'ref': hashlib.md5(reference.encode('utf-8')).hexdigest(),
                     'fitid': transaction.id,
-                    'branch': transaction.memo,
+                    'branch': self._get_branch(transaction.memo),
                     'amount': transaction.amount,
                     'unique_import_id': transaction.id,
                     'bank_account_id': bank_account_id,

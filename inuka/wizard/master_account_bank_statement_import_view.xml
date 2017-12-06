@@ -38,8 +38,8 @@
         <field name="inherit_id" ref="account.account_journal_dashboard_kanban_view"/>
         <field name="arch" type="xml">
             <xpath expr='//div[@name="bank_journal_cta"]' position='inside'>
-                <button t-if="dashboard.bank_statements_source == 'file_import' &amp;&amp; dashboard.number_to_reconcile == 0" type="object" name="import_master_statement" class="btn btn-primary btn-sm">Import Final Statement</button>
-                <a t-if="dashboard.bank_statements_source == 'file_import' &amp;&amp; dashboard.number_to_reconcile > 0" type="object" name="import_master_statement" class="oe_inline">Import Final Statement</a>
+                <button t-if="dashboard.bank_statements_source == 'file_import' &amp;&amp; dashboard.number_to_reconcile == 0" type="object" name="import_master_statement" class="btn btn-primary btn-sm btn-danger">Import Final Statement</button>
+                <a t-if="dashboard.bank_statements_source == 'file_import' &amp;&amp; dashboard.number_to_reconcile > 0" type="object" name="import_master_statement" class="oe_inline btn-danger">Import Final Statement</a>
             </xpath>
         </field>
     </record>

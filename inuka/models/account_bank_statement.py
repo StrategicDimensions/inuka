@@ -31,7 +31,6 @@ from odoo.exceptions import UserError, ValidationError
 
 class AccountBankStatementLine(models.Model):
     _inherit = 'account.bank.statement.line'
-    _rec_name = 'ref'
 
     fitid = fields.Char("FITID")
     branch = fields.Char("Branch")
@@ -387,7 +386,6 @@ class MasterAccountBankStatementLine(models.Model):
     _name = "master.account.bank.statement.line"
     _description = "Bank Statement Line"
     _order = "statement_id desc, sequence, id desc"
-    _rec_name = "ref"
 
     name = fields.Char(string='Label', required=True)
     date = fields.Date(required=True, default=lambda self: self._context.get('date', fields.Date.context_today(self)))
