@@ -217,7 +217,76 @@
         <field name="act_window_id" ref="action_master_bank_statement_tree"/>
     </record>
 
-    <menuitem id="menu_master_account_bank_statement_parent" name="Master Bank Statements" parent="account.menu_finance_entries" groups="account.group_account_manager" sequence="99"/>
-    <menuitem id="menu_master_account_bank_statement" name="Master Bank Statements" action="action_master_bank_statement_tree" parent="menu_master_account_bank_statement_parent" groups="account.group_account_manager" sequence="1"/>
+    <record id="view_master_bank_statement_line_search" model="ir.ui.view">
+        <field name="name">master.account.bank.statement.line.search</field>
+        <field name="model">master.account.bank.statement.line</field>
+        <field name="arch" type="xml">
+            <search string="Search Master Bank Statements Line">
+                <field name="name"/>
+                <field name="statement_id"/>
+                <field name="partner_id"/>
+                <field name="date"/>
+                <field name="journal_id" domain="[('type', 'in', ('bank', 'cash'))]" />
+            </search>
+        </field>
+    </record>
+
+    <record id="view_master_bank_statement_line_form" model="ir.ui.view">
+        <field name="name">master.bank.statement.line.form</field>
+        <field name="model">master.account.bank.statement.line</field>
+        <field name="priority">8</field>
+        <field name="arch" type="xml">
+        <form string="Master Statement Line" create="false">
+            <group col="4">
+                <field name="statement_id"/>
+                <field name="date"/>
+                <field name="name"/>
+                <field name="ref"/>
+                <field name="partner_id"/>
+                <field name="amount"/>
+                <field name="journal_currency_id" invisible="1"/>
+                <field name="sequence"/>
+                <field name="note"/>
+            </group>
+        </form>
+        </field>
+    </record>
+
+    <record id="view_master_bank_statement_line_tree" model="ir.ui.view">
+        <field name="name">master.account.bank.statement.line.tree</field>
+        <field name="model">master.account.bank.statement.line</field>
+        <field name="priority">8</field>
+        <field name="arch" type="xml">
+            <tree string="Master Statement Lines" create="false">
+                <field name="sequence" readonly="1" invisible="1"/>
+                <field name="statement_id" />
+                <field name="journal_id" invisible="1" />
+                <field name="date"/>
+                <field name="name"/>
+                <field name="ref"/>
+                <field name="partner_id"/>
+                <field name="amount"/>
+                <field name="journal_currency_id" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_master_bank_statement_line" model="ir.actions.act_window">
+        <field name="name">Master Bank Statement Lines</field>
+        <field name="res_model">master.account.bank.statement.line</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="search_view_id" ref="view_master_bank_statement_line_search"/>
+        <field name="help" type="html">
+          <p>
+            A bank statement line is a financial transaction on a bank account.
+          </p><p>
+            Odoo allows you to reconcile a statement line directly with
+            the related sale or puchase invoice(s).
+          </p>
+        </field>
+    </record>
 
 </odoo>

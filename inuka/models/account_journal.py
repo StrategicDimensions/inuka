@@ -15,3 +15,26 @@ class AccountJournal(models.Model):
         # Note: this drops action['context'], which is a dict stored as a string, which is not easy to update
         action.update({'context': (u"{'journal_id': " + str(self.id) + u"}")})
         return action
+
+    @api.multi
+    def open_master_bank_statements(self):
+        [action] = self.env.ref("inuka.action_master_bank_statement_tree").read()
+        return action
+
+    @api.multi
+    def open_master_action_with_context(self):
+        action_name = self.env.context.get('action_name', False)
+        if not action_name:
+            return False
+        ctx = dict(self.env.context, default_journal_id=self.id)
+        if ctx.get('search_default_journal', False):
+            ctx.update(search_default_journal_id=self.id)
+        ctx.pop('group_by', None)
+        ir_model_obj = self.env['ir.model.data']
+        model, action_id = ir_model_obj.get_object_reference('inuka', action_name)
+        [action] = self.env[model].browse(action_id).read()
+        action['context'] = ctx
+        if ctx.get('use_domain', False):
+            action['domain'] = ['|', ('journal_id', '=', self.id), ('journal_id', '=', False)]
+            action['name'] += ' for journal ' + self.name
+        return action
