@@ -128,6 +128,22 @@ class MasterAccountBankStatementImport(models.TransientModel):
                 result = memo.replace(bank, "").strip()
         return result
 
+    def _get_partner(self, label):
+        Partner = self.env['res.partner']
+        search_string = label.split()[-1]
+        if len(search_string) == 6:
+            partner = Partner.search([('ref', '=', search_string)], limit=1).id
+        else:
+            search_string = search_string.strip()
+            if search_string.startswith("06"):
+                search_string = search_string.replace("06", "276", 1)
+            elif search_string.startswith("07"):
+                search_string = search_string.replace("07", "277", 1)
+            elif search_string.startswith("08"):
+                search_string = search_string.replace("08", "278", 1)
+            partner = Partner.search([('mobile', '=', search_string)], limit=1).id
+        return partner
+
     def _parse_file(self, data_file):
         journal_id = self.env.context.get('journal_id', [])
         bank_name = self.env['account.journal'].browse(journal_id).bank_id.name or ""
@@ -154,16 +170,17 @@ class MasterAccountBankStatementImport(models.TransientModel):
                     bank_account_id = partner_bank.id
                     partner_id = partner_bank.partner_id.id
                 reference = str(transaction.date) + str(transaction.amount) + transaction.id
+                label = self._get_label(transaction.memo, bank_name)
                 vals_line = {
                     'date': transaction.date,
-                    'name': self._get_label(transaction.memo, bank_name),
+                    'name': label,
                     'ref': hashlib.md5(reference.encode('utf-8')).hexdigest(),
                     'fitid': transaction.id,
                     'branch': self._get_branch(transaction.memo),
                     'amount': transaction.amount,
                     'unique_import_id': transaction.id,
                     'bank_account_id': bank_account_id,
-                    'partner_id': partner_id,
+                    'partner_id': self._get_partner(label),
                     'sequence': len(transactions) + 1,
                 }
                 total_amt += float(transaction.amount)
@@ -262,21 +279,21 @@ class MasterAccountBankStatementImport(models.TransientModel):
                     sanitized_account_number = sanitize_account_number(account_number)
                     line_vals['unique_import_id'] = (sanitized_account_number and sanitized_account_number + '-' or '') + str(journal.id) + '-' + unique_import_id
 
-                if not line_vals.get('bank_account_id'):
-                    # Find the partner and his bank account or create the bank account. The partner selected during the
-                    # reconciliation process will be linked to the bank when the statement is closed.
-                    partner_id = False
-                    bank_account_id = False
-                    identifying_string = line_vals.get('account_number')
-                    if identifying_string:
-                        partner_bank = self.env['res.partner.bank'].search([('acc_number', '=', identifying_string)], limit=1)
-                        if partner_bank:
-                            bank_account_id = partner_bank.id
-                            partner_id = partner_bank.partner_id.id
-                        else:
-                            bank_account_id = self.env['res.partner.bank'].create({'acc_number': line_vals['account_number']}).id
-                    line_vals['partner_id'] = partner_id
-                    line_vals['bank_account_id'] = bank_account_id
+#                 if not line_vals.get('bank_account_id'):
+#                     # Find the partner and his bank account or create the bank account. The partner selected during the
+#                     # reconciliation process will be linked to the bank when the statement is closed.
+#                     partner_id = False
+#                     bank_account_id = False
+#                     identifying_string = line_vals.get('account_number')
+#                     if identifying_string:
+#                         partner_bank = self.env['res.partner.bank'].search([('acc_number', '=', identifying_string)], limit=1)
+#                         if partner_bank:
+#                             bank_account_id = partner_bank.id
+#                             partner_id = partner_bank.partner_id.id
+#                         else:
+#                             bank_account_id = self.env['res.partner.bank'].create({'acc_number': line_vals['account_number']}).id
+#                     line_vals['partner_id'] = partner_id
+#                     line_vals['bank_account_id'] = bank_account_id
 
         return stmts_vals
 
