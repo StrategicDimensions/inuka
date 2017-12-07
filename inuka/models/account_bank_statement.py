@@ -27,6 +27,7 @@ from odoo.tools import float_is_zero, pycompat
 from odoo.tools import float_compare, float_round, float_repr
 from odoo.tools.misc import formatLang
 from odoo.exceptions import UserError, ValidationError
+from odoo.addons.base.res.res_bank import sanitize_account_number
 
 
 class AccountBankStatementLine(models.Model):
@@ -41,7 +42,45 @@ class AccountBankStatementLine(models.Model):
 class AccountBankStatementImport(models.TransientModel):
     _inherit = 'account.bank.statement.import'
 
+    def _get_branch(self, memo):
+        if memo[21:21] == "":
+           return memo[:21].strip()
+        else:
+            bank_list = ["ABSA BANK", "CAPITEC", "SPEEDPOINT"]
+            for bank in bank_list:
+                if memo.find(bank) > 0:
+                    return bank
+        if len(memo) < 21:
+            return memo.strip()
+        else:
+            return memo[:21].strip()
+
+    def _get_label(self, memo, bank):
+        result = memo
+        if memo.strip() != bank.strip():
+            if bank:
+                result = memo.replace(bank, "").strip()
+        return result
+
+    def _get_partner(self, label):
+        Partner = self.env['res.partner']
+        search_string = label.split()[-1]
+        if len(search_string) == 6:
+            partner = Partner.search([('ref', '=', search_string)], limit=1).id
+        else:
+            search_string = search_string.strip()
+            if search_string.startswith("06"):
+                search_string = search_string.replace("06", "276", 1)
+            elif search_string.startswith("07"):
+                search_string = search_string.replace("07", "277", 1)
+            elif search_string.startswith("08"):
+                search_string = search_string.replace("08", "278", 1)
+            partner = Partner.search([('mobile', '=', search_string)], limit=1).id
+        return partner
+
     def _parse_file(self, data_file):
+        journal_id = self.env.context.get('journal_id', [])
+        bank_name = self.env['account.journal'].browse(journal_id).bank_id.name or ""
         if not self._check_ofx(data_file):
             return super(AccountBankStatementImport, self)._parse_file(data_file)
         if OfxParser is None:
@@ -65,16 +104,17 @@ class AccountBankStatementImport(models.TransientModel):
                     bank_account_id = partner_bank.id
                     partner_id = partner_bank.partner_id.id
                 reference = str(transaction.date) + str(transaction.amount) + transaction.id
+                label = self._get_label(transaction.memo, bank_name)
                 vals_line = {
                     'date': transaction.date,
-                    'name': transaction.memo or '',
+                    'name': label,
                     'ref': hashlib.md5(reference.encode('utf-8')).hexdigest(),
                     'fitid': transaction.id,
-                    'branch': transaction.memo,
+                    'branch': self._get_branch(transaction.memo),
                     'amount': transaction.amount,
                     'unique_import_id': transaction.id,
                     'bank_account_id': bank_account_id,
-                    'partner_id': partner_id,
+                    'partner_id': self._get_partner(label),
                     'sequence': len(transactions) + 1,
                 }
                 total_amt += float(transaction.amount)
@@ -96,6 +136,39 @@ class AccountBankStatementImport(models.TransientModel):
             currency_lst = None
 
         return currency_lst, account_lst, vals_bank_statement
+
+    def _complete_stmts_vals(self, stmts_vals, journal, account_number):
+        for st_vals in stmts_vals:
+            st_vals['journal_id'] = journal.id
+            if not st_vals.get('reference'):
+                st_vals['reference'] = self.filename
+            if st_vals.get('number'):
+                #build the full name like BNK/2016/00135 by just giving the number '135'
+                st_vals['name'] = journal.sequence_id.with_context(ir_sequence_date=st_vals.get('date')).get_next_char(st_vals['number'])
+                del(st_vals['number'])
+            for line_vals in st_vals['transactions']:
+                unique_import_id = line_vals.get('unique_import_id')
+                if unique_import_id:
+                    sanitized_account_number = sanitize_account_number(account_number)
+                    line_vals['unique_import_id'] = (sanitized_account_number and sanitized_account_number + '-' or '') + str(journal.id) + '-' + unique_import_id
+
+#                 if not line_vals.get('bank_account_id'):
+#                     # Find the partner and his bank account or create the bank account. The partner selected during the
+#                     # reconciliation process will be linked to the bank when the statement is closed.
+#                     partner_id = False
+#                     bank_account_id = False
+#                     identifying_string = line_vals.get('account_number')
+#                     if identifying_string:
+#                         partner_bank = self.env['res.partner.bank'].search([('acc_number', '=', identifying_string)], limit=1)
+#                         if partner_bank:
+#                             bank_account_id = partner_bank.id
+#                             partner_id = partner_bank.partner_id.id
+#                         else:
+#                             bank_account_id = self.env['res.partner.bank'].create({'acc_number': line_vals['account_number']}).id
+#                     line_vals['partner_id'] = partner_id
+#                     line_vals['bank_account_id'] = bank_account_id
+
+        return stmts_vals
 
 
 class MasterAccountBankStatement(models.Model):
