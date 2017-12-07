@@ -212,27 +212,29 @@ class ResPartner(models.Model):
             if sale_order_line_vals:
                 self.env['sale.order.line'].create(sale_order_line_vals)
 
-            sms_template = self.env.ref('sms_frame.sms_template_inuka_international')
-            msg_compose = self.env['sms.compose'].create({
-                'record_id': res.id,
-                'model': 'res.partner',
-                'sms_template_id': sms_template.id,
-                'from_mobile_id': self.env.ref('sms_frame.sms_number_inuka_international').id,
-                'to_number': res.mobile,
-                'sms_content': """ INUKA Welcomes YOU^Thank you for your Registration^ %s %s,your MemberID %s will be active once Kit payment is receipted^More info 27219499850""" %(res.first_name, res.last_name, res.ref)
-            })
-            msg_compose.send_entity()
+            if res.mobile:
+                sms_template = self.env.ref('sms_frame.sms_template_inuka_international')
+                msg_compose = self.env['sms.compose'].create({
+                    'record_id': res.id,
+                    'model': 'res.partner',
+                    'sms_template_id': sms_template.id,
+                    'from_mobile_id': self.env.ref('sms_frame.sms_number_inuka_international').id,
+                    'to_number': res.mobile,
+                    'sms_content': """ INUKA Welcomes YOU^Thank you for your Registration^ %s %s,your MemberID %s will be active once Kit payment is receipted^More info 27219499850""" %(res.first_name, res.last_name, res.ref)
+                })
+                msg_compose.send_entity()
 
-            sms_template = self.env.ref('sms_frame.sms_template_inuka_international_referrer')
-            msg_compose = self.env['sms.compose'].create({
-                'record_id': res.upline.id,
-                'model': 'res.partner',
-                'sms_template_id': sms_template.id,
-                'from_mobile_id': self.env.ref('sms_frame.sms_number_inuka_international').id,
-                'to_number': res.upline.mobile,
-                'sms_content': """ INUKA New Registration received^WELL DONE, %s^New MemberID %s for %s %s activated once kit is receipted^Info 27219499850""" %(res.upline.name, res.ref, res.first_name, res.last_name)
-            })
-            msg_compose.send_entity()
+            if res.upline.mobile:
+                sms_template = self.env.ref('sms_frame.sms_template_inuka_international_referrer')
+                msg_compose = self.env['sms.compose'].create({
+                    'record_id': res.upline.id,
+                    'model': 'res.partner',
+                    'sms_template_id': sms_template.id,
+                    'from_mobile_id': self.env.ref('sms_frame.sms_number_inuka_international').id,
+                    'to_number': res.upline.mobile,
+                    'sms_content': """ INUKA New Registration received^WELL DONE, %s^New MemberID %s for %s %s activated once kit is receipted^Info 27219499850""" %(res.upline.name, res.ref, res.first_name, res.last_name)
+                })
+                msg_compose.send_entity()
 
         return res
 
