@@ -364,4 +364,17 @@
         </field>
     </record>
 
+    <record model="ir.ui.view" id="master_account_reports_journal_dashboard_kanban_view">
+        <field name="name">master.account.journal.dashboard.kanban.reports</field>
+        <field name="model">account.journal</field>
+        <field name="inherit_id" ref="account.account_journal_dashboard_kanban_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('o_kanban_manage_reconciliation')]" position="inside">
+                <div groups="account.group_account_manager">
+                    <a type="action" name="%(action_master_account_report_bank_reconciliation_with_journal)d">Master Reconciliation Report</a>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>
