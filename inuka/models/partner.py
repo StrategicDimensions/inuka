@@ -76,11 +76,11 @@ class ResPartner(models.Model):
         ], string='Source', required=True, default='email')
     is_admin = fields.Boolean(compute="_compute_is_admin", string="Admin")
 
-    _sql_constraints = [
-        ('mobile_uniq', 'unique(mobile)', 'Mobile should be unique.'),
-        ('email_uniq', 'unique(email)', 'Email should be unique.'),
-        ('ref_uniq', 'unique(ref)', 'Internal Reference should be unique.'),
-    ]
+#     _sql_constraints = [
+#         ('mobile_uniq', 'unique(mobile)', 'Mobile should be unique.'),
+#         ('email_uniq', 'unique(email)', 'Email should be unique.'),
+#         ('ref_uniq', 'unique(ref)', 'Internal Reference should be unique.'),
+#     ]
 
     def _compute_is_admin(self):
         for partner in self:
