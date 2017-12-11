@@ -80,10 +80,10 @@ class SaleOrder(models.Model):
             amount_reserve = sum([x.amount for x in res_funds])
             order.reserve = - (order.partner_id.credit - order.partner_id.debit) + order.partner_id.credit_limit - amount_reserve
 
-    @api.onchange('partner_id')
-    def onchange_partner_id(self):
-        super(SaleOrder, self).onchange_partner_id()
-        self.partner_shipping_id = False
+#     @api.onchange('partner_id')
+#     def onchange_partner_id(self):
+#         super(SaleOrder, self).onchange_partner_id()
+#         self.partner_shipping_id = False
 
     @api.model
     def create(self, vals):
