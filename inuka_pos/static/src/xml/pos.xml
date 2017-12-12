@@ -100,7 +100,7 @@
                 <t t-if="widget.pos.config.reserve_fund_account_id[0] == cashregister.journal.id">
                     <div class="button paymentmethod" t-att-data-id="cashregister.journal_id[0]">
                         <t t-esc="cashregister.journal_id[1]"/>
-                        <t t-esc="widget.reserve"/>
+                        <span class="reserve_amount"><t t-esc="widget.reserve"/></span>
                     </div>
                 </t>
                 <t t-else="">

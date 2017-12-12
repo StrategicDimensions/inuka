@@ -59,6 +59,15 @@ screens.ActionpadWidget.include({
             }else{
                 self.gui.show_screen('payment');
             }
+            if (self.pos.get_client()) {
+                self._rpc({
+                    model: 'pos.config',
+                    method: 'calculate_reserve',
+                    args: [self.pos.get_client().id],
+                }).then(function (result) {
+                    $('.reserve_amount').text('('+result+')').css('color','red');
+                });
+            }
         });
         this.$('.set-customer').click(function(){
             self.gui.show_screen('clientlist');
@@ -70,7 +79,7 @@ var PaymentScreen = screens.PaymentScreenWidget.extend({
     init: function(parent, options) {
         this._super(parent, options);
     	this.click_invoice();
-    },
+    }
 });
 gui.define_screen({name:'payment', widget: PaymentScreen});
 
