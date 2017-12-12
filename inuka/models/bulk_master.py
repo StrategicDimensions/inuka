@@ -151,7 +151,7 @@ class BulkMaster(models.Model):
         for picking in pickings:
             for move in picking.move_lines:
                 move.write({'quantity_done': move.product_uom_qty})
-        pickings.with_context(from_bulk=True).button_validate()
+            picking.with_context(from_bulk=True).button_validate()
         pickings.write({'carrier_tracking_ref': self.waybill})
         self.write({'state': 'done'})
 
