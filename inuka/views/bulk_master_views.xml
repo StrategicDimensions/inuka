@@ -88,6 +88,7 @@
                                 <field name="name" string="Order Number"/>
                                 <field name="date_order"/>
                                 <field name="partner_id"/>
+                                <field name="paid"/>
                                 <field name="user_id"/>
                                 <field name="amount_total"/>
                                 <field name="invoice_status"/>
@@ -122,6 +123,7 @@
             <tree string="Bulk Master" decoration-info="not schedule_date or (state in ['draft', 'confirmed', 'ready'] and (schedule_date and schedule_date &gt; current_date)) " decoration-danger="state in ['draft', 'confirmed', 'ready'] and (schedule_date and schedule_date &lt; current_date)" decoration-muted="state == 'cancel'" decoration-success="state == 'done'">
                 <field name="name"/>
                 <field name="partner_id"/>
+                <field name="bulk_type"/>
                 <field name="schedule_date"/>
                 <field name="pv_total"/>
                 <field name="shipping_total"/>
