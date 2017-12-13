@@ -18,7 +18,8 @@
                 <button name="button_pack_unlock" string="Pack Unlock" type="object"
                     attrs="{'invisible': ['|', '|', ('state', 'not in', ['ready']), ('bulk_lock', '=', False), ('pack_lock', '=', False)]}" class="btn-primary"/>
                 <button name="button_validate" string="Validate" type="object" states="ready" class="btn-primary"/>
-                <button name="button_approve" string="Approve for Free Shipping" type="object" states="confirmed, ready" class="btn-primary"/>
+                <button name="button_approve" string="Approve for Free Shipping" type="object"
+                    attrs="{'invisible': ['|', ('state', 'not in', ['ready', 'confirmed']), ('free_shipping', '=', True)]}" class="btn-primary"/>
                 <button name="button_cancel" string="Cancel" type="object" states="confirmed,ready"/>
                 <button name="button_reset" string="Reset" type="object" states="cancelled" class="btn-primary"/>
                 <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,ready,done"/>
