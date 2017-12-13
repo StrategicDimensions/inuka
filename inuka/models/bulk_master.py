@@ -40,6 +40,7 @@ class BulkMaster(models.Model):
     sale_orders = fields.One2many('sale.order', 'bulk_master_id', string="Orders", readonly=True, copy=False)
     sale_order_count = fields.Integer(compute="_compute_sale_order_count", string="Sale Orders")
     delivery_count = fields.Integer(compute='_compute_picking_ids', string='Delivery Orders')
+    free_shipping = fields.Boolean("Free Shipping", readonly=True)
 
     def _compute_order_totals(self):
         for bulk in self:
@@ -154,6 +155,17 @@ class BulkMaster(models.Model):
             picking.with_context(from_bulk=True).button_validate()
         pickings.write({'carrier_tracking_ref': self.waybill})
         self.write({'state': 'done'})
+
+    @api.multi
+    def button_approve(self):
+        if not self.user_has_groups('inuka.group_approval_for_free_shipping'):
+            raise UserError(_("Access Denied: You don't have rights to approve for free shipping."))
+        for bulk in self:
+            bulk.free_shipping = True
+            msg = "<ul>"
+            msg += "<li>Approved for Free Shipping by %s " % (bulk.env.user.name)
+            msg += "</ul>"
+            bulk.message_post(body=msg)
 
     @api.multi
     def button_cancel(self):

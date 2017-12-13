@@ -12,6 +12,7 @@
     'depends': ['purchase', 'delivery', 'base_automation', 'sms_frame', 'payment_mygate', 'account_bank_statement_import_ofx', 'inuka_pos'],
     'data': [
         'security/ir.model.access.csv',
+        'security/inuka_security.xml',
         'data/account_financial_report_data.xml',
         'views/purchase_views.xml',
         'views/account_invoice_views.xml',
