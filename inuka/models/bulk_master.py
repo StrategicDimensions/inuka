@@ -70,11 +70,6 @@ class BulkMaster(models.Model):
             bulk.delivery_count = count
 
     @api.model
-    def create(self, vals):
-        vals['name'] = self.env.ref('inuka.seq_bulk_master').next_by_id()
-        return super(BulkMaster, self).create(vals)
-
-    @api.model
     def name_search(self, name='', args=None, operator='ilike', limit=100):
         args = args or []
         context = dict(self.env.context or {})
@@ -110,7 +105,8 @@ class BulkMaster(models.Model):
         for bulk in self:
             if bulk.bulk_type == 'bulk' and not bulk.partner_id.bulk_custodian:
                 raise UserError(_('Member is not a Bulk Custodian.'))
-        self.write({'state': 'confirmed'})
+            name = self.env.ref('inuka.seq_bulk_master').next_by_id() + '/' + bulk.partner_id.ref
+            bulk.write({'name': name, 'state': 'confirmed'})
 
     @api.multi
     def button_print(self):
