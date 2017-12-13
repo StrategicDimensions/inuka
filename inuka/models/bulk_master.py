@@ -24,7 +24,7 @@ class BulkMaster(models.Model):
     shipping_total = fields.Float(compute="_compute_order_totals", string="Shipping Total", track_visibility='onchange')
     unpaid_total = fields.Float(compute="_compute_order_totals", string="Unpaid Amount")
     pv_total = fields.Float(compute="_compute_order_totals", string="Total PV", track_visibility='onchange')
-    waybill = fields.Char("Waybill", readonly=True, states={'draft': [('readonly', False)]})
+    waybill = fields.Char("Waybill", readonly=True, states={'draft': [('readonly', False)], 'confirmed': [('readonly', False)]})
     carrier_id = fields.Many2one("delivery.carrier", string="Dispatch Method", required=True, readonly=True, states={'draft': [('readonly', False)]})
     unpaid_pv = fields.Float(compute="_compute_order_totals", string="Unpaid PV")
     bulk_lock = fields.Boolean("Bulk Lock", readonly=True, copy=False)
