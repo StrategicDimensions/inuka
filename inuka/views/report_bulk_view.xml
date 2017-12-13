@@ -28,9 +28,9 @@
 
                     <div class="mt64 mb16" style="font-size:18px;font-weight:bold;">This bulk shipment contains <span t-esc="len(o.sale_orders)"/> orders.</div>
 
-                    <table class="table table-condensed">
+                    <table class="table table-striped">
                         <thead>
-                            <tr>
+                            <tr style="color: #68465f !important;">
                                 <th>Member</th>
                                 <th>Order</th>
                                 <th>Order Date</th>
