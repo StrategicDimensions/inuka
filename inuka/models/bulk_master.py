@@ -121,7 +121,7 @@ class BulkMaster(models.Model):
     @api.multi
     def button_pack_lock(self):
         for bulk in self:
-            if not (bulk.shipping_total > 1 or bulk.pv_total == 45 or bulk.pv_total > 50):
+            if not (bulk.shipping_total > 1 or bulk.pv_total == 45 or bulk.pv_total > 50 or bulk.free_shipping):
                 raise UserError(_('Minimum PV’s required not met / Shipping required.'))
             if not bulk.waybill:
                 raise UserError(_('Please enter a waybill number.'))
