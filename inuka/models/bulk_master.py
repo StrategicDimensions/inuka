@@ -111,8 +111,7 @@ class BulkMaster(models.Model):
     @api.multi
     def button_print(self):
         self.ensure_one()
-        pickings = self.sale_orders.mapped('picking_ids')
-        return self.env.ref('stock.action_report_delivery').report_action(pickings)
+        return self.env.ref('inuka.action_report_delivery_bulk').report_action(self)
 
     @api.multi
     def button_bulk_lock(self):

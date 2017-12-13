@@ -27,6 +27,7 @@
         'views/bulk_master_views.xml',
         'wizard/account_invoice_validate_view.xml',
         'wizard/master_account_bank_statement_import_view.xml',
+        'views/report_bulk_view.xml',
     ],
     'test': [
     ],
