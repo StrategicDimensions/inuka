@@ -79,7 +79,7 @@
                         <div class="col-xs-3">
                             <table width="100%">
                                 <tr class="whitebg">
-                                    <td><strong>Checker<br/>1:</strong></td>
+                                    <td><strong>Checker<br/>2:</strong></td>
                                     <td><br/><span t-esc="'.'*25"/></td>
                                 </tr>
                                 <tr class="whitebg">
