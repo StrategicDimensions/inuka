@@ -101,7 +101,7 @@
                 <button name="%(account.action_bank_reconcile_bank_statements)d" string="Reconcile" type="action" class="oe_highlight" attrs="{'invisible':['|','|',('all_lines_reconciled','=',True),('line_ids','=',[]),('state', '!=', 'open')]}"/>
                 <button name="check_confirm_bank" string="Validate" type="object" class="oe_highlight" attrs="{'invisible':['|','|',('all_lines_reconciled','=',False),('line_ids','=',[]),('state', '!=', 'open')]}"/>
                 -->
-                <button name="reconcile_master_statement" string="Reconcile" type="object" class="oe_highlight"/>
+                <button name="reconcile_master_statement" string="Auto Match" type="object" class="oe_highlight"/>
                 <field name="state" widget="statusbar" statusbar_visible="open,confirm"/>
             </header>
             <sheet>
@@ -232,6 +232,18 @@
         </field>
     </record>
 
+    <record id="view_bank_statement_line_tree_inherit_inuka" model="ir.ui.view">
+        <field name="name">account.bank.statement.line.tree.inherit.inuka</field>
+        <field name="model">account.bank.statement.line</field>
+        <field name="inherit_id" ref="account.view_bank_statement_line_tree"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="master_bank_stmt_line_id"/>
+                <field name="statement_reconciled"/>
+            </field>
+        </field>
+    </record>
+
     <record id="view_bank_statement_line_search_inherit_inuka" model="ir.ui.view">
         <field name="name">account.bank.statement.line.search.inherit.inuka</field>
         <field name="model">account.bank.statement.line</field>
@@ -277,6 +289,8 @@
                 <field name="name"/>
                 <field name="ref"/>
                 <field name="partner_id"/>
+                <field name="bank_stmt_line_id"/>
+                <field name="statement_reconciled"/>
                 <field name="amount"/>
                 <field name="journal_currency_id" invisible="1"/>
             </tree>

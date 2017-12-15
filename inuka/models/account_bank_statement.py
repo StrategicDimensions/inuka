@@ -35,7 +35,7 @@ class AccountBankStatementLine(models.Model):
 
     fitid = fields.Char("FITID")
     branch = fields.Char("Branch")
-    statement_reconciled = fields.Boolean("Reconciled")
+    statement_reconciled = fields.Boolean("Reconciled", readonly=True)
     master_bank_stmt_line_id = fields.Many2one('master.account.bank.statement.line', string='Master Statement Line')
 
 
@@ -64,7 +64,7 @@ class AccountBankStatementImport(models.TransientModel):
 
     def _get_partner(self, label):
         Partner = self.env['res.partner']
-        search_string = label.split()[-1]
+        search_string = label and label.split()[-1] or ''
         if len(search_string) == 6:
             partner = Partner.search([('ref', '=', search_string)], limit=1).id
         else:
@@ -487,7 +487,7 @@ class MasterAccountBankStatementLine(models.Model):
         help="Technical field holding the number given to the journal entry, automatically set when the statement line is reconciled then stored to set the same number again if the line is cancelled, set to draft and re-processed again.")
     fitid = fields.Char("FITID")
     branch = fields.Char("Branch")
-    statement_reconciled = fields.Boolean("Reconciled")
+    statement_reconciled = fields.Boolean("Reconciled", readonly=True)
     bank_stmt_line_id = fields.Many2one("account.bank.statement.line", "Statement Line")
 
     @api.one
