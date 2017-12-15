@@ -19,6 +19,7 @@
         'views/res_partner_views.xml',
         'views/sale_views.xml',
         'views/stock_views.xml',
+        'views/account.xml',
         'data/mail_template_data.xml',
         'data/base_automation_data.xml',
         'data/sequence_data.xml',
