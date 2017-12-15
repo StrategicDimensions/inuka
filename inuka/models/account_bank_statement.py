@@ -30,6 +30,32 @@ from odoo.exceptions import UserError, ValidationError
 from odoo.addons.base.res.res_bank import sanitize_account_number
 
 
+class AccountBankStatement(models.Model):
+    _inherit = 'account.bank.statement'
+
+    @api.multi
+    def auto_match_partner(self):
+        Partner = self.env['res.partner']
+        for statement in self:
+            for line in statement.line_ids:
+                label = line.name
+                search_string = label and label.split()[-1] or ''
+                if len(search_string) == 6:
+                    partner = Partner.search([('ref', '=', search_string)], limit=1)
+                else:
+                    search_string = search_string.strip()
+                    if search_string.startswith("06"):
+                        search_string = search_string.replace("06", "276", 1)
+                    elif search_string.startswith("07"):
+                        search_string = search_string.replace("07", "277", 1)
+                    elif search_string.startswith("08"):
+                        search_string = search_string.replace("08", "278", 1)
+                    partner = Partner.search([('mobile', '=', search_string)], limit=1)
+                if partner:
+                    line.partner_id = partner
+        return True
+
+
 class AccountBankStatementLine(models.Model):
     _inherit = 'account.bank.statement.line'
 
