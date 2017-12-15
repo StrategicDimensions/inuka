@@ -38,6 +38,12 @@ class AccountBankStatementLine(models.Model):
     statement_reconciled = fields.Boolean("Reconciled", readonly=True)
     master_bank_stmt_line_id = fields.Many2one('master.account.bank.statement.line', string='Master Statement Line')
 
+    @api.model
+    def name_search(self, name='', args=None, operator='ilike', limit=100):
+        args = args or []
+        recs = self.search(['|', '|', '|', ('name', operator, name), ('fitid', operator, name), ('amount', operator, name), ('partner_id.name', operator, name)] + args, limit=limit)
+        return recs.name_get()
+
 
 class AccountBankStatementImport(models.TransientModel):
     _inherit = 'account.bank.statement.import'
