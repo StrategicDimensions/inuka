@@ -1130,3 +1130,13 @@ class MasterAccountBankStatementLine(models.Model):
             raise UserError(_('Operation not allowed. Since your statement line already received a number, you cannot reconcile it entirely with existing journal entries otherwise it would make a gap in the numbering. You should book an entry and make a regular revert of it in case you want to cancel it.'))
         counterpart_moves.assert_balanced()
         return counterpart_moves
+
+    @api.multi
+    def manual_reconcile(self):
+        for line in self.filtered(lambda r: r.statement_reconciled == False):
+            if not line.bank_stmt_line_id:
+                raise UserError(_('Please select a bank statement line to reconcile.'))
+            line.statement_reconciled = True
+            line.bank_stmt_line_id.master_bank_stmt_line_id = line.id
+            line.bank_stmt_line_id.statement_reconciled = True
+        return True
