@@ -6,6 +6,9 @@
         <field name="model">helpdesk.ticket</field>
         <field name="inherit_id" ref="helpdesk.helpdesk_ticket_view_form"/>
         <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="mobile"/>
+            </field>
             <xpath expr="//sheet/group" position="after">
                 <notebook>
                     <page string="Products">
