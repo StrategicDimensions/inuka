@@ -11,6 +11,7 @@ class HelpdeskTicket(models.Model):
     product_ids = fields.Many2many('product.product', 'helpdesk_ticket_product_rel', 'ticket_id', 'product_id', string="Products")
     mobile = fields.Char("Customer Mobile")
     sale_order_count = fields.Integer(compute="_compute_sale_order_count", string="Sale Orders")
+    is_close = fields.Boolean(related="stage_id.is_close")
 
     def _compute_sale_order_count(self):
         SaleOrder = self.env['sale.order']
@@ -48,6 +49,19 @@ class HelpdeskTicket(models.Model):
         action = self.env.ref('sale.action_orders').read()[0]
         action['domain'] = [('id', 'in', orders.ids)]
         return action
+
+    def sms_action(self):
+        self.ensure_one()
+        default_mobile = self.env.ref('sms_frame.sms_number_inuka_international')
+        return {
+            'name': 'SMS Compose',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'sms.compose',
+            'target': 'new',
+            'type': 'ir.actions.act_window',
+            'context': {'default_from_mobile_id': default_mobile.id, 'default_to_number': self.mobile, 'default_record_id': self.id, 'default_model': 'helpdesk.ticket'}
+         }
 
 
 class SaleOrder(models.Model):
