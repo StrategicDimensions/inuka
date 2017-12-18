@@ -6,6 +6,15 @@
         <field name="model">helpdesk.ticket</field>
         <field name="inherit_id" ref="helpdesk.helpdesk_ticket_view_form"/>
         <field name="arch" type="xml">
+            <button name="assign_ticket_to_self" position="after">
+                <button name="create_sale_order" string="Create Sales Order" type="object" class="oe_highlight"/>
+            </button>
+            <button name="open_customer_tickets" position="after">
+                <button class="oe_stat_button" type="object" name="view_sale_orders"
+                    icon="fa-usd">
+                    <field string="Sales" name="sale_order_count" widget="statinfo"/>
+                </button>
+            </button>
             <field name="partner_id" position="after">
                 <field name="mobile"/>
             </field>
