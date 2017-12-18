@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_helpdesk_ticket_form_inherit_inuka" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.form.inherit.inuka</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="inherit_id" ref="helpdesk.helpdesk_ticket_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/group" position="after">
+                <notebook>
+                    <page string="Ticket Lines">
+                        <field name="ticket_line">
+                            <tree string="Ticket Lines" editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="product_id"/>
+                                <field name="name"/>
+                                <field name="price_unit" string="Sale Price"/>
+                                <field name="qty_available" readonly="1" force_save="1"/>
+                                <field name="virtual_available" readonly="1" force_save="1"/>
+                                <field name="barcode"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
