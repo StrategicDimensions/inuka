@@ -143,4 +143,16 @@ for order in records:
         <field name="nextcall" eval="(DateTime.now() + timedelta(days=0)).strftime('%Y-%m-%d 09:00:00')" />
     </record>
 
+    <record id="res_partner_birthday_helpdesk_ticket" model="ir.cron">
+        <field name="name">Birthday Helpdesk Ticket</field>
+        <field name="model_id" ref="model_res_partner"/>
+        <field name="state">code</field>
+        <field name="code">model.create_birthday_ticket()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(days=0)).strftime('%Y-%m-%d 09:00:00')" />
+    </record>
+
 </odoo>

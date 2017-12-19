@@ -262,3 +262,28 @@ class ResPartner(models.Model):
                         'sms_content': """ INUKA Happy Birthday %s %s, sending you SMILES for every moment of your special day. Have a wonderful HAPPY BIRTHDAY. Your INUKA Team 27219499850""" %(customer.first_name, customer.last_name)
                     })
                     msg_compose.send_entity()
+
+    @api.model
+    def create_birthday_ticket(self):
+        HelpDeskTicket = self.env['helpdesk.ticket']
+        team = self.env['helpdesk.team'].search([('name', '=', 'Escalations')], limit=1)
+        ticket_type = self.env['helpdesk.ticket.type'].search([('name', '=', 'Birthday')], limit=1)
+        channel = self.env['mail.channel'].search([('name', '=', 'Escalations')], limit=1)
+        customers = self.search([('customer', '=', True), ('status', 'in', ('emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond', 'exective_diamond', 'presidential'))])
+        today = datetime.today()
+        for customer in customers:
+            if customer.dob:
+                dob = datetime.strptime(customer.dob, DF)
+                if dob.day == today.day and dob.month == today.month:
+                    ticket = HelpDeskTicket.create({
+                        'name': """Birthday: %s %s - %s""" %(customer.first_name, customer.last_name, customer.dob),
+                        'team_id': team.id,
+                        'user_id': False,
+                        'priority': '2',
+                        'description': """Birthday: %s %s - %s""" %(customer.first_name, customer.last_name, customer.dob),
+                        'partner_id': customer.id,
+                        'mobile': customer.mobile,
+                        'partner_email': customer.email,
+                        'ticket_type_id': ticket_type.id,
+                    })
+                    ticket.message_subscribe(channel_ids=[channel.id])
