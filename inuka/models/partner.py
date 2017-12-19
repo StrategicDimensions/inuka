@@ -243,3 +243,22 @@ class ResPartner(models.Model):
         args = args or []
         recs = self.search(['|', '|', '|', '|', ('ref', operator, name), ('name', operator, name), ('mobile', operator, name), ('passport_no', operator, name), ('email', operator, name)] + args, limit=limit)
         return recs.name_get()
+
+    @api.model
+    def check_birthday(self):
+        customers = self.search([('customer', '=', True), ('status', 'in', ('new', 'junior', 'senior', 'pearl', 'ruby'))])
+        today = datetime.today()
+        for customer in customers:
+            if customer.dob and customer.mobile:
+                dob = datetime.strptime(customer.dob, DF)
+                if dob.day == today.day and dob.month == today.month:
+                    sms_template = self.env.ref('sms_frame.sms_template_inuka_international')
+                    msg_compose = self.env['sms.compose'].create({
+                        'record_id': customer.id,
+                        'model': 'res.partner',
+                        'sms_template_id': sms_template.id,
+                        'from_mobile_id': self.env.ref('sms_frame.sms_number_inuka_international').id,
+                        'to_number': customer.mobile,
+                        'sms_content': """ INUKA Happy Birthday %s %s, sending you SMILES for every moment of your special day. Have a wonderful HAPPY BIRTHDAY. Your INUKA Team 27219499850""" %(customer.first_name, customer.last_name)
+                    })
+                    msg_compose.send_entity()
