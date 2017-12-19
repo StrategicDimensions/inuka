@@ -1172,3 +1172,14 @@ class MasterAccountBankStatementLine(models.Model):
             line.bank_stmt_line_id.master_bank_stmt_line_id = line.id
             line.bank_stmt_line_id.statement_reconciled = True
         return True
+
+
+class AccountReconcileModel(models.Model):
+    _inherit = "account.reconcile.model"
+
+    @api.model
+    def get_record_id(self):
+        if self.env.user.company_id.name == 'INUKA Namibia':
+            return self.env.ref('inuka.account_reconcile_model_2').id
+        else:
+            return self.env.ref('inuka.account_reconcile_model_1').id
