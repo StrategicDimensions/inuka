@@ -85,6 +85,26 @@ class ResPartner(models.Model):
     new_senior_recruits = fields.Integer("# of New Senior Recruits (MTD)")
     new_junior_recruits = fields.Integer("# of New Junior Recruits (MTD)")
 
+    # QTD Performance Tab
+    personal_pv_qtd = fields.Float("Personal PV (QTD)")
+    pv_downline_1_qtd = fields.Float("PV Downline 1 (QTD)")
+    pv_downline_2_qtd = fields.Float("PV Downline 2 (QTD)")
+    pv_downline_3_qtd = fields.Float("PV Downline 3 (QTD)")
+    pv_downline_4_qtd = fields.Float("PV Downline 4 (QTD)")
+    pv_tot_group_qtd = fields.Float("Group PV (QTD)")
+    personal_members_qtd = fields.Integer("# of Active Downline (QTD)")
+    new_members_qtd = fields.Integer("# of New Members (QTD)")
+
+    is_active_qtd = fields.Boolean("Is Active (QTD)")
+    is_new_qtd = fields.Boolean("Is New (QTD)")
+    is_vr_earner_qtd = fields.Boolean("Is VR Earner (QTD)")
+    is_new_senior_qtd = fields.Boolean("Is New & Senior Beyond (QTD)")
+    is_new_junior_qtd = fields.Boolean("Is New & Junior Beyond (QTD))")
+    is_new_ruby_qtd = fields.Boolean("Is New & Ruby & Beyond (QTD)")
+    vr_earner_qtd = fields.Integer("# of VR Earners (QTD)")
+    new_senior_recruits_qtd = fields.Integer("# of New Senior Recruits (QTD)")
+    new_junior_recruits_qtd = fields.Integer("# of New Junior Recruits (QTD)")
+
     # YTD Performance Tab
     personal_pv_ytd = fields.Float("Personal PV (YTD)")
     pv_downline_1_ytd = fields.Float("PV Downline 1 (YTD)")

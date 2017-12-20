@@ -93,6 +93,43 @@
                         </group>
                     </group>
                 </page>
+                <page string="QTD Performance" attrs="{'invisible': [('customer', '=', False)]}">
+                    <group>
+                        <group>
+                            <field name="personal_pv_qtd" readonly="1"/>
+                            <field name="pv_downline_1_qtd" readonly="1"/>
+                            <field name="pv_downline_3_qtd" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="pv_tot_group_qtd" readonly="1"/>
+                            <field name="pv_downline_2_qtd" readonly="1"/>
+                            <field name="pv_downline_4_qtd" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="is_active_qtd" readonly="1"/>
+                            <field name="is_vr_earner_qtd" readonly="1"/>
+                            <field name="is_new_junior_qtd" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="is_new_qtd" readonly="1"/>
+                            <field name="is_new_senior_qtd" readonly="1"/>
+                            <field name="is_new_ruby_qtd" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="personal_members_qtd" readonly="1"/>
+                            <field name="vr_earner_qtd" readonly="1"/>
+                            <field name="new_junior_recruits_qtd" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="new_members_qtd" readonly="1"/>
+                            <field name="new_senior_recruits_qtd" readonly="1"/>
+                        </group>
+                    </group>
+                </page>
                 <page string="YTD Performance" attrs="{'invisible': [('customer', '=', False)]}">
                     <group>
                         <group>
