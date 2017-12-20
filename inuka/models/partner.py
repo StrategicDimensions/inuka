@@ -85,6 +85,26 @@ class ResPartner(models.Model):
     new_senior_recruits = fields.Integer("# of New Senior Recruits (MTD)")
     new_junior_recruits = fields.Integer("# of New Junior Recruits (MTD)")
 
+    # YTD Performance Tab
+    personal_pv_ytd = fields.Float("Personal PV (YTD)")
+    pv_downline_1_ytd = fields.Float("PV Downline 1 (YTD)")
+    pv_downline_2_ytd = fields.Float("PV Downline 2 (YTD)")
+    pv_downline_3_ytd = fields.Float("PV Downline 3 (YTD)")
+    pv_downline_4_ytd = fields.Float("PV Downline 4 (YTD)")
+    pv_tot_group_ytd = fields.Float("Group PV (YTD)")
+    personal_members_ytd = fields.Integer("# of Active Downline (YTD)")
+    new_members_ytd = fields.Integer("# of New Members (YTD)")
+
+    is_active_ytd = fields.Boolean("Is Active (YTD)")
+    is_new_ytd = fields.Boolean("Is New (YTD)")
+    is_vr_earner_ytd = fields.Boolean("Is VR Earner (YTD)")
+    is_new_senior_ytd = fields.Boolean("Is New & Senior Beyond (YTD)")
+    is_new_junior_ytd = fields.Boolean("Is New & Junior Beyond (YTD))")
+    is_new_ruby_ytd = fields.Boolean("Is New & Ruby & Beyond (YTD)")
+    vr_earner_ytd = fields.Integer("# of VR Earners (YTD)")
+    new_senior_recruits_ytd = fields.Integer("# of New Senior Recruits (YTD)")
+    new_junior_recruits_ytd = fields.Integer("# of New Junior Recruits (YTD)")
+
 #     _sql_constraints = [
 #         ('mobile_uniq', 'unique(mobile)', 'Mobile should be unique.'),
 #         ('email_uniq', 'unique(email)', 'Email should be unique.'),
