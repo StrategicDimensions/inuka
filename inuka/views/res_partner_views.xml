@@ -56,19 +56,19 @@
                         </group>
                     </group>
                 </page>
-                <page string="Member Performance" name="member" attrs="{'invisible': [('customer', '=', False)]}">
+                <page string="MTD Performance" name="member" attrs="{'invisible': [('customer', '=', False)]}">
                     <group>
                         <group>
-                            <field name="personal_pv"/>
-                            <field name="pv_tot_group"/>
-                            <field name="personal_members"/>
-                            <field name="new_members"/>
+                            <field name="personal_pv" string="Personal PV (MTD)"/>
+                            <field name="pv_tot_group" string="Group PV (MTD)"/>
+                            <field name="personal_members" string="# of Active Downline (MTD)"/>
+                            <field name="new_members" string="# of New Members (MTD)"/>
                         </group>
                         <group>
-                            <field name="pv_downline_1"/>
-                            <field name="pv_downline_2"/>
-                            <field name="pv_downline_3"/>
-                            <field name="pv_downline_4"/>
+                            <field name="pv_downline_1" string="PV Downline 1 (MTD)"/>
+                            <field name="pv_downline_2" string="PV Downline 2 (MTD)"/>
+                            <field name="pv_downline_3" string="PV Downline 3 (MTD)"/>
+                            <field name="pv_downline_4" string="PV Downline 4 (MTD)"/>
                         </group>
                     </group>
                 </page>
