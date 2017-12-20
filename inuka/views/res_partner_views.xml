@@ -6,6 +6,9 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
+            <field name="user_id" position="attributes">
+                <attribute name="string">Mentor</attribute>
+            </field>
             <field name="type" position="before">
                 <field name="first_name" attrs="{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}"/>
                 <field name="passport_no" attrs="{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}"/>
