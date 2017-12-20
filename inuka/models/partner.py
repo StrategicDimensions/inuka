@@ -125,6 +125,26 @@ class ResPartner(models.Model):
     new_senior_recruits_ytd = fields.Integer("# of New Senior Recruits (YTD)")
     new_junior_recruits_ytd = fields.Integer("# of New Junior Recruits (YTD)")
 
+    # MTD Odoo Tab
+    o_personal_pv_mtd = fields.Float("O_Personal PV (MTD)")
+    o_pv_downline_1_mtd = fields.Float("O_PV Downline 1 (MTD)")
+    o_pv_downline_2_mtd = fields.Float("O_PV Downline 2 (MTD)")
+    o_pv_downline_3_mtd = fields.Float("O_PV Downline 3 (MTD)")
+    o_pv_downline_4_mtd = fields.Float("O_PV Downline 4 (MTD)")
+    o_pv_tot_group_mtd = fields.Float("O_Group PV (MTD)")
+    o_personal_members_mtd = fields.Integer("O_# of Active Downline (MTD)")
+    o_new_members_mtd = fields.Integer("O_# of New Members (MTD)")
+
+    o_is_active_mtd = fields.Boolean("O_Is Active (MTD)")
+    o_is_new_mtd = fields.Boolean("O_Is New (MTD)")
+    o_is_vr_earner_mtd = fields.Boolean("O_Is VR Earner (MTD)")
+    o_is_new_senior_mtd = fields.Boolean("O_Is New & Senior Beyond (MTD)")
+    o_is_new_junior_mtd = fields.Boolean("O_Is New & Junior Beyond (MTD))")
+    o_is_new_ruby_mtd = fields.Boolean("O_Is New & Ruby & Beyond (MTD)")
+    o_vr_earner_mtd = fields.Integer("O_# of VR Earners (MTD)")
+    o_new_senior_recruits_mtd = fields.Integer("O_# of New Senior Recruits (MTD)")
+    o_new_junior_recruits_mtd = fields.Integer("O_# of New Junior Recruits (MTD)")
+
 #     _sql_constraints = [
 #         ('mobile_uniq', 'unique(mobile)', 'Mobile should be unique.'),
 #         ('email_uniq', 'unique(email)', 'Email should be unique.'),

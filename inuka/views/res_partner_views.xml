@@ -167,6 +167,43 @@
                         </group>
                     </group>
                 </page>
+                <page string="MTD (Odoo)" attrs="{'invisible': [('customer', '=', False)]}">
+                    <group>
+                        <group>
+                            <field name="o_personal_pv_mtd" readonly="1"/>
+                            <field name="o_pv_downline_1_mtd" readonly="1"/>
+                            <field name="o_pv_downline_3_mtd" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="o_pv_tot_group_mtd" readonly="1"/>
+                            <field name="o_pv_downline_2_mtd" readonly="1"/>
+                            <field name="o_pv_downline_4_mtd" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="o_is_active_mtd" readonly="1"/>
+                            <field name="o_is_vr_earner_mtd" readonly="1"/>
+                            <field name="o_is_new_junior_mtd" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="o_is_new_mtd" readonly="1"/>
+                            <field name="o_is_new_senior_mtd" readonly="1"/>
+                            <field name="o_is_new_ruby_mtd" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="o_personal_members_mtd" readonly="1"/>
+                            <field name="o_vr_earner_mtd" readonly="1"/>
+                            <field name="o_new_junior_recruits_mtd" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="o_new_members_mtd" readonly="1"/>
+                            <field name="o_new_senior_recruits_mtd" readonly="1"/>
+                        </group>
+                    </group>
+                </page>
                 <page string="Other Info" name="other_info" attrs="{'invisible': [('customer', '=', False)]}">
                     <group>
                         <group>
