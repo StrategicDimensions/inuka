@@ -75,6 +75,15 @@ class ResPartner(models.Model):
         ('portal', 'Portal')
         ], string='Source', required=True, default='email')
     is_admin = fields.Boolean(compute="_compute_is_admin", string="Admin")
+    is_active_mtd = fields.Boolean("Is Active (MTD)")
+    is_new_mtd = fields.Boolean("Is New (MTD)")
+    is_vr_earner_mtd = fields.Boolean("Is VR Earner (MTD)")
+    is_new_senior_mtd = fields.Boolean("Is New & Senior Beyond (MTD)")
+    is_new_junior_mtd = fields.Boolean("Is New & Junior Beyond (MTD)")
+    is_new_ruby_mtd = fields.Boolean("Is New & Ruby & Beyond (MTD)")
+    vr_earner = fields.Integer("# of VR Earners (MTD)")
+    new_senior_recruits = fields.Integer("# of New Senior Recruits (MTD)")
+    new_junior_recruits = fields.Integer("# of New Junior Recruits (MTD)")
 
 #     _sql_constraints = [
 #         ('mobile_uniq', 'unique(mobile)', 'Mobile should be unique.'),

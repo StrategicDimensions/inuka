@@ -60,15 +60,36 @@
                     <group>
                         <group>
                             <field name="personal_pv" string="Personal PV (MTD)"/>
-                            <field name="pv_tot_group" string="Group PV (MTD)"/>
-                            <field name="personal_members" string="# of Active Downline (MTD)"/>
-                            <field name="new_members" string="# of New Members (MTD)"/>
+                            <field name="pv_downline_1" string="PV Downline 1 (MTD)"/>
+                            <field name="pv_downline_3" string="PV Downline 3 (MTD)"/>
                         </group>
                         <group>
-                            <field name="pv_downline_1" string="PV Downline 1 (MTD)"/>
+                            <field name="pv_tot_group" string="Group PV (MTD)"/>
                             <field name="pv_downline_2" string="PV Downline 2 (MTD)"/>
-                            <field name="pv_downline_3" string="PV Downline 3 (MTD)"/>
                             <field name="pv_downline_4" string="PV Downline 4 (MTD)"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="is_active_mtd"/>
+                            <field name="is_vr_earner_mtd"/>
+                            <field name="is_new_junior_mtd"/>
+                        </group>
+                        <group>
+                            <field name="is_new_mtd"/>
+                            <field name="is_new_senior_mtd"/>
+                            <field name="is_new_ruby_mtd"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="personal_members" string="# of Active Downline (MTD)"/>
+                            <field name="vr_earner"/>
+                            <field name="new_junior_recruits"/>
+                        </group>
+                        <group>
+                            <field name="new_members" string="# of New Members (MTD)"/>
+                            <field name="new_senior_recruits"/>
                         </group>
                     </group>
                 </page>
