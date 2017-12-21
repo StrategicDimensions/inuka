@@ -9,7 +9,7 @@
     'summary': 'Inuka',
     'description': "",
     'website': 'https://www.odoo.com/',
-    'depends': ['purchase', 'delivery', 'base_automation', 'sms_frame', 'payment_mygate', 'account_bank_statement_import_ofx', 'inuka_pos', 'helpdesk'],
+    'depends': ['crm', 'purchase', 'delivery', 'base_automation', 'sms_frame', 'payment_mygate', 'account_bank_statement_import_ofx', 'inuka_pos', 'helpdesk'],
     'data': [
         'security/ir.model.access.csv',
         'security/inuka_security.xml',

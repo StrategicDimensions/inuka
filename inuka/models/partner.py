@@ -396,3 +396,65 @@ class ResPartner(models.Model):
                         'ticket_type_id': ticket_type.id,
                     })
                     ticket.message_subscribe(channel_ids=[channel.id])
+
+
+class PerformanceHistory(models.Model):
+    _name = 'performance.history'
+    _description = 'Performance History'
+    _rec_name = 'partner_id'
+
+    partner_id = fields.Many2one("res.partner", string="Customer")
+    performance_type = fields.Selection([
+        ('month', 'Month Performance'),
+        ('quarter', 'Quarter Performance'),
+        ('year', 'Year Performance'),
+        ], string='Type')
+    date = fields.Date("Date", default=fields.Date.today())
+    months = fields.Selection([
+        ('jan', 'January'),
+        ('feb', 'February'),
+        ('mar', 'March'),
+        ('apr', 'April'),
+        ('may', 'May'),
+        ('jun', 'June'),
+        ('jul', 'July'),
+        ('aug', 'August'),
+        ('sep', 'September'),
+        ('oct', 'October'),
+        ('nov', 'November'),
+        ('dec', 'December')
+        ], string='Month')
+    quarters = fields.Selection([
+        ('q1', 'Q1'),
+        ('q2', 'Q2'),
+        ('q3', 'Q3'),
+        ('q4', 'Q4'),
+        ], string='Quarter')
+    years = fields.Selection([
+        ('2016', '2016'),
+        ('2017', '2017'),
+        ('2018', '2018'),
+        ('2019', '2019'),
+        ('2020', '2020'),
+        ('2021', '2021'),
+        ('2022', '2022')
+        ], string='Year')
+
+    personal_pv = fields.Float("Personal PV")
+    pv_downline_1 = fields.Float("PV Downline 1")
+    pv_downline_2 = fields.Float("PV Downline 2")
+    pv_downline_3 = fields.Float("PV Downline 3")
+    pv_downline_4 = fields.Float("PV Downline 4")
+    pv_tot_group = fields.Float("Group PV")
+    personal_members = fields.Integer("# of Active Downline")
+    new_members = fields.Integer("# of New Members")
+
+    is_active = fields.Boolean("Is Active")
+    is_new = fields.Boolean("Is New")
+    is_vr_earner = fields.Boolean("Is VR Earner")
+    is_new_senior = fields.Boolean("Is New & Senior Beyond")
+    is_new_junior = fields.Boolean("Is New & Junior Beyond")
+    is_new_ruby = fields.Boolean("Is New & Ruby & Beyond")
+    vr_earner = fields.Integer("# of VR Earners")
+    new_senior_recruits = fields.Integer("# of New Senior Recruits")
+    new_junior_recruits = fields.Integer("# of New Junior Recruits")

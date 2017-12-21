@@ -311,4 +311,98 @@
         </field>
     </record>
 
+    <record id="view_performance_history_tree" model="ir.ui.view">
+        <field name="name">performance.history.tree</field>
+        <field name="model">performance.history</field>
+        <field name="arch" type="xml">
+            <tree string="Performance History">
+                <field name="partner_id" domain="[('customer','=',True)]"/>
+                <field name="performance_type"/>
+                <field name="date"/>
+                <field name="months"/>
+                <field name="quarters"/>
+                <field name="years"/>
+                <field name="personal_pv"/>
+                <field name="pv_tot_group"/>
+                <field name="pv_downline_1"/>
+                <field name="pv_downline_2"/>
+                <field name="pv_downline_3"/>
+                <field name="pv_downline_4"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_performance_history_form" model="ir.ui.view">
+        <field name="name">performance.history.form</field>
+        <field name="model">performance.history</field>
+        <field name="arch" type="xml">
+            <form string="Performance History">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="partner_id" domain="[('customer','=',True)]"/>
+                            <field name="date"/>
+                            <field name="quarters"/>
+                        </group>
+                        <group>
+                            <field name="performance_type"/>
+                            <field name="months"/>
+                            <field name="years"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="personal_pv"/>
+                            <field name="pv_downline_1"/>
+                            <field name="pv_downline_3"/>
+                        </group>
+                        <group>
+                            <field name="pv_tot_group"/>
+                            <field name="pv_downline_2"/>
+                            <field name="pv_downline_4"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="is_active"/>
+                            <field name="is_vr_earner"/>
+                            <field name="is_new_junior"/>
+                        </group>
+                        <group>
+                            <field name="is_new"/>
+                            <field name="is_new_senior"/>
+                            <field name="is_new_ruby"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="personal_members"/>
+                            <field name="vr_earner"/>
+                            <field name="new_junior_recruits"/>
+                        </group>
+                        <group>
+                            <field name="new_members"/>
+                            <field name="new_senior_recruits"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_performance_history_form" model="ir.actions.act_window">
+        <field name="name">Performance History</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">performance.history</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add Performance History.
+          </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_performance_history" name="Performance History" action="action_performance_history_form" parent="crm.crm_menu_root" sequence="3"/>
+
 </odoo>
