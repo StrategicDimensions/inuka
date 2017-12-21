@@ -185,6 +185,8 @@ class ResPartner(models.Model):
     o_new_senior_recruits_ytd = fields.Integer("O_# of New Senior Recruits (YTD)")
     o_new_junior_recruits_ytd = fields.Integer("O_# of New Junior Recruits (YTD)")
 
+    performance_history_count = fields.Integer(compute="_compute_performance_history_count", string="Performance History Count")
+
 #     _sql_constraints = [
 #         ('mobile_uniq', 'unique(mobile)', 'Mobile should be unique.'),
 #         ('email_uniq', 'unique(email)', 'Email should be unique.'),
@@ -396,6 +398,19 @@ class ResPartner(models.Model):
                         'ticket_type_id': ticket_type.id,
                     })
                     ticket.message_subscribe(channel_ids=[channel.id])
+
+    def _compute_performance_history_count(self):
+        PerformanceHistory = self.env['performance.history']
+        for partner in self:
+            partner.performance_history_count = PerformanceHistory.search_count([('partner_id', '=', partner.id)])
+
+    @api.multi
+    def view_performance_history(self):
+        self.ensure_one()
+        performances = self.env['performance.history'].search([('partner_id', '=', self.id)])
+        action = self.env.ref('inuka.action_performance_history_form').read()[0]
+        action['domain'] = [('id', 'in', performances.ids)]
+        return action
 
 
 class PerformanceHistory(models.Model):
