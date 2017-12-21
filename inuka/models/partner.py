@@ -42,7 +42,7 @@ class ResPartner(models.Model):
         ('triple_diamond', 'Triple Diamond'),
         ('exective_diamond', 'Exective Diamond'),
         ('presidential', 'Presidential')
-        ], string='Status', required=True, default='candidate')
+        ], string='Status', required=True, default='candidate', track_visibility='onchange')
     upline = fields.Many2one("res.partner", string="Upline")
     upline_id = fields.Char(related="upline.ref", string="Upline ID")
     candidate_registrar = fields.Boolean("Candidate Registrar")
