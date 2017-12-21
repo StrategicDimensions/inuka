@@ -390,12 +390,29 @@
         </field>
     </record>
 
+    <record id="view_performance_history_search" model="ir.ui.view">
+        <field name="name">performance.history.search</field>
+        <field name="model">performance.history</field>
+        <field name="arch" type="xml">
+            <search string="Search Performance History">
+                <field name="partner_id" domain="[('customer', '=', True)]" />
+                <group expand="0" string="Group By">
+                    <filter string="Customer" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Month" context="{'group_by': 'months'}"/>
+                    <filter string="Quarter" context="{'group_by': 'quarters'}"/>
+                    <filter string="Year" context="{'group_by': 'years'}"/>
+                    <filter string="Type" context="{'group_by': 'performance_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
     <record id="action_performance_history_form" model="ir.actions.act_window">
         <field name="name">Performance History</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">performance.history</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,search</field>
         <field name="help" type="html">
           <p class="oe_view_nocontent_create">
             Click to add Performance History.
