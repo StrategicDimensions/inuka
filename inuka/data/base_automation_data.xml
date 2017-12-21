@@ -227,4 +227,28 @@ for record in records:
         </field>
     </record>
 
+    <record id="rule_send_sms_ruby_status" model="base.automation">
+        <field name="name">Send SMS - Ruby Status</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="state">code</field>
+        <field name="trigger">on_write</field>
+        <field name="active" eval="True"/>
+        <field name="filter_pre_domain">[("customer", "=", True), ("status", "!=", "ruby")]</field>
+        <field name="filter_domain">[("customer", "=", True), ("status", "=", "ruby")]</field>
+        <field name="code">
+for record in records:
+  if record.mobile:
+    sms_template = env.ref('sms_frame.sms_template_inuka_international')
+    msg_compose = env['sms.compose'].create({
+        'record_id': record.id,
+        'model': 'res.partner',
+        'sms_template_id': sms_template.id,
+        'from_mobile_id': env.ref('sms_frame.sms_number_inuka_international').id,
+        'to_number': record.mobile,
+        'sms_content': """INUKA RUBY Leadership Status %s %s,we are SO PROUD of you for achieving RUBY Status YOU are climbing the ladder of SUCCESS!Let's work together to grow you to EMERALD Status to also start earning Quarterly Maintenance Bonuses Reply/Call our Helpdesk for advice on 27219499850 Why wait?""" %(record.first_name, record.last_name)
+    })
+    msg_compose.send_entity()
+        </field>
+    </record>
+
 </odoo>
