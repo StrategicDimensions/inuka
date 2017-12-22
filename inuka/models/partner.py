@@ -186,6 +186,7 @@ class ResPartner(models.Model):
     o_new_junior_recruits_ytd = fields.Integer("O_# of New Junior Recruits (YTD)")
 
     performance_history_count = fields.Integer(compute="_compute_performance_history_count", string="Performance History Count")
+    property_product_pricelist = fields.Many2one(track_visibility='onchange')
 
 #     _sql_constraints = [
 #         ('mobile_uniq', 'unique(mobile)', 'Mobile should be unique.'),
