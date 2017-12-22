@@ -407,6 +407,29 @@ class ResPartner(models.Model):
                     })
                     ticket.message_subscribe(channel_ids=[channel.id])
 
+    @api.multi
+    def create_helpdesk_ticket(self):
+        HelpDeskTicket = self.env['helpdesk.ticket']
+        team = self.env['helpdesk.team'].search([('name', '=', 'Escalations')], limit=1)
+        ticket_type = self.env['helpdesk.ticket.type'].search([('name', '=', 'Other')], limit=1)
+        channel = self.env['mail.channel'].search([('name', '=', 'Escalations')], limit=1)
+        tag = self.env['helpdesk.tag'].search([('name', '=', 'Status Change')], limit=1)
+        user = self.env['res.users'].search([('login', '=', 'alma@inuka.co.za')], limit=1)
+        for customer in self:
+            ticket = HelpDeskTicket.create({
+                'name': """%s %s has achieved %s status""" %(customer.first_name, customer.last_name, customer.status),
+                'team_id': team.id,
+                'user_id': user.id,
+                'priority': '2',
+                'description': """%s %s has achieved %s status""" %(customer.first_name, customer.last_name, customer.status),
+                'partner_id': customer.id,
+                'mobile': customer.mobile,
+                'partner_email': customer.email,
+                'ticket_type_id': ticket_type.id,
+                'tag_ids': [(6, 0, tag.ids)],
+            })
+            ticket.message_subscribe(channel_ids=[channel.id])
+
     def _compute_performance_history_count(self):
         PerformanceHistory = self.env['performance.history']
         for partner in self:

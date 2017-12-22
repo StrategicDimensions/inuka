@@ -303,4 +303,17 @@ for partner in records:
         </field>
     </record>
 
+    <record id="rule_create_helpdesk_ticket_change_status" model="base.automation">
+        <field name="name">Create a Helpdesk Ticket - Member Status Change</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="state">code</field>
+        <field name="trigger">on_write</field>
+        <field name="active" eval="True"/>
+        <field name="filter_pre_domain">[('status','in', ['candidate','new','junior','senior','pearl','ruby','emerald']),('customer','=',True)]</field>
+        <field name="filter_domain">[('status','in', ['sapphire','diamond','double_diamond','triple_diamond','exective_diamond','presidential']),('customer','=',True)]</field>
+        <field name="code">
+records.create_helpdesk_ticket()
+        </field>
+    </record>
+
 </odoo>
