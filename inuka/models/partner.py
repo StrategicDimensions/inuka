@@ -455,6 +455,22 @@ class PerformanceHistory(models.Model):
         ('2022', '2022')
         ], string='Year')
 
+    status = fields.Selection([
+        ('candidate', 'Candidate'),
+        ('new', 'New'),
+        ('junior', 'Junior'),
+        ('senior', 'Senior'),
+        ('pearl', 'Pearl'),
+        ('ruby', 'Ruby'),
+        ('emerald', 'Emerald'),
+        ('sapphire', 'Sapphire'),
+        ('diamond', 'Diamond'),
+        ('double_diamond', 'Double Diamond'),
+        ('triple_diamond', 'Triple Diamond'),
+        ('exective_diamond', 'Exective Diamond'),
+        ('presidential', 'Presidential')
+        ], string='Status', default='candidate')
+
     personal_pv = fields.Float("Personal PV")
     pv_downline_1 = fields.Float("PV Downline 1")
     pv_downline_2 = fields.Float("PV Downline 2")
