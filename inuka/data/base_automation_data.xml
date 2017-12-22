@@ -275,4 +275,32 @@ for record in records:
         </field>
     </record>
 
+    <record id="rule_update_pricelist_change_status" model="base.automation">
+        <field name="name">Update Pricelist - Member Status Change</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="state">code</field>
+        <field name="trigger">on_write</field>
+        <field name="active" eval="True"/>
+        <field name="filter_pre_domain">[("customer", "=", True)]</field>
+        <field name="filter_domain">[("customer", "=", True)]</field>
+        <field name="code">
+Pricelist = env['product.pricelist']
+for partner in records:
+  company = partner.company_id.name
+  if partner.status == 'new':
+    if company == 'INUKA':
+      pricelist = Pricelist.search([('name', '=', 'New Pricelist')], limit=1)
+    else:
+      pricelist = Pricelist.search([('name', '=', 'New Pricelist (Namibia)')], limit=1)
+    partner.write({'property_product_pricelist': pricelist.id})
+
+  elif partner.status != 'new':
+    if company == 'INUKA':
+      pricelist = Pricelist.search([('name', '=', 'Established Pricelist')], limit=1)
+    else:
+      pricelist = Pricelist.search([('name', '=', 'Established Pricelist (Namibia)')], limit=1)
+    partner.write({'property_product_pricelist': pricelist.id})
+        </field>
+    </record>
+
 </odoo>
