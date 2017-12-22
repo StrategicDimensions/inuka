@@ -331,7 +331,7 @@
         <field name="name">performance.history.tree</field>
         <field name="model">performance.history</field>
         <field name="arch" type="xml">
-            <tree string="Performance History" create="false">
+            <tree string="Performance History">
                 <field name="partner_id" domain="[('customer','=',True)]"/>
                 <field name="performance_type"/>
                 <field name="date"/>
