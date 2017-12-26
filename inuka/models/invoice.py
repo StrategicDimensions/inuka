@@ -54,8 +54,8 @@ class AccountInvoice(models.Model):
                     'context': context,
                     'target': 'new'
                 }
-            if invoice.type == 'in_invoice' and not invoice.approved_for_payment:
-                raise UserError(_('Vendor bill should be approved for payment before you Validate.'))
+#             if invoice.type == 'in_invoice' and not invoice.approved_for_payment:
+#                 raise UserError(_('Vendor bill should be approved for payment before you Validate.'))
         return super(AccountInvoice, self).action_invoice_open()
 
     @api.multi

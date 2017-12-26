@@ -194,6 +194,71 @@ class ResPartner(models.Model):
 #         ('ref_uniq', 'unique(ref)', 'Internal Reference should be unique.'),
 #     ]
 
+    @api.model
+    def get_month_interval(self, current_date):
+        first_date = current_date.replace(day = 7)
+        next_first_date = current_date + relativedelta(day=1, months=1) # Getting 1st of next month
+        last_date = next_first_date.replace(day = 6)
+        return first_date, last_date
+
+    def compute_personal_pv_month(self):
+        Invoice = self.env['account.invoice']
+        first_date, last_date = self.get_month_interval(date.today())
+        for partner in self:
+            invoices = Invoice.search([('partner_id', '=', partner.id), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
+            personal_pv_month =  sum(invoices.mapped('total_pv'))
+
+            downline1_partner = partner.search([('upline', '=', partner.id), ('customer', '=', True)])
+            downline1_invoices = Invoice.search([('partner_id', 'in', downline1_partner.ids), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
+            pv_downline_1_month = sum(downline1_invoices.mapped('total_pv'))
+
+            downline2_partner = partner.search([('upline', 'in', downline1_partner.ids), ('customer', '=', True)])
+            downline2_invoices = Invoice.search([('partner_id', 'in', downline2_partner.ids), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
+            pv_downline_2_month = sum(downline2_invoices.mapped('total_pv'))
+
+            downline3_partner = partner.search([('upline', 'in', downline2_partner.ids), ('customer', '=', True)])
+            downline3_invoices = Invoice.search([('partner_id', 'in', downline3_partner.ids), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
+            pv_downline_3_month = sum(downline3_invoices.mapped('total_pv'))
+
+            downline4_partner = partner.search([('upline', 'in', downline3_partner.ids), ('customer', '=', True)])
+            downline4_invoices = Invoice.search([('partner_id', 'in', downline4_partner.ids), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
+            pv_downline_4_month = sum(downline4_invoices.mapped('total_pv'))
+
+            group_pv_month = pv_downline_1_month + pv_downline_2_month + pv_downline_3_month + pv_downline_4_month
+
+            is_active_month = False
+            if personal_pv_month >= 5:
+                is_active_month = True
+
+            is_new_month = False
+            join_date = fields.Date.from_string(partner.join_date)
+            if join_date >= first_date and join_date <= last_date:
+                is_new_month = True
+
+            is_vr_earner = False
+            if personal_pv_month >= 20 and group_pv_month >= 45:
+                is_vr_earner = True
+
+            is_new_senior_month = False
+            if is_new_month == True and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond', 'exective_diamond', 'presidential'):
+                is_new_senior_month = True
+
+            is_new_junior_month = False
+            if is_new_month == True and partner.status in ('junior', 'senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond', 'exective_diamond', 'presidential'):
+                is_new_junior_month = True
+
+            is_new_ruby_month = False
+            if is_new_month == True and partner.status in ('ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond', 'exective_diamond', 'presidential'):
+                is_new_ruby_month = True
+
+            is_new_ruby_month = False
+            if is_new_month == True and partner.status in ('ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond', 'exective_diamond', 'presidential'):
+                is_new_ruby_month = True
+
+            personal_members_month = len(downline1_partner.filtered(lambda partner: partner.is_active_mtd)) # of Active Downline (MTD)
+            new_members_month = len(downline1_partner.filtered(lambda partner: partner.is_new_mtd)) # of New Members (MTD)
+            vr_earner_month = len(downline1_partner.filtered(lambda partner: partner.is_vr_earner_mtd)) # of VR Earners (MTD)
+
     def _compute_is_admin(self):
         for partner in self:
             if partner.env.user._is_superuser():
