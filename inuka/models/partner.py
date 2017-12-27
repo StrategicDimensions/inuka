@@ -259,6 +259,27 @@ class ResPartner(models.Model):
             new_senior_recruits_month = len(downline1_partner.filtered(lambda partner: partner.is_new_mtd and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Senior Recruits (MTD)
             new_junior_recruits_month = len(downline1_partner.filtered(lambda partner: partner.is_new_mtd and partner.status in ('junior','senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Junior Recruits (MTD)
 
+            partner_dict = {
+                'o_personal_pv_mtd': personal_pv_month,
+                'o_pv_downline_1_mtd': pv_downline_1_month,
+                'o_pv_downline_2_mtd': pv_downline_2_month,
+                'o_pv_downline_3_mtd': pv_downline_3_month,
+                'o_pv_downline_4_mtd': pv_downline_4_month,
+                'o_pv_tot_group_mtd': group_pv_month,
+                'o_personal_members_mtd': personal_members_month,
+                'o_new_members_mtd': new_members_month,
+                'o_is_active_mtd': is_active_month,
+                'o_is_new_mtd': is_new_month,
+                'o_is_vr_earner_mtd': is_vr_earner_month,
+                'o_is_new_senior_mtd': is_new_senior_month,
+                'o_is_new_junior_mtd': is_new_junior_month,
+                'o_is_new_ruby_mtd': is_new_ruby_month,
+                'o_vr_earner_mtd': vr_earner_month,
+                'o_new_senior_recruits_mtd': new_senior_recruits_month,
+                'o_new_junior_recruits_mtd': new_junior_recruits_month,
+            }
+            partner.write(partner_dict)
+
     @api.model
     def get_quarter_interval(self, current_date):
         if current_date.month <= 6 and current_date.day < 7:
