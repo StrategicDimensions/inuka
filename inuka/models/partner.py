@@ -201,10 +201,12 @@ class ResPartner(models.Model):
         last_date = next_first_date.replace(day = 6)
         return first_date, last_date
 
-    def compute_personal_pv_month(self):
+    @api.model
+    def compute_mtd(self):
         Invoice = self.env['account.invoice']
         first_date, last_date = self.get_month_interval(date.today())
-        for partner in self:
+        partners = self.search([('customer', '=', True)])
+        for partner in partners:
             invoices = Invoice.search([('partner_id', '=', partner.id), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
             personal_pv_month =  sum(invoices.mapped('total_pv'))
 
@@ -224,7 +226,7 @@ class ResPartner(models.Model):
             downline4_invoices = Invoice.search([('partner_id', 'in', downline4_partner.ids), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
             pv_downline_4_month = sum(downline4_invoices.mapped('total_pv'))
 
-            group_pv_month = pv_downline_1_month + pv_downline_2_month + pv_downline_3_month + pv_downline_4_month
+            group_pv_month = personal_pv_month + pv_downline_1_month + pv_downline_2_month + pv_downline_3_month + pv_downline_4_month
 
             is_active_month = False
             if personal_pv_month >= 5:
@@ -258,6 +260,8 @@ class ResPartner(models.Model):
             personal_members_month = len(downline1_partner.filtered(lambda partner: partner.is_active_mtd)) # of Active Downline (MTD)
             new_members_month = len(downline1_partner.filtered(lambda partner: partner.is_new_mtd)) # of New Members (MTD)
             vr_earner_month = len(downline1_partner.filtered(lambda partner: partner.is_vr_earner_mtd)) # of VR Earners (MTD)
+            new_senior_recruits_month = len(downline1_partner.filtered(lambda partner: partner.is_new_mtd and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Senior Recruits (MTD)
+            new_junior_recruits_month = len(downline1_partner.filtered(lambda partner: partner.is_new_mtd and partner.status in ('junior','senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Junior Recruits (MTD)
 
     def _compute_is_admin(self):
         for partner in self:
