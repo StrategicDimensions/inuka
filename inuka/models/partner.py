@@ -365,6 +365,27 @@ class ResPartner(models.Model):
             new_senior_recruits_quarter = len(downline1_partner.filtered(lambda partner: partner.is_new_qtd and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Senior Recruits (QTD)
             new_junior_recruits_quarter = len(downline1_partner.filtered(lambda partner: partner.is_new_qtd and partner.status in ('junior','senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Junior Recruits (QTD)
 
+            partner_dict = {
+                'o_personal_pv_qtd': personal_pv_quarter,
+                'o_pv_downline_1_qtd': pv_downline_1_quarter,
+                'o_pv_downline_2_qtd': pv_downline_2_quarter,
+                'o_pv_downline_3_qtd': pv_downline_3_quarter,
+                'o_pv_downline_4_qtd': pv_downline_4_quarter,
+                'o_pv_tot_group_qtd': group_pv_quarter,
+                'o_personal_members_qtd': personal_members_quarter,
+                'o_new_members_qtd': new_members_quarter,
+                'o_is_active_qtd': is_active_quarter,
+                'o_is_new_qtd': is_new_quarter,
+                'o_is_vr_earner_qtd': is_vr_earner_quarter,
+                'o_is_new_senior_qtd': is_new_senior_quarter,
+                'o_is_new_junior_qtd': is_new_junior_quarter,
+                'o_is_new_ruby_qtd': is_new_ruby_quarter,
+                'o_vr_earner_qtd': vr_earner_quarter,
+                'o_new_senior_recruits_qtd': new_senior_recruits_quarter,
+                'o_new_junior_recruits_qtd': new_junior_recruits_quarter,
+            }
+            partner.write(partner_dict)
+
     def _compute_is_admin(self):
         for partner in self:
             if partner.env.user._is_superuser():
