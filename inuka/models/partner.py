@@ -205,7 +205,7 @@ class ResPartner(models.Model):
     def compute_mtd(self):
         Invoice = self.env['account.invoice']
         first_date, last_date = self.get_month_interval(date.today())
-        partners = self.search([('customer', '=', True)])
+        partners = self.search([('customer', '=', True)], order='id desc')
         for partner in partners:
             invoices = Invoice.search([('partner_id', '=', partner.id), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
             personal_pv_month =  sum(invoices.mapped('total_pv'))
@@ -237,9 +237,9 @@ class ResPartner(models.Model):
             if join_date >= first_date and join_date <= last_date:
                 is_new_month = True
 
-            is_vr_earner = False
+            is_vr_earner_month = False
             if personal_pv_month >= 20 and group_pv_month >= 45:
-                is_vr_earner = True
+                is_vr_earner_month = True
 
             is_new_senior_month = False
             if is_new_month == True and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond', 'exective_diamond', 'presidential'):
@@ -253,15 +253,96 @@ class ResPartner(models.Model):
             if is_new_month == True and partner.status in ('ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond', 'exective_diamond', 'presidential'):
                 is_new_ruby_month = True
 
-            is_new_ruby_month = False
-            if is_new_month == True and partner.status in ('ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond', 'exective_diamond', 'presidential'):
-                is_new_ruby_month = True
-
             personal_members_month = len(downline1_partner.filtered(lambda partner: partner.is_active_mtd)) # of Active Downline (MTD)
             new_members_month = len(downline1_partner.filtered(lambda partner: partner.is_new_mtd)) # of New Members (MTD)
             vr_earner_month = len(downline1_partner.filtered(lambda partner: partner.is_vr_earner_mtd)) # of VR Earners (MTD)
             new_senior_recruits_month = len(downline1_partner.filtered(lambda partner: partner.is_new_mtd and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Senior Recruits (MTD)
             new_junior_recruits_month = len(downline1_partner.filtered(lambda partner: partner.is_new_mtd and partner.status in ('junior','senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Junior Recruits (MTD)
+
+    @api.model
+    def get_quarter_interval(self, current_date):
+        if current_date.month <= 6 and current_date.day < 7:
+            current_year = current_date.year - 1
+        elif current_date.month >= 6 and current_date.day >= 7:
+            current_year = current_date.year
+
+        q1_start_date = date(current_year, 6, 7)
+        q1_end_date = date(current_year, 9, 6)
+        if current_date >= q1_start_date and current_date <= q1_end_date:
+            return q1_start_date, q1_end_date
+
+        q2_start_date = date(current_year, 9, 7)
+        q2_end_date = date(current_year, 12, 6)
+        if current_date >= q2_start_date and current_date <= q2_end_date:
+            return q2_start_date, q2_end_date
+
+        q3_start_date = date(current_year, 12, 7)
+        q3_end_date = date(current_year+1, 3, 6)
+        if current_date >= q3_start_date and current_date <= q3_end_date:
+            return q3_start_date, q3_end_date
+
+        q4_start_date = date(current_year, 3, 7)
+        q4_end_date = date(current_year+1, 6, 6)
+        if current_date >= q4_start_date and current_date <= q4_end_date:
+            return q4_start_date, q4_end_date
+
+    @api.model
+    def compute_qtd(self):
+        Invoice = self.env['account.invoice']
+        first_date, last_date = self.get_quarter_interval(date.today())
+        partners = self.search([('customer', '=', True)], order='id desc')
+        for partner in partners:
+            invoices = Invoice.search([('partner_id', '=', partner.id), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
+            personal_pv_quarter =  sum(invoices.mapped('total_pv'))
+
+            downline1_partner = partner.search([('upline', '=', partner.id), ('customer', '=', True)])
+            downline1_invoices = Invoice.search([('partner_id', 'in', downline1_partner.ids), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
+            pv_downline_1_quarter = sum(downline1_invoices.mapped('total_pv'))
+
+            downline2_partner = partner.search([('upline', 'in', downline1_partner.ids), ('customer', '=', True)])
+            downline2_invoices = Invoice.search([('partner_id', 'in', downline2_partner.ids), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
+            pv_downline_2_quarter = sum(downline2_invoices.mapped('total_pv'))
+
+            downline3_partner = partner.search([('upline', 'in', downline2_partner.ids), ('customer', '=', True)])
+            downline3_invoices = Invoice.search([('partner_id', 'in', downline3_partner.ids), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
+            pv_downline_3_quarter = sum(downline3_invoices.mapped('total_pv'))
+
+            downline4_partner = partner.search([('upline', 'in', downline3_partner.ids), ('customer', '=', True)])
+            downline4_invoices = Invoice.search([('partner_id', 'in', downline4_partner.ids), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
+            pv_downline_4_quarter = sum(downline4_invoices.mapped('total_pv'))
+
+            group_pv_quarter = personal_pv_quarter + pv_downline_1_quarter + pv_downline_2_quarter + pv_downline_3_quarter + pv_downline_4_quarter
+
+            is_active_quarter = False
+            if personal_pv_quarter >= 15:
+                is_active_quarter = True
+
+            is_new_quarter = False
+            join_date = fields.Date.from_string(partner.join_date)
+            if join_date >= first_date and join_date <= last_date:
+                is_new_quarter = True
+
+            is_vr_earner_quarter = False
+            if personal_pv_quarter >= 20 and group_pv_quarter >= 45:
+                is_vr_earner_quarter = True
+
+            is_new_senior_quarter = False
+            if is_new_quarter == True and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond', 'exective_diamond', 'presidential'):
+                is_new_senior_quarter = True
+
+            is_new_junior_quarter = False
+            if is_new_quarter == True and partner.status in ('junior', 'senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond', 'exective_diamond', 'presidential'):
+                is_new_junior_quarter = True
+
+            is_new_ruby_quarter = False
+            if is_new_quarter == True and partner.status in ('ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond', 'exective_diamond', 'presidential'):
+                is_new_ruby_quarter = True
+
+            personal_members_quarter = len(downline1_partner.filtered(lambda partner: partner.is_active_qtd)) # of Active Downline (QTD)
+            new_members_quarter = len(downline1_partner.filtered(lambda partner: partner.is_new_qtd)) # of New Members (QTD)
+            vr_earner_quarter = len(downline1_partner.filtered(lambda partner: partner.is_vr_earner_qtd)) # of VR Earners (QTD)
+            new_senior_recruits_quarter = len(downline1_partner.filtered(lambda partner: partner.is_new_qtd and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Senior Recruits (QTD)
+            new_junior_recruits_quarter = len(downline1_partner.filtered(lambda partner: partner.is_new_qtd and partner.status in ('junior','senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Junior Recruits (QTD)
 
     def _compute_is_admin(self):
         for partner in self:
