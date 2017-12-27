@@ -328,4 +328,16 @@ records.create_helpdesk_ticket()
         <field name="nextcall" eval="(DateTime.now() + timedelta(days=0)).strftime('%Y-%m-%d 09:00:00')" />
     </record>
 
+    <record id="res_partner_compute_qtd" model="ir.cron">
+        <field name="name">Calculate QTD</field>
+        <field name="model_id" ref="model_res_partner"/>
+        <field name="state">code</field>
+        <field name="code">model.compute_qtd()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(days=0)).strftime('%Y-%m-%d 08:00:00')" />
+    </record>
+
 </odoo>

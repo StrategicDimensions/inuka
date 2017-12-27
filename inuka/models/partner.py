@@ -234,7 +234,7 @@ class ResPartner(models.Model):
 
             is_new_month = False
             join_date = fields.Date.from_string(partner.join_date)
-            if join_date >= first_date and join_date <= last_date:
+            if join_date and join_date >= first_date and join_date <= last_date:
                 is_new_month = True
 
             is_vr_earner_month = False
@@ -319,7 +319,7 @@ class ResPartner(models.Model):
 
             is_new_quarter = False
             join_date = fields.Date.from_string(partner.join_date)
-            if join_date >= first_date and join_date <= last_date:
+            if join_date and join_date >= first_date and join_date <= last_date:
                 is_new_quarter = True
 
             is_vr_earner_quarter = False
