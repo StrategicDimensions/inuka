@@ -282,9 +282,9 @@ class ResPartner(models.Model):
 
     @api.model
     def get_quarter_interval(self, current_date):
-        if current_date.month <= 6 and current_date.day < 7:
+        if current_date.month < 6 or (current_date.month == 6 and current_date.day < 7):
             current_year = current_date.year - 1
-        elif current_date.month >= 6 and current_date.day >= 7:
+        elif current_date.month > 6 or (current_date.month == 6 and current_date.day > 6):
             current_year = current_date.year
 
         q1_start_date = date(current_year, 6, 7)
@@ -385,6 +385,17 @@ class ResPartner(models.Model):
                 'o_new_junior_recruits_qtd': new_junior_recruits_quarter,
             }
             partner.write(partner_dict)
+
+    @api.model
+    def get_year_interval(self, current_date):
+        if current_date.month < 6 or (current_date.month == 6 and current_date.day < 7):
+            current_year = current_date.year - 1
+        elif current_date.month > 6 or (current_date.month == 6 and current_date.day > 6):
+            current_year = current_date.year
+
+        start_date = date(current_year, 6, 7)
+        end_date = date(current_year+1, 6, 6)
+        return start_date, end_date
 
     def _compute_is_admin(self):
         for partner in self:
