@@ -49,3 +49,28 @@ class SmsRecipients(models.Model):
     unsubscription_date = fields.Datetime("Unsubscription Date")
     optout = fields.Boolean("Opt Out")
     sms_list_id = fields.Many2one("sms.list", string="SMS List")
+
+
+class MassSms(models.Model):
+    _name = 'mass.sms'
+    _description = 'Mass SMS'
+
+    name = fields.Char(string="Name")
+    from_mobile_id = fields.Many2one("sms.number", string="From")
+    recipient_ids = fields.Many2many('sms.list', 'mass_sms_list_rel', 'mass_sms_id', 'list_id', string='Recipients')
+    sms_template_id = fields.Many2one("sms.template", string="Template")
+    sms_content = fields.Text("SMS Body")
+    scheduled_date = fields.Datetime("Scheduled Date")
+    status = fields.Selection([
+        ('draft', 'Draft'),
+        ('queue', 'In Queue'),
+        ('sending', 'Sending'),
+        ('sent', 'Sent'),
+        ('cancelled', 'Cancelled')
+        ], string='Status', default='draft', track_visibility='onchange')
+    batch_mode = fields.Boolean("Batch Mode")
+    batch_size = fields.Integer("Batch Size", default=1000)
+    sent = fields.Integer("SMS Sent's")
+    pending = fields.Integer("SMS Pending")
+    received = fields.Integer("SMS Received")
+    errors = fields.Integer("Errors")

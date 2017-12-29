@@ -130,9 +130,84 @@
         </field>
     </record>
 
+    <record id="view_mass_sms_form" model="ir.ui.view">
+        <field name="name">mass.sms.form</field>
+        <field name="model">mass.sms</field>
+        <field name="arch" type="xml">
+            <form string="Mass SMS">
+                <header>
+                    <field name="status" widget="statusbar" statusbar_visible="draft,queue,sending,sent"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="from_mobile_id"/>
+                            <field name="sms_template_id"/>
+                        </group>
+                        <group>
+                            <field name="recipient_ids" widget="many2many_tags"/>
+                            <field name="scheduled_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="SMS Body">
+                            <field name="sms_content"/>
+                        </page>
+                        <page string="Options">
+                            <group>
+                                <group>
+                                    <field name="batch_mode"/>
+                                </group>
+                                <group>
+                                    <field name="batch_size"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_mass_sms_tree" model="ir.ui.view">
+        <field name="name">mass.sms.tree</field>
+        <field name="model">mass.sms</field>
+        <field name="arch" type="xml">
+            <tree string="Mass SMS">
+                <field name="name"/>
+                <field name="scheduled_date"/>
+                <field name="status"/>
+                <field name="sent"/>
+                <field name="pending"/>
+                <field name="received"/>
+                <field name="errors"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_mass_sms_form" model="ir.actions.act_window">
+        <field name="name">Mass SMS</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">mass.sms</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add Mass SMS.
+          </p>
+        </field>
+    </record>
+
     <menuitem id="menu_sms_inuka_root" name="SMS" web_icon="fa fa-random,#f1c40f,#34495e"/>
 
     <menuitem id="menu_mass_sms" name="Mass SMS" action="action_sms_list_form" parent="menu_sms_inuka_root" sequence="1"/>
+    <menuitem id="menu_sms_list" name="SMS List" action="action_sms_list_form" parent="menu_sms_inuka_root" sequence="1"/>
+    <menuitem id="menu_mass_sms" name="Mass SMS" action="action_mass_sms_form" parent="menu_sms_inuka_root" sequence="2"/>
 
     <menuitem id="menu_sms_history" name="SMS History" parent="menu_sms_inuka_root" sequence="2"/>
     <menuitem id="menu_inbound_sms_history" name="Inbound" parent="menu_sms_history" sequence="1"/>
