@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_sms_list_form" model="ir.ui.view">
+        <field name="name">sms.list.form</field>
+        <field name="model">sms.list</field>
+        <field name="arch" type="xml">
+            <form string="Mass List">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="view_sms_recipients"
+                            icon="fa-user">
+                            <field string="Recipients" name="sms_recipients_count" widget="statinfo"/>
+                        </button>
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="var1"/>
+                            <field name="var3"/>
+                            <field name="var5"/>
+                        </group>
+                        <group>
+                            <field name="var2"/>
+                            <field name="var4"/>
+                            <field name="var6"/>
+                        </group>
+                    </group>
+                    <field name="description" class="oe_inline" placeholder="Description ..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_sms_list_tree" model="ir.ui.view">
+        <field name="name">sms.list.tree</field>
+        <field name="model">sms.list</field>
+        <field name="arch" type="xml">
+            <tree string="Mass List">
+                <field name="name"/>
+                <field name="create_date" string="Creation Date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_sms_list_form" model="ir.actions.act_window">
+        <field name="name">Mass List</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sms.list</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add Mass List.
+          </p>
+        </field>
+    </record>
+
+    <record id="view_sms_recipients_form" model="ir.ui.view">
+        <field name="name">sms.recipients.form</field>
+        <field name="model">sms.recipients</field>
+        <field name="arch" type="xml">
+            <form string="SMS Recipients">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="member_id"/>
+                            <field name="mobile"/>
+                            <field name="var1"/>
+                            <field name="var3"/>
+                            <field name="var5"/>
+                            <field name="optout"/>
+                            <field name="sms_list_id"/>
+                        </group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="create_date" string="Created On"/>
+                            <field name="var2"/>
+                            <field name="var4"/>
+                            <field name="var6"/>
+                            <field name="unsubscription_date"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_sms_recipients_tree" model="ir.ui.view">
+        <field name="name">sms.recipients.tree</field>
+        <field name="model">sms.recipients</field>
+        <field name="arch" type="xml">
+            <tree string="SMS Recipients">
+                <field name="name"/>
+                <field name="member_id"/>
+                <field name="partner_id"/>
+                <field name="mobile"/>
+                <field name="var1"/>
+                <field name="var2"/>
+                <field name="var3"/>
+                <field name="var4"/>
+                <field name="var5"/>
+                <field name="optout"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_sms_recipients_form" model="ir.actions.act_window">
+        <field name="name">SMS Recipients</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sms.recipients</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add SMS Recipients.
+          </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_sms_inuka_root" name="SMS" web_icon="fa fa-random,#f1c40f,#34495e"/>
+
+    <menuitem id="menu_mass_sms" name="Mass SMS" action="action_sms_list_form" parent="menu_sms_inuka_root" sequence="1"/>
+
+    <menuitem id="menu_sms_history" name="SMS History" parent="menu_sms_inuka_root" sequence="2"/>
+    <menuitem id="menu_inbound_sms_history" name="Inbound" parent="menu_sms_history" sequence="1"/>
+    <menuitem id="menu_outbound_sms_history" name="Outbound" parent="menu_sms_history" sequence="2"/>
+
+</odoo>
