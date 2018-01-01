@@ -359,11 +359,11 @@ class ResPartner(models.Model):
             if is_new_quarter == True and partner.status in ('ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond', 'exective_diamond', 'presidential'):
                 is_new_ruby_quarter = True
 
-            personal_members_quarter = len(downline1_partner.filtered(lambda partner: partner.is_active_qtd)) # of Active Downline (QTD)
-            new_members_quarter = len(downline1_partner.filtered(lambda partner: partner.is_new_qtd)) # of New Members (QTD)
-            vr_earner_quarter = len(downline1_partner.filtered(lambda partner: partner.is_vr_earner_qtd)) # of VR Earners (QTD)
-            new_senior_recruits_quarter = len(downline1_partner.filtered(lambda partner: partner.is_new_qtd and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Senior Recruits (QTD)
-            new_junior_recruits_quarter = len(downline1_partner.filtered(lambda partner: partner.is_new_qtd and partner.status in ('junior','senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Junior Recruits (QTD)
+            personal_members_quarter = len(downline1_partner.filtered(lambda partner: partner.o_is_active_qtd)) # of Active Downline (QTD)
+            new_members_quarter = len(downline1_partner.filtered(lambda partner: partner.o_is_new_qtd)) # of New Members (QTD)
+            vr_earner_quarter = len(downline1_partner.filtered(lambda partner: partner.o_is_vr_earner_qtd)) # of VR Earners (QTD)
+            new_senior_recruits_quarter = len(downline1_partner.filtered(lambda partner: partner.o_is_new_qtd and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Senior Recruits (QTD)
+            new_junior_recruits_quarter = len(downline1_partner.filtered(lambda partner: partner.o_is_new_qtd and partner.status in ('junior','senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Junior Recruits (QTD)
 
             partner_dict = {
                 'o_personal_pv_qtd': personal_pv_quarter,
