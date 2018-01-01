@@ -260,6 +260,36 @@
         </field>
     </record>
 
+    <record id="action_sms_message_form_inbound" model="ir.actions.act_window">
+        <field name="name">Inbound</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sms.message</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('direction','=','I')]</field>
+        <field name="context">{'default_direction':'I'}</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add Inbound SMS Message.
+          </p>
+        </field>
+    </record>
+
+    <record id="action_sms_message_form_outbound" model="ir.actions.act_window">
+        <field name="name">Outbound</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sms.message</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('direction','=','O')]</field>
+        <field name="context">{'default_direction':'O'}</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add Outbound SMS Message.
+          </p>
+        </field>
+    </record>
+
     <menuitem id="menu_sms_inuka_root" name="SMS" web_icon="fa fa-random,#f1c40f,#34495e"/>
 
     <menuitem id="menu_mass_sms" name="Mass SMS" action="action_sms_list_form" parent="menu_sms_inuka_root" sequence="1"/>
@@ -271,8 +301,8 @@
     <menuitem id="menu_outbound_sms_history" name="Outbound" parent="menu_sms_history" sequence="2"/>
 
     <menuitem id="menu_sms_shortcode" name="Shortcodes" parent="menu_sms_inuka_root" sequence="3"/>
-    <menuitem id="menu_inbound_sms_message" name="Inbound" parent="menu_sms_shortcode" sequence="1"/>
-    <menuitem id="menu_outbound_sms_message" name="Outbound" parent="menu_sms_shortcode" sequence="2"/>
-    <menuitem id="menu_sms_shortcode_child" action="action_sms_shortcode_form" name="Shortcodes" parent="menu_sms_shortcode" sequence="3"/>
+    <menuitem id="menu_inbound_sms_message" action="action_sms_message_form_inbound" name="Inbound" parent="menu_sms_shortcode" sequence="1"/>
+    <menuitem id="menu_outbound_sms_message" action="action_sms_message_form_outbound" name="Outbound" parent="menu_sms_shortcode" sequence="2"/>
+    <menuitem id="menu_sms_shortcode_child" action="action_sms_shortcode_form" name="Shortcodes" parent="menu_sms_shortcode" sequence="3"/>sms.message
 
 </odoo>
