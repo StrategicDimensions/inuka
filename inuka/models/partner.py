@@ -253,11 +253,11 @@ class ResPartner(models.Model):
             if is_new_month == True and partner.status in ('ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond', 'exective_diamond', 'presidential'):
                 is_new_ruby_month = True
 
-            personal_members_month = len(downline1_partner.filtered(lambda partner: partner.is_active_mtd)) # of Active Downline (MTD)
-            new_members_month = len(downline1_partner.filtered(lambda partner: partner.is_new_mtd)) # of New Members (MTD)
-            vr_earner_month = len(downline1_partner.filtered(lambda partner: partner.is_vr_earner_mtd)) # of VR Earners (MTD)
-            new_senior_recruits_month = len(downline1_partner.filtered(lambda partner: partner.is_new_mtd and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Senior Recruits (MTD)
-            new_junior_recruits_month = len(downline1_partner.filtered(lambda partner: partner.is_new_mtd and partner.status in ('junior','senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Junior Recruits (MTD)
+            personal_members_month = len(downline1_partner.filtered(lambda partner: partner.o_is_active_mtd)) # of Active Downline (MTD)
+            new_members_month = len(downline1_partner.filtered(lambda partner: partner.o_is_new_mtd)) # of New Members (MTD)
+            vr_earner_month = len(downline1_partner.filtered(lambda partner: partner.o_is_vr_earner_mtd)) # of VR Earners (MTD)
+            new_senior_recruits_month = len(downline1_partner.filtered(lambda partner: partner.o_is_new_mtd and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Senior Recruits (MTD)
+            new_junior_recruits_month = len(downline1_partner.filtered(lambda partner: partner.o_is_new_mtd and partner.status in ('junior','senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Junior Recruits (MTD)
 
             partner_dict = {
                 'o_personal_pv_mtd': personal_pv_month,
