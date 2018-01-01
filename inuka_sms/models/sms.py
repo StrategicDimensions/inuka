@@ -61,7 +61,7 @@ class MassSms(models.Model):
     sms_template_id = fields.Many2one("sms.template", string="Template")
     sms_content = fields.Text("SMS Body")
     scheduled_date = fields.Datetime("Scheduled Date")
-    status = fields.Selection([
+    state = fields.Selection([
         ('draft', 'Draft'),
         ('queue', 'In Queue'),
         ('sending', 'Sending'),
@@ -74,3 +74,26 @@ class MassSms(models.Model):
     pending = fields.Integer("SMS Pending")
     received = fields.Integer("SMS Received")
     errors = fields.Integer("Errors")
+
+    @api.multi
+    def button_test_sms(self):
+        return True
+
+    @api.multi
+    def button_send_all(self):
+        return True
+
+    @api.multi
+    def button_cancel(self):
+        return True
+
+
+class SmsShortcode(models.Model):
+    _name = 'sms.shortcode'
+    _description = 'SMS Shortcode'
+    _rec_name = 'keyword'
+
+    keyword = fields.Char("Keyword")
+    sms_template_id = fields.Many2one("sms.template", string="Template")
+    member_required = fields.Boolean("Member Required")
+    active = fields.Boolean(default=True)
