@@ -302,7 +302,7 @@ class ResPartner(models.Model):
         if current_date >= q3_start_date and current_date <= q3_end_date:
             return q3_start_date, q3_end_date
 
-        q4_start_date = date(current_year, 3, 7)
+        q4_start_date = date(current_year+1, 3, 7)
         q4_end_date = date(current_year+1, 6, 6)
         if current_date >= q4_start_date and current_date <= q4_end_date:
             return q4_start_date, q4_end_date

@@ -337,7 +337,7 @@ records.create_helpdesk_ticket()
         <field name="interval_type">days</field>
         <field name="numbercall">-1</field>
         <field name="doall" eval="False"/>
-        <field name="nextcall" eval="(DateTime.now() + timedelta(days=0)).strftime('%Y-%m-%d 08:00:00')" />
+        <field name="nextcall" eval="(DateTime.now() + timedelta(days=0)).strftime('%Y-%m-%d 20:00:00')" />
     </record>
 
     <record id="res_partner_compute_ytd" model="ir.cron">
@@ -349,7 +349,7 @@ records.create_helpdesk_ticket()
         <field name="interval_type">days</field>
         <field name="numbercall">-1</field>
         <field name="doall" eval="False"/>
-        <field name="nextcall" eval="(DateTime.now() + timedelta(days=0)).strftime('%Y-%m-%d 09:00:00')" />
+        <field name="nextcall" eval="(DateTime.now() + timedelta(days=0)).strftime('%Y-%m-%d 21:00:00')" />
     </record>
 
 </odoo>
