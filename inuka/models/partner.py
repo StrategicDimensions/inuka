@@ -344,7 +344,7 @@ class ResPartner(models.Model):
                 is_new_quarter = True
 
             is_vr_earner_quarter = False
-            if personal_pv_quarter >= 20 and group_pv_quarter >= 45:
+            if personal_pv_quarter >= 60 and group_pv_quarter >= 135:
                 is_vr_earner_quarter = True
 
             is_new_senior_quarter = False
