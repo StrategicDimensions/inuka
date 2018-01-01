@@ -449,11 +449,11 @@ class ResPartner(models.Model):
             if is_new_year == True and partner.status in ('ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond', 'exective_diamond', 'presidential'):
                 is_new_ruby_year = True
 
-            personal_members_year = len(downline1_partner.filtered(lambda partner: partner.is_active_ytd)) # of Active Downline (YTD)
-            new_members_year = len(downline1_partner.filtered(lambda partner: partner.is_new_ytd)) # of New Members (YTD)
-            vr_earner_year = len(downline1_partner.filtered(lambda partner: partner.is_vr_earner_ytd)) # of VR Earners (YTD)
-            new_senior_recruits_year = len(downline1_partner.filtered(lambda partner: partner.is_new_ytd and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Senior Recruits (YTD)
-            new_junior_recruits_year = len(downline1_partner.filtered(lambda partner: partner.is_new_ytd and partner.status in ('junior','senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Junior Recruits (YTD)
+            personal_members_year = len(downline1_partner.filtered(lambda partner: partner.o_is_active_ytd)) # of Active Downline (YTD)
+            new_members_year = len(downline1_partner.filtered(lambda partner: partner.o_is_new_ytd)) # of New Members (YTD)
+            vr_earner_year = len(downline1_partner.filtered(lambda partner: partner.o_is_vr_earner_ytd)) # of VR Earners (YTD)
+            new_senior_recruits_year = len(downline1_partner.filtered(lambda partner: partner.o_is_new_ytd and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Senior Recruits (YTD)
+            new_junior_recruits_year = len(downline1_partner.filtered(lambda partner: partner.o_is_new_ytd and partner.status in ('junior','senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Junior Recruits (YTD)
 
             partner_dict = {
                 'o_personal_pv_ytd': personal_pv_year,
