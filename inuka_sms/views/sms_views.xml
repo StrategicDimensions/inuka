@@ -319,4 +319,9 @@
     <menuitem id="menu_outbound_sms_message" action="action_sms_message_form_outbound" name="Outbound" parent="menu_sms_shortcode" sequence="2"/>
     <menuitem id="menu_sms_shortcode_child" action="action_sms_shortcode_form" name="Shortcodes" parent="menu_sms_shortcode" sequence="3"/>
 
+    <menuitem id="menu_sms_configuration" name="Configuration" parent="menu_sms_inuka_root" sequence="5"/>
+    <menuitem id="menu_sms_accounts" action="sms_frame.sms_account_action" name="SMS Accounts" parent="menu_sms_configuration" sequence="1"/>
+    <menuitem id="menu_sms_numbers" action="sms_frame.sms_number_action" name="SMS Numbers" parent="menu_sms_configuration" sequence="2"/>
+    <menuitem id="menu_sms_templates" action="sms_frame.sms_template_action" name="SMS Templates" parent="menu_sms_configuration" sequence="3"/>
+
 </odoo>
