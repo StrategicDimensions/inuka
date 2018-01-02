@@ -634,9 +634,7 @@ class ResPartner(models.Model):
 
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
-        print ("-----------domain--------------",args)
         result = super(ResPartner, self).search(args, offset, limit, order, count=count)
-        print ("------------result-------------",result)
         return result
 
     @api.model
