@@ -16,7 +16,7 @@ class SmsList(models.Model):
     var6 = fields.Char("VAR 6")
     description = fields.Text()
     active = fields.Boolean(default=True)
-    sms_recipients_count = fields.Integer(compute="_compute_sms_recipients_count")
+    sms_recipients_count = fields.Integer(compute="_compute_sms_recipients_count", string="Number of Recipients")
 
     def _compute_sms_recipients_count(self):
         SmsRecipients = self.env['sms.recipients']

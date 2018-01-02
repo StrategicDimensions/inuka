@@ -46,6 +46,7 @@
             <tree string="Mass List">
                 <field name="name"/>
                 <field name="create_date" string="Creation Date"/>
+                <field name="sms_recipients_count"/>
             </tree>
         </field>
     </record>
