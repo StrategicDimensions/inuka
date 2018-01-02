@@ -51,12 +51,23 @@
         </field>
     </record>
 
+    <record id="view_sms_list_filter" model="ir.ui.view">
+        <field name="name">sms.list.search</field>
+        <field name="model">sms.list</field>
+        <field name="arch" type="xml">
+            <search string="Search SMS List">
+                <field name="name" string="SMS List" filter_domain="['|','|','|','|','|','|',('name','ilike',self),('var1','ilike',self),('var2','ilike',self),('var3','ilike',self),('var4','ilike',self),('var5','ilike',self),('var6','ilike',self)]"/>
+                <filter string="Archived" name="archived" domain="[('active','=',False)]"/>
+           </search>
+        </field>
+    </record>
+
     <record id="action_sms_list_form" model="ir.actions.act_window">
         <field name="name">Mass List</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">sms.list</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,search</field>
         <field name="help" type="html">
           <p class="oe_view_nocontent_create">
             Click to add Mass List.
