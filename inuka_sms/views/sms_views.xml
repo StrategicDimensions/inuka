@@ -304,14 +304,14 @@
 
     <menuitem id="menu_sms_inuka_root" name="SMS" web_icon="fa fa-random,#f1c40f,#34495e"/>
 
-    <menuitem id="menu_sms_history" name="SMS History" parent="menu_sms_inuka_root" sequence="1"/>
+    <menuitem id="menu_sms_customers" name="Customers" action="base.action_partner_form" parent="menu_sms_inuka_root" sequence="1"/>
+
+    <menuitem id="menu_sms_history" name="SMS History" parent="menu_sms_inuka_root" sequence="2"/>
     <menuitem id="menu_inbound_sms_history" action="action_sms_message_form_inbound" name="Inbound" parent="menu_sms_history" sequence="1"/>
     <menuitem id="menu_outbound_sms_history" action="action_sms_message_form_outbound" name="Outbound" parent="menu_sms_history" sequence="2"/>
 
-    <menuitem id="menu_sms_customers" name="Customers" action="base.action_partner_form" parent="menu_sms_inuka_root" sequence="2"/>
-
     <menuitem id="menu_mass_sms" name="Mass SMS" parent="menu_sms_inuka_root" sequence="3"/>
-    <menuitem id="menu_sms_list" name="SMS List" action="action_sms_list_form" parent="menu_mass_sms" sequence="1"/>
+    <menuitem id="menu_sms_list" name="Mass List" action="action_sms_list_form" parent="menu_mass_sms" sequence="1"/>
     <menuitem id="menu_mass_sms_child" name="Mass SMS" action="action_mass_sms_form" parent="menu_mass_sms" sequence="2"/>
 
     <menuitem id="menu_sms_shortcode" name="Shortcodes" parent="menu_sms_inuka_root" sequence="4"/>
