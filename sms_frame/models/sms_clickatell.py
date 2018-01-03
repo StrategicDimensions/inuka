@@ -14,24 +14,6 @@ class SmsGatewayClickatell(models.Model):
         sms_account = self.env['sms.account'].search([('id', '=', sms_gateway_id)], limit=1)
         clickatell1 = Http(sms_account.clicKatell_username, sms_account.clicKatell_password, sms_account.clicKatell_api)
         response = clickatell1.sendMessage(to_number, sms_content.decode('utf-8'))
-        print ("-----------response--------------",response)
-
-        #Checking message delivery status
-        from urllib.request import urlopen
-        from urllib.parse import urlencode
-
-        params = {
-            "user": sms_account.clicKatell_username,
-            "password": sms_account.clicKatell_password,
-            "api_id": sms_account.clicKatell_api,
-            "apimsgid": response[0]['id']
-        }
-
-        print ("------params------------",params)
-        params = urlencode(params).encode("utf-8")
-        f = urlopen("https://api.clickatell.com/http/querymsg", params)
-        print ("-------------status------------",f.read())
-
         return response
 
     def check_messages(self, account_id, message_id=""):
