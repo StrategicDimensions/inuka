@@ -111,7 +111,7 @@ class MassSms(models.Model):
     def send_sms(self):
         self.ensure_one()
         SmsCompose = self.env['sms.compose']
-        participants = get_remaining_recipients()
+        participants = self.get_remaining_recipients()
         for participant in participants:
             if participant.partner_id.mobile:
                 msg_compose = SmsCompose.create({
@@ -128,7 +128,6 @@ class MassSms(models.Model):
     @api.multi
     def generate_participants(self):
         participant = self.env['sms.participant']
-        smslist = self.env['sms.list']
         recipient = self.env['sms.recipients']
         for record in self:
             for list in record.recipient_ids:
