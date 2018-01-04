@@ -93,15 +93,37 @@ class MassSms(models.Model):
             else:
                 mass_sms.next_departure = cron_time
 
+    @api.multi
+    def get_remaining_recipients(self):
+        self.ensure_one()
+        return self.participants.filtered(lambda r: r.state == 'running')
+
     @api.model
     def _process_mass_sms_queue(self):
         mass_sms = self.search([('state', 'in', ('queue', 'sending')), '|', ('scheduled_date', '<', fields.Datetime.now()), ('scheduled_date', '=', False)])
         for sms in mass_sms:
             if len(sms.get_remaining_recipients()) > 0:
                 sms.state = 'sending'
-                sms.send_mail()
+                sms.send_sms()
             else:
                 sms.state = 'sent'
+
+    def send_sms(self):
+        self.ensure_one()
+        SmsCompose = self.env['sms.compose']
+        participants = get_remaining_recipients()
+        for participant in participants:
+            if participant.partner_id.mobile:
+                msg_compose = SmsCompose.create({
+                    'record_id': participant.partner_id.id,
+                    'model': 'res.partner',
+                    'sms_template_id': self.sms_template_id.id,
+                    'from_mobile_id': self.env.ref('sms_frame.sms_number_inuka_international').id,
+                    'to_number': participant.partner_id.mobile,
+                    'sms_content': self.sms_content,
+                })
+                msg_compose.send_entity()
+            participant.state = 'completed'
 
     @api.multi
     def generate_participants(self):
