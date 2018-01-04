@@ -74,6 +74,56 @@ class MassSms(models.Model):
     pending = fields.Integer("SMS Pending")
     received = fields.Integer("SMS Received")
     errors = fields.Integer("Errors")
+    next_departure = fields.Datetime(compute="_compute_next_departure", string='Scheduled date')
+    participants = fields.One2many('sms.participant', 'mass_sms_id', string="Participants")
+    sms_participant_count = fields.Integer(compute="_compute_sms_participant_count", string="Number of Participants")
+
+    def _compute_sms_participant_count(self):
+        for record in self:
+            record.sms_participant_count = len(record.participants)
+
+    def _compute_next_departure(self):
+        cron_next_call = self.env.ref('inuka_sms.ir_cron_mass_sms_queue').sudo().nextcall
+        str2dt = fields.Datetime.from_string
+        cron_time = str2dt(cron_next_call)
+        for mass_sms in self:
+            if mass_sms.schedule_date:
+                schedule_date = str2dt(mass_sms.schedule_date)
+                mass_sms.next_departure = max(schedule_date, cron_time)
+            else:
+                mass_sms.next_departure = cron_time
+
+    @api.model
+    def _process_mass_sms_queue(self):
+        mass_sms = self.search([('state', 'in', ('queue', 'sending')), '|', ('scheduled_date', '<', fields.Datetime.now()), ('scheduled_date', '=', False)])
+        for sms in mass_sms:
+            if len(sms.get_remaining_recipients()) > 0:
+                sms.state = 'sending'
+                sms.send_mail()
+            else:
+                sms.state = 'sent'
+
+    @api.multi
+    def generate_participants(self):
+        participant = self.env['sms.participant']
+        smslist = self.env['sms.list']
+        recipient = self.env['sms.recipients']
+        for record in self:
+            for list in record.recipient_ids:
+                recipients = recipient.search([('sms_list_id', '=', list.id)])
+                for recipient in recipients:
+                    participant.create({'partner_id': recipient.partner_id.id, 'mass_sms_id': record.id})
+
+    @api.multi
+    def view_participants(self):
+        self.ensure_one()
+        action = self.env.ref('inuka_sms.action_sms_participant_form').read()[0]
+        action['domain'] = [('id', 'in', self.participants.ids)]
+        return action
+
+    @api.multi
+    def view_stastics(self):
+        return True
 
     @api.multi
     def button_test_sms(self):
@@ -81,11 +131,25 @@ class MassSms(models.Model):
 
     @api.multi
     def button_send_all(self):
-        return True
+        self.write({'state': 'queue'})
 
     @api.multi
     def button_cancel(self):
-        return True
+        self.write({'state': 'cancelled'})
+
+
+class SmsParticipant(models.Model):
+    _name = 'sms.participant'
+    _description = 'SMS Participant'
+    _rec_name = 'partner_id'
+
+    partner_id = fields.Many2one("res.partner", string="Member")
+    mass_sms_id = fields.Many2one('mass.sms', string='Mass SMS', ondelete='cascade', required=True)
+    state = fields.Selection([
+        ('running', 'Running'),
+        ('completed', 'Completed'),
+        ], default='running', index=True, required=True,
+    )
 
 
 class SmsShortcode(models.Model):

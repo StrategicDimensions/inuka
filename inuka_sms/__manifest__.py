@@ -11,6 +11,7 @@
     'depends': ['inuka'],
     'data': [
         'views/sms_views.xml',
+        'data/inuka_sms_data.xml',
     ],
     'test': [
     ],

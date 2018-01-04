@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Cron that process the mass sms queue -->
+    <record id="ir_cron_mass_sms_queue" model="ir.cron">
+        <field name="name">Mass SMS: Process Queue</field>
+        <field name="model_id" ref="model_mass_sms"/>
+        <field name="state">code</field>
+        <field name="code">model._process_mass_sms_queue()</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">60</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">-1</field>
+        <field eval="False" name="doall" />
+    </record>
+
+</odoo>
