@@ -77,6 +77,7 @@ class MassSms(models.Model):
     next_departure = fields.Datetime(compute="_compute_next_departure", string='Scheduled date')
     participants = fields.One2many('sms.participant', 'mass_sms_id', string="Participants")
     sms_participant_count = fields.Integer(compute="_compute_sms_participant_count", string="Number of Participants")
+    participant_generated = fields.Boolean()
 
     def _compute_sms_participant_count(self):
         for record in self:
@@ -130,10 +131,12 @@ class MassSms(models.Model):
         participant = self.env['sms.participant']
         recipient = self.env['sms.recipients']
         for record in self:
-            for list in record.recipient_ids:
-                recipients = recipient.search([('sms_list_id', '=', list.id)])
-                for recipient in recipients:
-                    participant.create({'partner_id': recipient.partner_id.id, 'mass_sms_id': record.id})
+            if not record.participant_generated:
+                for list in record.recipient_ids:
+                    recipients = recipient.search([('sms_list_id', '=', list.id)])
+                    for recipient in recipients:
+                        participant.create({'partner_id': recipient.partner_id.id, 'mass_sms_id': record.id})
+                record.participant_generated = True
 
     @api.multi
     def view_participants(self):
