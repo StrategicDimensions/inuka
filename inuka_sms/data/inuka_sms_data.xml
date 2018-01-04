@@ -14,4 +14,14 @@
         <field eval="False" name="doall" />
     </record>
 
+    <record id="ir_cron_sms_sync_participants" model="ir.cron">
+        <field name="name">Mass SMS: Sync Participants</field>
+        <field name="model_id" ref="model_mass_sms"/>
+        <field name="state">code</field>
+        <field name="code">model.search([('state', '=', 'queue')]).generate_participants()</field>
+        <field name="interval_number">30</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">1</field>
+    </record>
+
 </odoo>
