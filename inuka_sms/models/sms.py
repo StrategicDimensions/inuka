@@ -77,7 +77,7 @@ class MassSms(models.Model):
     next_departure = fields.Datetime(compute="_compute_next_departure", string='Scheduled date')
     participants = fields.One2many('sms.participant', 'mass_sms_id', string="Participants")
     sms_participant_count = fields.Integer(compute="_compute_sms_participant_count", string="Number of Participants")
-    participant_generated = fields.Boolean()
+    participant_generated = fields.Boolean(copy=False)
 
     def _compute_sms_participant_count(self):
         for record in self:
