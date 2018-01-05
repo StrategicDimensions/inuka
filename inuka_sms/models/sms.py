@@ -61,6 +61,7 @@ class MassSms(models.Model):
     sms_template_id = fields.Many2one("sms.template", string="Template")
     sms_content = fields.Text("SMS Body")
     scheduled_date = fields.Datetime("Scheduled Date")
+    sent_date = fields.Datetime(string='Sent Date', copy=False)
     state = fields.Selection([
         ('draft', 'Draft'),
         ('queue', 'In Queue'),
@@ -70,23 +71,34 @@ class MassSms(models.Model):
         ], string='Status', default='draft', track_visibility='onchange')
     batch_mode = fields.Boolean("Batch Mode")
     batch_size = fields.Integer("Batch Size", default=1000)
-    sent = fields.Integer(compute="_compute_statistics", string="SMS Sent's")
-    pending = fields.Integer(compute="_compute_statistics", string="SMS Pending")
-    received = fields.Integer(compute="_compute_statistics", string="SMS Received")
-    errors = fields.Integer(compute="_compute_statistics", string="Errors")
+    sent_ratio = fields.Integer(compute="_compute_statistics", string="SMS Sent's")
+    pending_ratio = fields.Integer(compute="_compute_statistics", string="SMS Pending")
+    received_ratio = fields.Integer(compute="_compute_statistics", string="SMS Received")
+    errors_ratio = fields.Integer(compute="_compute_statistics", string="Errors")
+    total = fields.Integer(compute="_compute_statistics")
+    sent = fields.Integer(compute="_compute_statistics")
+    pending = fields.Integer(compute="_compute_statistics")
+    received = fields.Integer(compute="_compute_statistics")
+    errors = fields.Integer(compute="_compute_statistics")
     next_departure = fields.Datetime(compute="_compute_next_departure", string='Scheduled date')
     participants = fields.One2many('sms.participant', 'mass_sms_id', string="Participants")
     sms_participant_count = fields.Integer(compute="_compute_sms_participant_count", string="Number of Participants")
     participant_generated = fields.Boolean(copy=False)
+    color = fields.Integer()
 
     def _compute_statistics(self):
         for record in self:
             total = len(record.participants) or 1
             pending = len(record.participants.filtered(lambda r: r.state == 'running'))
             sent = len(record.participants.filtered(lambda r: r.state == 'completed'))
-            record.pending = 100 * pending / total
-            record.sent = 100 * sent / total
-            record.received = 100 * sent / total
+            record.pending_ratio = 100 * pending / total
+            record.sent_ratio = 100 * sent / total
+            record.received_ratio = 100 * sent / total
+            record.errors_ratio = 0
+            record.total = len(record.participants)
+            record.sent = sent
+            record.pending = pending
+            record.received = sent
             record.errors = 0
 
     def _compute_sms_participant_count(self):
@@ -165,7 +177,7 @@ class MassSms(models.Model):
 
     @api.multi
     def button_send_all(self):
-        self.write({'state': 'queue'})
+        self.write({'sent_date': fields.Datetime.now(), 'state': 'queue'})
 
     @api.multi
     def button_cancel(self):
