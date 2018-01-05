@@ -70,14 +70,24 @@ class MassSms(models.Model):
         ], string='Status', default='draft', track_visibility='onchange')
     batch_mode = fields.Boolean("Batch Mode")
     batch_size = fields.Integer("Batch Size", default=1000)
-    sent = fields.Integer("SMS Sent's")
-    pending = fields.Integer("SMS Pending")
-    received = fields.Integer("SMS Received")
-    errors = fields.Integer("Errors")
+    sent = fields.Integer(compute="_compute_statistics", string="SMS Sent's")
+    pending = fields.Integer(compute="_compute_statistics", string="SMS Pending")
+    received = fields.Integer(compute="_compute_statistics", string="SMS Received")
+    errors = fields.Integer(compute="_compute_statistics", string="Errors")
     next_departure = fields.Datetime(compute="_compute_next_departure", string='Scheduled date')
     participants = fields.One2many('sms.participant', 'mass_sms_id', string="Participants")
     sms_participant_count = fields.Integer(compute="_compute_sms_participant_count", string="Number of Participants")
     participant_generated = fields.Boolean(copy=False)
+
+    def _compute_statistics(self):
+        for record in self:
+            total = len(record.participants) or 1
+            pending = len(record.participants.filtered(lambda r: r.state == 'running'))
+            sent = len(record.participants.filtered(lambda r: r.state == 'completed'))
+            record.pending = 100 * pending / total
+            record.sent = 100 * sent / total
+            record.received = 100 * sent / total
+            record.errors = 0
 
     def _compute_sms_participant_count(self):
         for record in self:
