@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import api, fields, models
+from odoo import api, fields, models, tools
 
 
 class SmsList(models.Model):
@@ -137,13 +137,15 @@ class MassSms(models.Model):
         participants = self.get_remaining_recipients()
         for participant in participants:
             if participant.partner_id.mobile:
+                render_msg = self.env['sms.template'].render_template(self.sms_template_id.template_body, 'res.partner', participant.partner_id.id)
+                message = tools.html2plaintext(render_msg)
                 msg_compose = SmsCompose.create({
                     'record_id': participant.partner_id.id,
                     'model': 'res.partner',
                     'sms_template_id': self.sms_template_id.id,
-                    'from_mobile_id': self.env.ref('sms_frame.sms_number_inuka_international').id,
+                    'from_mobile_id': self.from_mobile_id.id,
                     'to_number': participant.partner_id.mobile,
-                    'sms_content': self.sms_content,
+                    'sms_content': message,
                 })
                 msg_compose.send_entity()
             participant.state = 'completed'
