@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import api, fields, models
+from odoo import api, fields, models, tools
 
 
 class TestMassSMS(models.TransientModel):
@@ -26,13 +26,16 @@ class TestMassSMS(models.TransientModel):
         recipients = self.get_recipients()
         for recipient in recipients:
             if recipient.partner_id.mobile:
+                render_msg = self.env['sms.template'].render_template(record.sms_template_id.template_body, 'res.partner', recipient.partner_id.id)
+                message = tools.html2plaintext(render_msg)
                 msg_compose = SmsCompose.create({
                     'record_id': recipient.partner_id.id,
                     'model': 'res.partner',
                     'sms_template_id': record.sms_template_id.id,
-                    'from_mobile_id': self.env.ref('sms_frame.sms_number_inuka_international').id,
+#                     'from_mobile_id': self.env.ref('sms_frame.sms_number_inuka_international').id,
+                    'from_mobile_id': record.from_mobile_id.id,
                     'to_number': recipient.partner_id.mobile,
-                    'sms_content': record.sms_content,
+                    'sms_content': message,
                 })
                 msg_compose.send_entity()
 
