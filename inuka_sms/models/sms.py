@@ -172,10 +172,6 @@ class MassSms(models.Model):
         return True
 
     @api.multi
-    def button_test_sms(self):
-        return True
-
-    @api.multi
     def button_send_all(self):
         self.write({'sent_date': fields.Datetime.now(), 'state': 'queue'})
 

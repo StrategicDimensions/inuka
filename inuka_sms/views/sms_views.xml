@@ -148,7 +148,7 @@
         <field name="arch" type="xml">
             <form string="Mass SMS">
                 <header>
-                    <button name="button_test_sms" string="Test" type="object" states="draft" class="btn-primary"/>
+                    <button name="%(action_test_mass_sms_form)d" string="Test" type="action" states="draft" class="btn-primary"/>
                     <button name="generate_participants" string="Generate Participants" type="object" states="draft" class="btn-primary"/>
                     <button name="button_send_all" string="Send All" type="object" states="draft" class="btn-primary"/>
                     <button name="button_cancel" string="Cancel" type="object" states="draft,queue" class="btn-primary"/>
@@ -179,22 +179,22 @@
                 </div>
                     <div class="oe_title">
                         <h1>
-                            <field name="name"/>
+                            <field name="name" required="1"/>
                         </h1>
                     </div>
                     <group>
                         <group>
-                            <field name="from_mobile_id"/>
-                            <field name="sms_template_id"/>
+                            <field name="from_mobile_id" required="1"/>
+                            <field name="sms_template_id" required="1"/>
                         </group>
                         <group>
-                            <field name="recipient_ids" widget="many2many_tags"/>
+                            <field name="recipient_ids" widget="many2many_tags" required="1"/>
                             <field name="scheduled_date"/>
                         </group>
                     </group>
                     <notebook>
                         <page string="SMS Body">
-                            <field name="sms_content"/>
+                            <field name="sms_content" required="1"/>
                         </page>
                         <page string="Options">
                             <group>

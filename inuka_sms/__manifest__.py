@@ -10,6 +10,7 @@
     'website': 'https://www.odoo.com/',
     'depends': ['inuka'],
     'data': [
+        'wizard/test_mass_sms_view.xml',
         'views/sms_views.xml',
         'data/inuka_sms_data.xml',
     ],
