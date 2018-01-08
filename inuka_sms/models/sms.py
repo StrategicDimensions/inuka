@@ -181,6 +181,7 @@ class MassSms(models.Model):
 
     @api.multi
     def button_cancel(self):
+        self.mapped('participants').write({'state': 'cancelled'})
         self.write({'state': 'cancelled'})
 
 
@@ -194,6 +195,7 @@ class SmsParticipant(models.Model):
     state = fields.Selection([
         ('running', 'Running'),
         ('completed', 'Completed'),
+        ('cancelled', 'Cancelled')
         ], default='running', index=True, required=True,
     )
 

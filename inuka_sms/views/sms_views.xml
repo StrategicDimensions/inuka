@@ -148,10 +148,10 @@
         <field name="arch" type="xml">
             <form string="Mass SMS">
                 <header>
-                    <button name="button_test_sms" string="Test" type="object" states="draft" class="btn-primary"/>generate_participants
+                    <button name="button_test_sms" string="Test" type="object" states="draft" class="btn-primary"/>
                     <button name="generate_participants" string="Generate Participants" type="object" states="draft" class="btn-primary"/>
                     <button name="button_send_all" string="Send All" type="object" states="draft" class="btn-primary"/>
-                    <button name="button_cancel" string="Cancel" type="object" states="draft" class="btn-primary"/>
+                    <button name="button_cancel" string="Cancel" type="object" states="draft,queue" class="btn-primary"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,queue,sending,sent"/>
                 </header>
                 <sheet>
