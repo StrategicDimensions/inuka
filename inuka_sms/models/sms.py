@@ -116,6 +116,10 @@ class MassSms(models.Model):
             else:
                 mass_sms.next_departure = cron_time
 
+    @api.onchange('sms_template_id')
+    def _onchange_sms_template_id(self):
+        self.sms_content = self.sms_template_id.template_body
+
     @api.multi
     def get_remaining_recipients(self):
         self.ensure_one()
