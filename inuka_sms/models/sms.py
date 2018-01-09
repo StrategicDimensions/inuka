@@ -89,19 +89,24 @@ class MassSms(models.Model):
     color = fields.Integer()
 
     def _compute_statistics(self):
+        SmsMessage = self.env['sms.message']
         for record in self:
             total = len(record.participants) or 1
             pending = len(record.participants.filtered(lambda r: r.state == 'running'))
             sent = len(record.participants.filtered(lambda r: r.state == 'completed'))
+            received = len(SmsMessage.search([('mass_sms_id', '=', record.id), ('status_code', 'in', ('003', '004'))]))
+            errors = len(SmsMessage.search([('mass_sms_id', '=', record.id), ('status_code', 'in', ('001', '002', '005', '006', '007', '009', '010', '011', '012', '013', '014'))]))
+
             record.pending_ratio = 100 * pending / total
             record.sent_ratio = 100 * sent / total
-            record.received_ratio = 100 * sent / total
-            record.errors_ratio = 0
+            record.received_ratio = 100 * received / total
+            record.errors_ratio = 100 * errors / total
+
             record.total = len(record.participants)
             record.sent = sent
             record.pending = pending
-            record.received = sent
-            record.errors = 0
+            record.received = received
+            record.errors = errors
 
     def _compute_sms_participant_count(self):
         for record in self:
@@ -178,6 +183,24 @@ class MassSms(models.Model):
     @api.multi
     def view_stastics(self):
         return True
+
+    @api.multi
+    def open_received_sms_message(self):
+        self.ensure_one()
+        messages = self.env['sms.message'].search([('mass_sms_id', '=', self.id), ('status_code', 'in', ('003', '004'))])
+        action = self.env.ref('inuka_sms.action_sms_message_form_outbound').read()[0]
+        action['domain'] = [('id', 'in', messages.ids)]
+        action['view_mode'] = 'tree,form'
+        return action
+
+    @api.multi
+    def open_error_sms_message(self):
+        self.ensure_one()
+        messages = self.env['sms.message'].search([('mass_sms_id', '=', self.id), ('status_code', 'in', ('001', '002', '005', '006', '007', '009', '010', '011', '012', '013', '014'))])
+        action = self.env.ref('inuka_sms.action_sms_message_form_outbound').read()[0]
+        action['domain'] = [('id', 'in', messages.ids)]
+        action['view_mode'] = 'tree,form'
+        return action
 
     @api.multi
     def button_send_all(self):

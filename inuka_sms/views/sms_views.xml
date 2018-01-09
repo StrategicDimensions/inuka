@@ -164,11 +164,11 @@
                             type="object" class="oe_stat_button">
                         <field name="sent_ratio" string="SMS's Sent" widget="percentpie"/>
                     </button>
-                    <button name="view_stastics"
+                    <button name="open_received_sms_message"
                             type="object" class="oe_stat_button">
                         <field name="received_ratio" string="Received" widget="percentpie"/>
                     </button>
-                    <button name="view_stastics"
+                    <button name="open_error_sms_message"
                             type="object" class="oe_stat_button">
                         <field name="errors_ratio" string="Errors" widget="percentpie"/>
                     </button>
