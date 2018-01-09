@@ -241,6 +241,7 @@ class SmsShortcode(models.Model):
 class SmsMessage(models.Model):
     _inherit = "sms.message"
 
+    keyword = fields.Char("Keyword")
     mass_sms_id = fields.Many2one("mass.sms", string="Mass SMS")
     status_code = fields.Selection([
         ('001','Message unknown'),
