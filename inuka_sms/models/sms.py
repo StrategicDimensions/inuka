@@ -211,3 +211,23 @@ class SmsShortcode(models.Model):
     sms_template_id = fields.Many2one("sms.template", string="Template")
     member_required = fields.Boolean("Member Required")
     active = fields.Boolean(default=True)
+
+
+class SmsMessage(models.Model):
+    _inherit = "sms.message"
+
+    status_code = fields.Selection([
+        ('001','Message unknown'),
+        ('002', 'Message queued'),
+        ('003', 'Delivered to gateway'),
+        ('004', 'Received by recipient'),
+        ('005', 'Error with message'),
+        ('006','User cancelled message delivery'),
+        ('007', 'Error delivering message'),
+        ('009', 'Routing error'),
+        ('010', 'Message expired'),
+        ('011', 'Message scheduled for later delivery'),
+        ('012', 'Out of credit'),
+        ('013', 'Clickatell cancelled message delivery'),
+        ('014', 'Maximum MT limit exceeded'),
+        ], string='Delivary State', readonly=True)
