@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
+
 from odoo import api, fields, models, tools
 
 
@@ -151,7 +153,7 @@ class MassSms(models.Model):
                     'to_number': participant.partner_id.mobile,
                     'sms_content': message,
                 })
-                msg_compose.send_entity()
+                msg_compose.with_context(mass_sms_id=self.id).send_entity()
             participant.state = 'completed'
 
     @api.multi
@@ -216,6 +218,7 @@ class SmsShortcode(models.Model):
 class SmsMessage(models.Model):
     _inherit = "sms.message"
 
+    mass_sms_id = fields.Many2one("mass.sms", string="Mass SMS")
     status_code = fields.Selection([
         ('001','Message unknown'),
         ('002', 'Message queued'),
@@ -231,3 +234,51 @@ class SmsMessage(models.Model):
         ('013', 'Clickatell cancelled message delivery'),
         ('014', 'Maximum MT limit exceeded'),
         ], string='Delivary State', readonly=True)
+
+
+class SmsCompose(models.Model):
+    _inherit = "sms.compose"
+
+    @api.multi
+    def send_entity(self):
+        """Attempt to send the sms, if any error comes back show it to the user and only log the smses that successfully sent"""
+        self.ensure_one()
+
+        gateway_model = self.from_mobile_id.account_id.account_gateway_id.gateway_model_name
+        my_sms = self.from_mobile_id.account_id.send_message(self.from_mobile_id.mobile_number, self.to_number, self.sms_content.encode('utf-8'), self.model, self.record_id, self.media_id)[0]
+        error_message = my_sms['error']
+
+        #display the screen with an error code if the sms/mms was not successfully sent
+        if my_sms['errorCode'] != False:
+            return {
+               'type':'ir.actions.act_window',
+               'res_model':'sms.compose',
+               'view_type':'form',
+               'view_mode':'form',
+               'target':'new',
+               'context':{'default_to_number':self.to_number,'default_record_id':self.record_id,'default_model':self.model, 'default_error_message':error_message}
+            }
+        else:
+            my_model = self.env['ir.model'].search([('model','=',self.model)])
+
+        #for single smses we only record succesful sms, failed ones reopen the form with the error message
+        sms_message = self.env['sms.message'].create({
+            'record_id': self.record_id,
+            'model_id': my_model[0].id,
+            'account_id': self.from_mobile_id.account_id.id,
+            'from_mobile': self.from_mobile_id.mobile_number,
+            'to_mobile': self.to_number,
+            'sms_content': self.sms_content,
+            'status_string': my_sms['error'],
+            'direction': 'O',
+            'message_date': datetime.utcnow(),
+            'status_code': my_sms['errorCode'],
+            'sms_gateway_message_id': my_sms['id'],
+            'by_partner_id': self.env.user.partner_id.id,
+            'mass_sms_id': self.env.context.get('mass_sms_id'),
+        })
+        sms_subtype = self.env['ir.model.data'].get_object('sms_frame', 'sms_subtype')
+        attachments = []
+        if self.media_id:
+            attachments.append((self.media_filename, base64.b64decode(self.media_id)) )
+        self.env[self.model].search([('id','=', self.record_id)]).message_post(body=self.sms_content, subject="SMS Sent", message_type="comment", subtype_id=sms_subtype.id, attachments=attachments)
