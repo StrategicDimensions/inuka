@@ -21,6 +21,9 @@ class SMSPushNotification(http.Controller):
             model = False
             record_id = False
             record_name = False
+            msg = "<b>SMS Received</b><ul>"
+            msg += "<li>%s" % (kwargs.get('text'))
+            msg += "</ul>"
             partner = request.env['res.partner'].sudo().search([('mobile', '=', kwargs.get('fromNumber'))], limit=1)
             helpdesk_ticket = request.env['helpdesk.ticket'].sudo().search([('partner_id', '=', partner.id)], order="create_date desc")
             if helpdesk_ticket:
@@ -30,10 +33,12 @@ class SMSPushNotification(http.Controller):
                 model = 'helpdesk.ticket'
                 record_id = helpdesk_ticket.id
                 record_name = helpdesk_ticket.name
+                helpdesk_ticket.message_post(body=msg)
             elif partner and not helpdesk_ticket:
                 model = 'res.partner'
                 record_id = partner.id
                 record_name = partner.name
+                partner.message_post(body=msg)
             model_id = False
             if model:
                 model_id = request.env['ir.model'].sudo().search([('model', '=', model)], limit=1)
