@@ -188,7 +188,9 @@ class ResPartner(models.Model):
     performance_history_count = fields.Integer(compute="_compute_performance_history_count", string="Performance History Count")
     downline_count = fields.Integer(compute="_compute_downline_count", string="Downline Count")
     project_count = fields.Integer(compute="_compute_project_count", string="Project Count")
+    sms_count = fields.Integer(compute="_compute_sms_count", string="SMS Count")
     property_product_pricelist = fields.Many2one(track_visibility='onchange')
+    watchlist = fields.Boolean('Watchlist', default=False)
 
 #     _sql_constraints = [
 #         ('mobile_uniq', 'unique(mobile)', 'Mobile should be unique.'),
@@ -726,6 +728,12 @@ class ResPartner(models.Model):
         for partner in self:
             partner.project_count = Project.search_count([('partner_id', '=', partner.id)])
 
+    def _compute_sms_count(self):
+        SmsMessage = self.env['sms.message']
+        model_id = self.env['ir.model'].search([('model', '=', 'res.partner')], limit=1).id
+        for partner in self:
+            partner.sms_count = SmsMessage.search_count([('model_id', '=', model_id), ('record_id', '=', partner.id)])
+
     @api.multi
     def view_performance_history(self):
         self.ensure_one()
@@ -758,6 +766,36 @@ class ResPartner(models.Model):
         action = self.env.ref('project.open_view_project_all').read()[0]
         action['domain'] = [('id', 'in', projects.ids)]
         return action
+
+    @api.multi
+    def view_sms_message(self):
+        self.ensure_one()
+        model_id = self.env['ir.model'].search([('model', '=', 'res.partner')], limit=1).id
+        messages = self.env['sms.message'].search([('model_id', '=', model_id), ('record_id', '=', self.id)])
+
+        return {
+            'name': _('Messages'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'sms.message',
+            'context': self.env.context,
+            'domain': [('id', 'in', messages.ids)],
+        }
+
+    @api.multi
+    def action_watchlist_add(self):
+        self.ensure_one()
+        self.watchlist = True
+        message = _("Customer %s added to watchlist") % (self.name)
+        self.message_post(body=message)
+
+    @api.multi
+    def action_watchlist_remove(self):
+        self.ensure_one()
+        self.watchlist = False
+        message = _("Customer %s removed from watchlist") % (self.name)
+        self.message_post(body=message)
 
 
 class PerformanceHistory(models.Model):
