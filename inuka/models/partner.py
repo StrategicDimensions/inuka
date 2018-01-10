@@ -186,6 +186,7 @@ class ResPartner(models.Model):
     o_new_junior_recruits_ytd = fields.Integer("O_# of New Junior Recruits (YTD)")
 
     performance_history_count = fields.Integer(compute="_compute_performance_history_count", string="Performance History Count")
+    downline_count = fields.Integer(compute="_compute_downline_count", string="Downline Count")
     property_product_pricelist = fields.Many2one(track_visibility='onchange')
 
 #     _sql_constraints = [
@@ -715,6 +716,10 @@ class ResPartner(models.Model):
         for partner in self:
             partner.performance_history_count = PerformanceHistory.search_count([('partner_id', '=', partner.id)])
 
+    def _compute_downline_count(self):
+        for partner in self:
+            partner.downline_count = partner.search_count([('upline', '=', partner.id), ('customer', '=', True)])
+
     @api.multi
     def view_performance_history(self):
         self.ensure_one()
@@ -722,6 +727,23 @@ class ResPartner(models.Model):
         action = self.env.ref('inuka.action_performance_history_form').read()[0]
         action['domain'] = [('id', 'in', performances.ids)]
         return action
+
+    @api.multi
+    def view_downline_member(self):
+        self.ensure_one()
+        partners = self.search([('upline', '=', self.id), ('customer', '=', True)])
+        view_id = self.env.ref('base.view_partner_tree').id
+
+        return {
+            'name': _('Downline'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'res_model': 'res.partner',
+            'view_id': view_id,
+            'context': self.env.context,
+            'domain': [('id', 'in', partners.ids)],
+        }
 
 
 class PerformanceHistory(models.Model):

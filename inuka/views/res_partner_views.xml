@@ -318,6 +318,11 @@
         <field name="priority" eval="20"/>
         <field name="arch" type="xml">
             <button name="%(sale.act_res_partner_2_sale_order)d" position="after">
+                <button class="oe_stat_button" type="object" name="view_downline_member"
+                    attrs="{'invisible': [('customer', '=', False)]}"
+                    icon="fa-users">
+                    <field string="Downline" name="downline_count" widget="statinfo"/>
+                </button>
                 <button class="oe_stat_button" type="object" name="view_performance_history" 
                     attrs="{'invisible': [('customer', '=', False)]}"
                     icon="fa-calculator">
