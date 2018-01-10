@@ -259,6 +259,39 @@ class SmsMessage(models.Model):
         ('014', 'Maximum MT limit exceeded'),
         ], string='Delivary State', readonly=True)
 
+    @api.multi
+    def send_sms_reply(self):
+        SmsShortcode = self.env['sms.shortcode']
+        ResPartner = self.env['res.partner']
+        SmsCompose = self.env['sms.compose']
+        for message in self:
+            shortcode = SmsShortcode.search([('keyword', '=', message.keyword)], limit=1)
+            if shortcode and shortcode.member_required and message.model_id.model == 'res.partner':
+                partner = ResPartner.browse(message.record_id)
+                if partner.mobile:
+                    render_msg = self.env['sms.template'].render_template(shortcode.sms_template_id.template_body, 'res.partner', partner.id)
+                    message = tools.html2plaintext(render_msg)
+                    msg_compose = SmsCompose.create({
+                        'record_id': partner.id,
+                        'model': 'res.partner',
+                        'sms_template_id': shortcode.sms_template_id.id,
+                        'from_mobile_id': self.env.ref('sms_frame.sms_number_inuka_international').id,
+                        'to_number': partner.mobile,
+                        'sms_content': message,
+                    })
+                    msg_compose.send_entity()
+
+            elif shortcode and not shortcode.member_required:
+                msg_compose = SmsCompose.create({
+                    'record_id': message.record_id,
+                    'model': message.model_id.model,
+                    'sms_template_id': shortcode.sms_template_id.id,
+                    'from_mobile_id': self.env.ref('sms_frame.sms_number_inuka_international').id,
+                    'to_number': message.from_mobile,
+                    'sms_content': shortcode.sms_template_id.template_body,
+                })
+                msg_compose.send_entity()
+
 
 class SmsCompose(models.Model):
     _inherit = "sms.compose"
