@@ -328,6 +328,11 @@
                     icon="fa-calculator">
                     <field string="Performance History" name="performance_history_count" widget="statinfo"/>
                 </button>
+                <button class="oe_stat_button" type="object" name="view_project"
+                    attrs="{'invisible': [('customer', '=', False)]}"
+                    icon="fa-puzzle-piece">
+                    <field string="Mentorship" name="project_count" widget="statinfo"/>
+                </button>
             </button>
         </field>
     </record>

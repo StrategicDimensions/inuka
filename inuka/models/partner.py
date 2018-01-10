@@ -187,6 +187,7 @@ class ResPartner(models.Model):
 
     performance_history_count = fields.Integer(compute="_compute_performance_history_count", string="Performance History Count")
     downline_count = fields.Integer(compute="_compute_downline_count", string="Downline Count")
+    project_count = fields.Integer(compute="_compute_project_count", string="Project Count")
     property_product_pricelist = fields.Many2one(track_visibility='onchange')
 
 #     _sql_constraints = [
@@ -720,6 +721,11 @@ class ResPartner(models.Model):
         for partner in self:
             partner.downline_count = partner.search_count([('upline', '=', partner.id), ('customer', '=', True)])
 
+    def _compute_project_count(self):
+        Project = self.env['project.project']
+        for partner in self:
+            partner.project_count = Project.search_count([('partner_id', '=', partner.id)])
+
     @api.multi
     def view_performance_history(self):
         self.ensure_one()
@@ -744,6 +750,14 @@ class ResPartner(models.Model):
             'context': self.env.context,
             'domain': [('id', 'in', partners.ids)],
         }
+
+    @api.multi
+    def view_project(self):
+        self.ensure_one()
+        projects = self.env['project.project'].search([('partner_id', '=', self.id)])
+        action = self.env.ref('project.open_view_project_all').read()[0]
+        action['domain'] = [('id', 'in', projects.ids)]
+        return action
 
 
 class PerformanceHistory(models.Model):
