@@ -6,6 +6,12 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button class="btn-primary" name="action_watchlist_add" type="object" string="Add Watchlist" attrs="{'invisible':['|',('watchlist', '=', True),('customer', '=', False)]}"/>
+                    <button class="btn-primary" name="action_watchlist_remove" type="object" string="Remove Watchlist" attrs="{'invisible':['|',('watchlist', '=', False),('customer', '=', False)]}"/>
+                </header>
+            </xpath>
             <field name="user_id" position="attributes">
                 <attribute name="string">Mentor</attribute>
             </field>
@@ -319,8 +325,6 @@
         <field name="priority" eval="20"/>
         <field name="arch" type="xml">
             <button name="%(sale.act_res_partner_2_sale_order)d" position="after">
-                <button class="oe_stat_button" name="action_watchlist_add" type="object" string="Add Watchlist" icon="fa-eye" attrs="{'invisible':['|',('watchlist', '=', True),('customer', '=', False)]}"/>
-                <button class="oe_stat_button" name="action_watchlist_remove" type="object" string="Remove Watchlist" icon="fa-eye" attrs="{'invisible':['|',('watchlist', '=', False),('customer', '=', False)]}"/>
                 <button class="oe_stat_button" type="object" name="view_downline_member"
                     attrs="{'invisible': [('customer', '=', False)]}"
                     icon="fa-users">
