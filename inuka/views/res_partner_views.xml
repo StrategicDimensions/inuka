@@ -6,13 +6,6 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//sheet" position="before">
-                <header>
-                    <button name="action_watchlist_add" type="object" string="Add Watchlist" attrs="{'invisible':['|',('watchlist', '=', True),('customer', '=', False)]}" class="btn-primary"/>
-                    <button name="action_watchlist_remove" type="object" string="Remove Watchlist" attrs="{'invisible':['|',('watchlist', '=', False),('customer', '=', False)]}" class="btn-primary"/>
-                    <field name="status" widget="statusbar" statusbar_visible="candidate,new,junior,senior,pearl,ruby,emerald,sapphire,diamond,double_diamond,triple_diamond,exective_diamond,presidential" attrs="{'invisible':[('customer', '=', False)]}"/>
-                </header>
-            </xpath>
             <field name="user_id" position="attributes">
                 <attribute name="string">Mentor</attribute>
             </field>
@@ -47,6 +40,13 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="account.view_partner_property_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_watchlist_add" type="object" string="Add Watchlist" attrs="{'invisible':['|',('watchlist', '=', True),('customer', '=', False)]}" class="btn-primary"/>
+                    <button name="action_watchlist_remove" type="object" string="Remove Watchlist" attrs="{'invisible':['|',('watchlist', '=', False),('customer', '=', False)]}" class="btn-primary"/>
+                    <field name="status" widget="statusbar" statusbar_visible="candidate,new,junior,senior,pearl,ruby,emerald,sapphire,diamond,double_diamond,triple_diamond,exective_diamond,presidential" attrs="{'invisible':[('customer', '=', False)]}"/>
+                </header>
+            </xpath>
             <field name="trust" position="after">
                 <field name="credit_limit"/>
             </field>
