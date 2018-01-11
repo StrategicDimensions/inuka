@@ -10,7 +10,7 @@
                 <header>
                     <button name="action_watchlist_add" type="object" string="Add Watchlist" attrs="{'invisible':['|',('watchlist', '=', True),('customer', '=', False)]}" class="btn-primary"/>
                     <button name="action_watchlist_remove" type="object" string="Remove Watchlist" attrs="{'invisible':['|',('watchlist', '=', False),('customer', '=', False)]}" class="btn-primary"/>
-                    <field name="status" widget="statusbar" statusbar_visible="candidate,new,junior,senior,pearl,ruby,emerald,sapphire,diamond,double_diamond,triple_diamond,exective_diamond,presidential"/>
+                    <field name="status" widget="statusbar" statusbar_visible="candidate,new,junior,senior,pearl,ruby,emerald,sapphire,diamond,double_diamond,triple_diamond,exective_diamond,presidential" attrs="{'invisible':[('customer', '=', False)]}"/>
                 </header>
             </xpath>
             <field name="user_id" position="attributes">
