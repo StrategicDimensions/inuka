@@ -241,7 +241,7 @@
         <field name="inherit_id" ref="account.view_bank_statement_line_tree"/>
         <field name="arch" type="xml">
             <field name="partner_id" position="after">
-                <field name="master_bank_stmt_line_id"/>
+                <field name="master_bank_stmt_line_id" string="Bank Statement Lines"/>
                 <field name="statement_reconciled"/>
             </field>
         </field>

@@ -401,6 +401,24 @@
         </field>
     </record>
 
+    <record id="account.action_bank_statement_line" model="ir.actions.act_window">
+        <field name="name">Transaction Line</field>
+        <field name="res_model">account.bank.statement.line</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="search_view_id" ref="account.view_bank_statement_line_search"/>
+        <field name="help" type="html">
+          <p>
+            A bank statement line is a financial transaction on a bank account.
+          </p><p>
+            Odoo allows you to reconcile a statement line directly with
+            the related sale or puchase invoice(s).
+          </p>
+        </field>
+    </record>
+
     <record model="ir.ui.view" id="master_account_reports_journal_dashboard_kanban_view">
         <field name="name">master.account.journal.dashboard.kanban.reports</field>
         <field name="model">account.journal</field>
