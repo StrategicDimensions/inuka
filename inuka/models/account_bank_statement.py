@@ -1173,6 +1173,15 @@ class MasterAccountBankStatementLine(models.Model):
             line.bank_stmt_line_id.statement_reconciled = True
         return True
 
+    @api.multi
+    def manual_unreconcile(self):
+        for line in self.filtered(lambda r: r.statement_reconciled == True):
+            line.statement_reconciled = False
+            line.bank_stmt_line_id.master_bank_stmt_line_id = False
+            line.bank_stmt_line_id.statement_reconciled = False
+            line.bank_stmt_line_id = False
+        return True
+
 
 class AccountReconcileModel(models.Model):
     _inherit = "account.reconcile.model"

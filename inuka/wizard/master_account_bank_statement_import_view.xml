@@ -419,6 +419,25 @@
         </field>
     </record>
 
+    <record id="account.view_bank_statement_line_tree" model="ir.ui.view">
+        <field name="name">account.bank.statement.line.tree</field>
+        <field name="model">account.bank.statement.line</field>
+        <field name="priority">8</field>
+        <field name="arch" type="xml">
+            <tree string="Statement lines" create="false">
+                <field name="sequence" readonly="1" invisible="1"/>
+                <field name="statement_id" string="Transaction List"/>
+                <field name="journal_id" invisible="1" />
+                <field name="date"/>
+                <field name="name"/>
+                <field name="ref"/>
+                <field name="partner_id"/>
+                <field name="amount"/>
+                <field name="journal_currency_id" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
     <record model="ir.ui.view" id="master_account_reports_journal_dashboard_kanban_view">
         <field name="name">master.account.journal.dashboard.kanban.reports</field>
         <field name="model">account.journal</field>
