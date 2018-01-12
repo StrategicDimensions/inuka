@@ -302,7 +302,7 @@
     </record>
 
     <record id="action_master_bank_statement_line" model="ir.actions.act_window">
-        <field name="name">Master Bank Statement Lines</field>
+        <field name="name">Bank Statement Lines</field>
         <field name="res_model">master.account.bank.statement.line</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
