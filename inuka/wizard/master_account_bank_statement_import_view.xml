@@ -98,7 +98,7 @@
                                         <t t-if="journal_type == 'cash'">Cash Statements</t>
                                     </a>
                                     <a type="object" name="open_master_bank_statements">
-                                        <t t-if="journal_type == 'bank'">Master Bank Statements</t>
+                                        <t t-if="journal_type == 'bank'">Bank Statements</t>
                                     </a>
                                 </div>
                                 <div>
