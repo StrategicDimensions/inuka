@@ -94,7 +94,7 @@
                                 </div>
                                 <div>
                                     <a type="object" name="open_action">
-                                        <t t-if="journal_type == 'bank'">Bank Statements</t>
+                                        <t t-if="journal_type == 'bank'">Transaction Lists</t>
                                         <t t-if="journal_type == 'cash'">Cash Statements</t>
                                     </a>
                                     <a type="object" name="open_master_bank_statements">
