@@ -102,7 +102,7 @@
                                     </a>
                                 </div>
                                 <div>
-                                    <a type="object" name="open_action_with_context" context="{'action_name': 'action_bank_statement_line', 'search_default_journal': True}">Search Operations</a>
+                                    <a type="object" name="open_action_with_context" context="{'action_name': 'action_bank_statement_line', 'search_default_journal': True}">Search Transactions</a>
                                 </div>
                                 <div>
                                     <a type="object" name="open_master_action_with_context" context="{'action_name': 'action_master_bank_statement_line', 'search_default_journal': True}">Master Search Operations</a>
