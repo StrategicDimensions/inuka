@@ -379,6 +379,28 @@
         </field>
     </record>
 
+    <record id="account.action_bank_statement_tree" model="ir.actions.act_window">
+        <field name="name">Transaction Lists</field>
+        <field name="res_model">account.bank.statement</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
+        <field name="domain">[('journal_id.type', '=', 'bank')]</field>
+        <field name="context">{'journal_type':'bank'}</field>
+        <field name="search_view_id" ref="account.view_bank_statement_search"/>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to register a bank statement.
+          </p><p>
+            A bank statement is a summary of all financial transactions
+            occurring over a given period of time on a bank account. You
+            should receive this periodicaly from your bank.
+          </p><p>
+            Odoo allows you to reconcile a statement line directly with
+            the related sale or puchase invoices.
+          </p>
+        </field>
+    </record>
+
     <record model="ir.ui.view" id="master_account_reports_journal_dashboard_kanban_view">
         <field name="name">master.account.journal.dashboard.kanban.reports</field>
         <field name="model">account.journal</field>
