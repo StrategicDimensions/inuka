@@ -187,7 +187,7 @@
     </record>
 
     <record id="action_master_bank_statement_tree" model="ir.actions.act_window">
-        <field name="name">Master Bank Statements</field>
+        <field name="name">Bank Statements</field>
         <field name="res_model">master.account.bank.statement</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form,pivot,graph</field>
