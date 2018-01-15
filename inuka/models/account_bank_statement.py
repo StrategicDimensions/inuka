@@ -158,6 +158,7 @@ class AccountBankStatementImport(models.TransientModel):
                 # see https://github.com/odoo/odoo/issues/3003
                 'balance_start': float(account.statement.balance) - total_amt,
                 'balance_end_real': account.statement.balance,
+                'name': fields.Datetime.now()
             })
 
         if account_lst and len(account_lst) == 1:
