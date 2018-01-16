@@ -21,6 +21,7 @@ class AccountInvoice(models.Model):
     total_pv = fields.Float(compute='_compute_tot_pv', store=True)
     payment_reference = fields.Char("Payment Reference", states={'draft': [('readonly', False)]})
     approved_for_payment = fields.Boolean("Approved for Payment", readonly=True, copy=False)
+    sale_date = fields.Date('Sale Date', track_visibility='onchange')
 
     @api.depends('invoice_line_ids','invoice_line_ids.pv')
     def _compute_tot_pv(self):

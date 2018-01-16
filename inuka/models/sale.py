@@ -156,6 +156,12 @@ class SaleOrder(models.Model):
             msg += "</ul>"
             order.message_post(body=msg)
 
+    @api.multi
+    def _prepare_invoice(self):
+        res = super(SaleOrder, self)._prepare_invoice()
+        res['sale_date'] = self.sale_date
+        return res
+
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
