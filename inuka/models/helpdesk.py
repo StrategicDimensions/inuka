@@ -136,7 +136,7 @@ class IrAttachment(models.Model):
     def create(self, vals):
         res = super(IrAttachment, self).create(vals)
         if res.res_model == 'helpdesk.ticket' and 'FNB RSA OFX' in res.res_name and 'Hourly' in res.res_name:
-            res.import_bank_statement()
+            self.env['helpdesk.ticket'].browse(res.res_id).import_bank_statement()
         elif res.res_model == 'helpdesk.ticket' and 'FNB RSA OFX' in res.res_name and 'Hourly' not in res.res_name:
-            res.import_master_bank_statement()
+            self.env['helpdesk.ticket'].browse(res.res_id).import_master_bank_statement()
         return res
