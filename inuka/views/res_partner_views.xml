@@ -284,6 +284,17 @@
                         </group>
                     </group>
                 </page>
+                <page string="Device Info" name="device_info" attrs="{'invisible': [('customer', '=', False)]}">
+                    <group>
+                        <group>
+                            <field name="device_id"/>
+                            <field name="is_device_live"/>
+                        </group>
+                        <group>
+                            <field name="device_type"/>
+                        </group>
+                    </group>
+                </page>
                 <page string="Other Info" name="other_info" attrs="{'invisible': [('customer', '=', False)]}">
                     <group>
                         <group>

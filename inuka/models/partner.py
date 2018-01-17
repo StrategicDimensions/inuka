@@ -192,6 +192,13 @@ class ResPartner(models.Model):
     property_product_pricelist = fields.Many2one(track_visibility='onchange')
     watchlist = fields.Boolean('Watchlist', default=False)
 
+    device_id = fields.Char("Device ID", readonly=True)
+    device_type = fields.Selection([
+        ('android', 'Android'),
+        ('iphone', 'iPhone'),
+    ], string="Device Type", readonly=True)
+    is_device_live = fields.Boolean("Is Device Live", readonly=True)
+
 #     _sql_constraints = [
 #         ('mobile_uniq', 'unique(mobile)', 'Mobile should be unique.'),
 #         ('email_uniq', 'unique(email)', 'Email should be unique.'),
