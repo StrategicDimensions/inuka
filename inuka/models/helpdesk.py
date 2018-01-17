@@ -51,7 +51,7 @@ class HelpdeskTicket(models.Model):
     def import_bank_statement(self):
         journal_id = self.env['account.journal'].search([('name', '=', 'FNB')], limit=1).id
         for ticket in self:
-            attachments = self.env['ir.attachment'].search([('res_id', '=', ticket.id), ('res_model', '=', 'helpdesk.ticket')])
+            attachments = self.mapped('message_ids.attachment_ids')
 
             for attachment in attachments:
                 fp = BytesIO()
@@ -76,7 +76,7 @@ class HelpdeskTicket(models.Model):
     def import_master_bank_statement(self):
         journal_id = self.env['account.journal'].search([('name', '=', 'FNB')], limit=1).id
         for ticket in self:
-            attachments = self.env['ir.attachment'].search([('res_id', '=', ticket.id), ('res_model', '=', 'helpdesk.ticket')])
+            attachments = self.mapped('message_ids.attachment_ids')
 
             for attachment in attachments:
                 fp = BytesIO()
