@@ -352,28 +352,4 @@ records.create_helpdesk_ticket()
         <field name="nextcall" eval="(DateTime.now() + timedelta(days=0)).strftime('%Y-%m-%d 21:00:00')" />
     </record>
 
-    <record id="rule_import_bank_statement" model="base.automation">
-        <field name="name">Import Bank Statement</field>
-        <field name="model_id" ref="helpdesk.model_helpdesk_ticket"/>
-        <field name="state">code</field>
-        <field name="trigger">on_create</field>
-        <field name="active" eval="True"/>
-        <field name="filter_domain">[("name", "ilike", "FNB RSA OFX"), ("name", "ilike", "Hourly")]</field>
-        <field name="code">
-records.import_bank_statement()
-        </field>
-    </record>
-
-    <record id="rule_import_master_bank_statement" model="base.automation">
-        <field name="name">Import Master Bank Statement</field>
-        <field name="model_id" ref="helpdesk.model_helpdesk_ticket"/>
-        <field name="state">code</field>
-        <field name="trigger">on_create</field>
-        <field name="active" eval="True"/>
-        <field name="filter_domain">[("name", "ilike", "FNB RSA OFX"), ("name", "not ilike", "Hourly")]</field>
-        <field name="code">
-records.import_master_bank_statement()
-        </field>
-    </record>
-
 </odoo>

@@ -50,8 +50,9 @@ class HelpdeskTicket(models.Model):
     @api.multi
     def import_bank_statement(self):
         journal_id = self.env['account.journal'].search([('name', '=', 'FNB')], limit=1).id
+        stage = self.env['helpdesk.stage'].search([('name', '=', 'Solved')], limit=1)
         for ticket in self:
-            attachments = self.mapped('message_ids.attachment_ids')
+            attachments = self.env['ir.attachment'].search([('res_id', '=', ticket.id), ('res_model', '=', 'helpdesk.ticket')])
 
             for attachment in attachments:
                 fp = BytesIO()
@@ -69,14 +70,16 @@ class HelpdeskTicket(models.Model):
                                     extract_file = z.open(d)
                                     new_rec = self.env['account.bank.statement.import'].with_context(journal_id=journal_id).create({'data_file': base64.b64encode(extract_file.read()), 'filename': 'test'})
                                     new_rec.import_file()
+                                    ticket.write({'stage_id': stage.id})
                             finally:
                                 module.ad_paths.remove(module_dir)
 
     @api.multi
     def import_master_bank_statement(self):
         journal_id = self.env['account.journal'].search([('name', '=', 'FNB')], limit=1).id
+        stage = self.env['helpdesk.stage'].search([('name', '=', 'Solved')], limit=1)
         for ticket in self:
-            attachments = self.mapped('message_ids.attachment_ids')
+            attachments = self.env['ir.attachment'].search([('res_id', '=', ticket.id), ('res_model', '=', 'helpdesk.ticket')])
 
             for attachment in attachments:
                 fp = BytesIO()
@@ -94,6 +97,7 @@ class HelpdeskTicket(models.Model):
                                     extract_file = z.open(d)
                                     new_rec = self.env['master.account.bank.statement.import'].with_context(journal_id=journal_id).create({'data_file': base64.b64encode(extract_file.read()), 'filename': 'test'})
                                     new_rec.import_file()
+                                    ticket.write({'stage_id': stage.id})
                             finally:
                                 module.ad_paths.remove(module_dir)
 
@@ -123,3 +127,16 @@ class SaleOrder(models.Model):
     _inherit = "sale.order"
 
     ticket_id = fields.Many2one("helpdesk.ticket", string="Tickets")
+
+
+class IrAttachment(models.Model):
+    _inherit = 'ir.attachment'
+
+    @api.model
+    def create(self, vals):
+        res = super(IrAttachment, self).create(vals)
+        if res.res_model == 'helpdesk.ticket' and 'FNB RSA OFX' in res.res_name and 'Hourly' in res.res_name:
+            res.import_bank_statement()
+        elif res.res_model == 'helpdesk.ticket' and 'FNB RSA OFX' in res.res_name and 'Hourly' not in res.res_name:
+            res.import_master_bank_statement()
+        return res
