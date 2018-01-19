@@ -793,16 +793,34 @@ class ResPartner(models.Model):
     @api.multi
     def action_watchlist_add(self):
         self.ensure_one()
-        self.watchlist = True
-        message = _("Customer %s added to watchlist") % (self.name)
-        self.message_post(body=message)
+        watchlist_comment_id = self.env.ref('inuka.view_partner_watchlist_comment_form').id
+        return {
+            'name': _('Watchlist Comment'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'res.partner.watchlist',
+            'views': [(watchlist_comment_id, 'form')],
+            'view_id': watchlist_comment_id,
+            'target': 'new',
+            'context': {'watchlist': False},
+        }
 
     @api.multi
     def action_watchlist_remove(self):
         self.ensure_one()
-        self.watchlist = False
-        message = _("Customer %s removed from watchlist") % (self.name)
-        self.message_post(body=message)
+        watchlist_comment_id = self.env.ref('inuka.view_partner_watchlist_comment_form').id
+        return {
+            'name': _('Watchlist Comment'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'res.partner.watchlist',
+            'views': [(watchlist_comment_id, 'form')],
+            'view_id': watchlist_comment_id,
+            'target': 'new',
+            'context': {'watchlist': True},
+        }
 
 
 class PerformanceHistory(models.Model):

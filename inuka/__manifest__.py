@@ -29,7 +29,8 @@
         'wizard/account_invoice_validate_view.xml',
         'wizard/master_account_bank_statement_import_view.xml',
         'views/report_bulk_view.xml',
-        'views/helpdesk_ticket_views.xml'
+        'views/helpdesk_ticket_views.xml',
+        'wizard/partner_watchlist_comment_view.xml',
     ],
     'test': [
     ],
