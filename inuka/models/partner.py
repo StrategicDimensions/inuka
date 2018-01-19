@@ -645,11 +645,6 @@ class ResPartner(models.Model):
         return res
 
     @api.model
-    def search(self, args, offset=0, limit=None, order=None, count=False):
-        result = super(ResPartner, self).search(args, offset, limit, order, count=count)
-        return result
-
-    @api.model
     def name_search(self, name='', args=None, operator='ilike', limit=100):
         args = args or []
         recs = self.search(['|', '|', '|', '|', ('ref', operator, name), ('name', operator, name), ('mobile', operator, name), ('passport_no', operator, name), ('email', operator, name)] + args, limit=limit)
