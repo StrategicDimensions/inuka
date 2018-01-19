@@ -908,3 +908,4 @@ class PerformanceHistory(models.Model):
     vr_earner = fields.Integer("# of VR Earners")
     new_senior_recruits = fields.Integer("# of New Senior Recruits")
     new_junior_recruits = fields.Integer("# of New Junior Recruits")
+    company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.user.company_id)
