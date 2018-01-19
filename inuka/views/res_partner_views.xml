@@ -341,6 +341,11 @@
                     icon="fa-users">
                     <field string="Downline" name="downline_count" widget="statinfo"/>
                 </button>
+                <button class="oe_stat_button" type="object" name="view_rewards"
+                    attrs="{'invisible': [('customer', '=', False)]}"
+                    icon="fa-calculator">
+                    <field string="Rewards" name="rewards_count" widget="statinfo"/>
+                </button>
                 <button class="oe_stat_button" type="object" name="view_performance_history" 
                     attrs="{'invisible': [('customer', '=', False)]}"
                     icon="fa-calculator">

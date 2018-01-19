@@ -26,6 +26,7 @@
         'views/report_invoice_document_inherited_for_pv.xml',
         'views/report_saleorder_document_inherited_for_pv.xml',
         'views/bulk_master_views.xml',
+        'views/rewards_views.xml',
         'wizard/account_invoice_validate_view.xml',
         'wizard/master_account_bank_statement_import_view.xml',
         'views/report_bulk_view.xml',

@@ -186,6 +186,7 @@ class ResPartner(models.Model):
     o_new_junior_recruits_ytd = fields.Integer("O_# of New Junior Recruits (YTD)")
 
     performance_history_count = fields.Integer(compute="_compute_performance_history_count", string="Performance History Count")
+    rewards_count = fields.Integer(compute="_compute_rewards_count", string="Rewards Count")
     downline_count = fields.Integer(compute="_compute_downline_count", string="Downline Count")
     project_count = fields.Integer(compute="_compute_project_count", string="Project Count")
     sms_count = fields.Integer(compute="_compute_sms_count", string="SMS Count")
@@ -747,6 +748,19 @@ class ResPartner(models.Model):
         performances = self.env['performance.history'].search([('partner_id', '=', self.id)])
         action = self.env.ref('inuka.action_performance_history_form').read()[0]
         action['domain'] = [('id', 'in', performances.ids)]
+        return action
+
+    def _compute_rewards_count(self):
+        Rewards = self.env['inuka.reward']
+        for partner in self:
+            partner.rewards_count = Rewards.search_count([('partner_id', '=', partner.id)])
+
+    @api.multi
+    def view_rewards(self):
+        self.ensure_one()
+        rewards = self.env['inuka.reward'].search([('partner_id', '=', self.id)])
+        action = self.env.ref('inuka.action_inuka_rewards_form').read()[0]
+        action['domain'] = [('id', 'in', rewards.ids)]
         return action
 
     @api.multi
