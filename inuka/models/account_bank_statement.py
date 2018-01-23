@@ -1215,6 +1215,10 @@ class MasterAccountBankStatementLine(models.Model):
             line.bank_stmt_line_id.master_bank_stmt_line_id = False
             line.bank_stmt_line_id.statement_reconciled = False
             line.bank_stmt_line_id = False
+
+            if line.move_id:
+                res = line.move_id.reverse_moves(fields.Date.context_today(self), False)
+                line.write({'move_id': res and res[0] or False})
         return True
 
 
