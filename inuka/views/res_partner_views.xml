@@ -9,9 +9,12 @@
             <field name="user_id" position="attributes">
                 <attribute name="string">Mentor</attribute>
             </field>
+            <field name="mobile" position="attributes">
+                <attribute name="required">1</attribute>
+            </field>
             <field name="type" position="before">
                 <field name="first_name" attrs="{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}"/>
-                <field name="passport_no" attrs="{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}"/>
+                <field name="passport_no" attrs="{'invisible': [('customer', '=', False)]}"/>
                 <field name="join_date" attrs="{'invisible': [('customer', '=', False)]}"/>
                 <field name="dob" attrs="{'invisible': [('customer', '=', False)]}"/>
                 <field name="is_admin" invisible="1"/>
