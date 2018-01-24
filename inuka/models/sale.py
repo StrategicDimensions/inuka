@@ -65,7 +65,12 @@ class SaleOrder(models.Model):
     kit_order = fields.Boolean("Kit Order", readonly=True)
     validity_date = fields.Date(string='Expiration Date', readonly=True, copy=False, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]},
         help="Manually set the expiration date of your quotation (offer), or it will set the date automatically based on the template if online quotation is installed.", default=_default_expiry_date)
-
+    channel = fields.Selection([
+        ('front', 'Front Office'),
+        ('admin', 'Admin'),
+        ('portal', 'Online Portal'),
+        ('mobile', 'Mobile Application'),
+    ], string="Channel")
 
     @api.depends('state', 'order_line', 'order_line.qty_delivered', 'order_line.product_uom_qty')
     def _compute_delivery_status(self):

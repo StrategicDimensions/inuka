@@ -57,6 +57,9 @@
             <field name="team_id" position="attributes">
                 <attribute name="string">Sales Team</attribute>
             </field>
+            <field name="team_id" position="after">
+                <field name="channel"/>
+            </field>
             <xpath expr="//sheet/group" position="after">
                 <group>
                     <group>
