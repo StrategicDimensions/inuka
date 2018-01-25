@@ -36,8 +36,8 @@
             <field name="type" position="before">
                 <field name="first_name" attrs="{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}"/>
                 <field name="passport_no" attrs="{'invisible': [('customer', '=', False)]}"/>
-                <field name="join_date" attrs="{'invisible': [('customer', '=', False)]}"/>
-                <field name="dob" attrs="{'invisible': [('customer', '=', False)]}"/>
+                <field name="join_date" attrs="{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}"/>
+                <field name="dob" attrs="{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}"/>
                 <field name="is_admin" invisible="1"/>
             </field>
             <field name="function" position="before">
