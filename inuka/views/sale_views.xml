@@ -235,7 +235,9 @@
         <field name="arch" type="xml">
             <form string="Sale Upload">
             <header>
-                <field name="status" widget="statusbar" statusbar_visible="new,inprogress,completed,error,cancelled"/>
+                <button name="button_start" string="Start" type="object" states="new" class="btn-primary"/>
+                <button name="button_cancel" string="Cancel" type="object" states="new" class="btn-primary"/>
+                <field name="state" widget="statusbar" statusbar_visible="new,inprogress,completed,error,cancelled"/>
             </header>
             <sheet>
                 <div class="oe_title">
@@ -254,7 +256,7 @@
                     </group>
                 </group>
                 <group>
-                    <field name="file"/>
+                    <field name="file" filename="name"/>
                 </group>
                 <label for="result"/>
                 <div>
@@ -275,7 +277,7 @@
                 <field name="start_time"/>
                 <field name="end_time"/>
                 <field name="duration"/>
-                <field name="status"/>
+                <field name="state"/>
             </tree>
         </field>
     </record>

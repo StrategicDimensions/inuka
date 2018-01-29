@@ -1,6 +1,9 @@
 # -*- coding:utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
+import base64
+import io
+import xlrd
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 
@@ -224,7 +227,7 @@ class SaleUpload(models.Model):
     _description = "Sale Upload"
 
     name = fields.Char("Name")
-    status = fields.Selection([
+    state = fields.Selection([
         ('new', 'New'),
         ('inprogress', 'In Progress'),
         ('completed', 'Completed'),
@@ -245,3 +248,76 @@ class SaleUpload(models.Model):
             if start_time and end_time:
                 duration = (end_time - start_time).total_seconds()
             record.duration = duration
+
+    @api.multi
+    def button_start(self):
+        self.ensure_one()
+        self.state = 'inprogress'
+        self.start_time = fields.Datetime.now(self)
+        self.import_data()
+        self.end_time = fields.Datetime.now(self)
+        self.state = 'completed'
+        return True
+
+    @api.multi
+    def button_cancel(self):
+        return True
+
+    @api.multi
+    def import_data(self):
+        self.ensure_one()
+        Partner = self.env['res.partner']
+        file_data = base64.decodestring(self.file)
+        row_list = []
+
+        fp = io.BytesIO()
+        fp.write(file_data)
+        workbook = xlrd.open_workbook(file_contents=fp.getvalue())
+        sheet = workbook.sheet_by_index(0)
+        no_of_rows = sheet.nrows
+        row_list = []
+        keys = sheet.row_values(0)
+        for row in range(1, no_of_rows):
+            field = sheet.row_values(row)
+            values = dict(zip(keys, field))
+            row_list.append(values)
+
+        status_dict = {
+            'Candidate': 'candidate',
+            'New': 'new',
+            'Junior': 'junior',
+            'Senior': 'senior',
+            'Pearl': 'pearl',
+            'Ruby': 'ruby',
+            'Emerald': 'emerald',
+            'Sapphire': 'sapphire',
+            'Diamond': 'diamond',
+            'Double Diamond': 'double_diamond',
+            'Triple Diamond': 'triple_diamond',
+            'Exective Diamond': 'exective_diamond',
+            'Presidential': 'presidential',
+        }
+
+        for data in row_list:
+            if data.get('MEMBERID'):
+                part = Partner.search([('ref', '=', data['MEMBERID'])], limit=1)
+                if part:
+                    val = {
+                        'personal_pv': data.get('PVPERS') or 0.0,
+                        'pv_downline_1': data.get('PVDOWNLINE1') or 0.0,
+                        'pv_downline_2': data.get('PVDOWNLINE2') or 0.0,
+                        'pv_downline_3': data.get('PVDOWNLINE3') or 0.0,
+                        'pv_downline_4': data.get('PVDOWNLINE4') or 0.0,
+                        'pv_tot_group': data.get('PVTOTGROUP') or 0.0,
+                        'personal_members': data.get('ACTIVEPERSMEM') or 0,
+                        'new_members': data.get('PERSNEWMEM') or 0,
+                        'join_date': datetime(*xlrd.xldate_as_tuple(data['JOIN DATE'], workbook.datemode)).strftime('%Y-%m-%d'),
+                    }
+                    if data.get('STATUS'):
+                        val['status'] = status_dict.get(data.get('STATUS'))
+                    if data.get('UPLINECODE'):
+                        upline_1 = Partner.search([('ref', '=', data['UPLINECODE'])], limit=1).id
+                        if upline_1:
+                            val['upline'] = upline_1
+                    part.write(val)
+        return True
