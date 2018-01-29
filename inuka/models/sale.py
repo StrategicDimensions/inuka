@@ -261,6 +261,8 @@ class SaleUpload(models.Model):
 
     @api.multi
     def button_cancel(self):
+        self.ensure_one()
+        self.state = 'cancelled'
         return True
 
     @api.multi
