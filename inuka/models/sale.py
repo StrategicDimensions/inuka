@@ -217,3 +217,31 @@ class ReservedFund(models.Model):
     customer_id = fields.Many2one('res.partner', readonly=True, requied=True)
     active = fields.Boolean(default=True, readonly=True)
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.user.company_id)
+
+
+class SaleUpload(models.Model):
+    _name = "sale.upload"
+    _description = "Sale Upload"
+
+    name = fields.Char("Name")
+    status = fields.Selection([
+        ('new', 'New'),
+        ('inprogress', 'In Progress'),
+        ('completed', 'Completed'),
+        ('error', 'Error'),
+        ('cancelled', 'Cancelled'),
+        ], string='Status', default='new')
+    start_time = fields.Datetime("Start Time", default=lambda self: fields.Datetime.now())
+    end_time = fields.Datetime("End Time")
+    duration = fields.Integer(compute="_compute_duration", string="Duration")
+    result = fields.Text()
+    file = fields.Binary()
+
+    def _compute_duration(self):
+        for record in self:
+            start_time = fields.Datetime.from_string(record.start_time)
+            end_time = fields.Datetime.from_string(record.end_time)
+            duration = 0
+            if start_time and end_time:
+                duration = (end_time - start_time).total_seconds()
+            record.duration = duration
