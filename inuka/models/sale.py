@@ -284,42 +284,15 @@ class SaleUpload(models.Model):
             values = dict(zip(keys, field))
             row_list.append(values)
 
-        status_dict = {
-            'Candidate': 'candidate',
-            'New': 'new',
-            'Junior': 'junior',
-            'Senior': 'senior',
-            'Pearl': 'pearl',
-            'Ruby': 'ruby',
-            'Emerald': 'emerald',
-            'Sapphire': 'sapphire',
-            'Diamond': 'diamond',
-            'Double Diamond': 'double_diamond',
-            'Triple Diamond': 'triple_diamond',
-            'Exective Diamond': 'exective_diamond',
-            'Presidential': 'presidential',
-        }
-
         for data in row_list:
             if data.get('MEMBERID'):
                 part = Partner.search([('ref', '=', data['MEMBERID'])], limit=1)
                 if part:
-                    val = {
-                        'personal_pv': data.get('PVPERS') or 0.0,
-                        'pv_downline_1': data.get('PVDOWNLINE1') or 0.0,
-                        'pv_downline_2': data.get('PVDOWNLINE2') or 0.0,
-                        'pv_downline_3': data.get('PVDOWNLINE3') or 0.0,
-                        'pv_downline_4': data.get('PVDOWNLINE4') or 0.0,
-                        'pv_tot_group': data.get('PVTOTGROUP') or 0.0,
-                        'personal_members': data.get('ACTIVEPERSMEM') or 0,
-                        'new_members': data.get('PERSNEWMEM') or 0,
-                        'join_date': datetime(*xlrd.xldate_as_tuple(data['JOIN DATE'], workbook.datemode)).strftime('%Y-%m-%d'),
-                    }
-                    if data.get('STATUS'):
-                        val['status'] = status_dict.get(data.get('STATUS'))
-                    if data.get('UPLINECODE'):
-                        upline_1 = Partner.search([('ref', '=', data['UPLINECODE'])], limit=1).id
-                        if upline_1:
-                            val['upline'] = upline_1
-                    part.write(val)
+                    sql_query ="""UPDATE res_partner SET personal_pv = %s,
+                                pv_downline_1 = %s, pv_downline_2 = %s,
+                                pv_downline_3 = %s, pv_downline_4 = %s,
+                                pv_tot_group = %s, personal_members = %s, new_members = %s WHERE ref = %s"""
+                    params = (data.get('PVPERS') or 0.0, data.get('PVDOWNLINE1') or 0.0, data.get('PVDOWNLINE2') or 0.0, data.get('PVDOWNLINE3') or 0.0, data.get('PVDOWNLINE4') or 0.0,
+                            data.get('PVTOTGROUP') or 0.0, data.get('ACTIVEPERSMEM') or 0, data.get('PERSNEWMEM') or 0, data.get('MEMBERID'))
+                    self.env.cr.execute(sql_query, params)
         return True
