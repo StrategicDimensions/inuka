@@ -236,7 +236,7 @@
             <form string="Sale Upload">
             <header>
                 <button name="button_start" string="Start" type="object" states="new" class="btn-primary"/>
-                <button name="button_cancel" string="Cancel" type="object" states="new" class="btn-primary"/>
+                <button name="button_cancel" string="Cancel" type="object" states="new,inprogress" class="btn-primary"/>
                 <field name="state" widget="statusbar" statusbar_visible="new,inprogress,completed,error,cancelled"/>
             </header>
             <sheet>
@@ -295,6 +295,6 @@
         </field>
     </record>
 
-    <menuitem id="menu_sale_upload" name="Sales Upload" action="action_sale_upload_form" parent="crm.crm_menu_config" sequence="10"/>
+    <menuitem id="menu_sale_upload" name="Sales Upload" action="action_sale_upload_form" parent="crm.crm_menu_config" sequence="10" groups="base.group_system"/>
 
 </odoo>

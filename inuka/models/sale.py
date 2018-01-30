@@ -284,6 +284,23 @@ class SaleUpload(models.Model):
             values = dict(zip(keys, field))
             row_list.append(values)
 
+        status_dict = {
+            'Candidate': 'candidate',
+            'New': 'new',
+            'Junior': 'junior',
+            'Senior': 'senior',
+            'Pearl': 'pearl',
+            'Ruby': 'ruby',
+            'Emerald': 'emerald',
+            'Sapphire': 'sapphire',
+            'Diamond': 'diamond',
+            'Double Diamond': 'double_diamond',
+            'Triple Diamond': 'triple_diamond',
+            'Exective Diamond': 'exective_diamond',
+            'Presidential': 'presidential',
+        }
+
+        record_count = status_count = 0
         for data in row_list:
             if data.get('MEMBERID'):
                 part = Partner.search([('ref', '=', data['MEMBERID'])], limit=1)
@@ -295,4 +312,10 @@ class SaleUpload(models.Model):
                     params = (data.get('PVPERS') or 0.0, data.get('PVDOWNLINE1') or 0.0, data.get('PVDOWNLINE2') or 0.0, data.get('PVDOWNLINE3') or 0.0, data.get('PVDOWNLINE4') or 0.0,
                             data.get('PVTOTGROUP') or 0.0, data.get('ACTIVEPERSMEM') or 0, data.get('PERSNEWMEM') or 0, data.get('MEMBERID'))
                     self.env.cr.execute(sql_query, params)
+                    record_count += 1
+
+                    if part.status != status_dict.get(data.get('STATUS')):
+                        part.write({'status': status_dict.get(data.get('STATUS'))})
+                        status_count += 1
+        self.result = """%s records updated, %s status change updated""" %(record_count, status_count)
         return True
