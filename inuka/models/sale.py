@@ -122,7 +122,7 @@ class SaleOrder(models.Model):
                 'sms_content': """ INUKA thanks you for your order %s, an SMS with details will follow when your order (Ref: %s) is dispatched^More info on 27219499850""" %(res.partner_id.name, res.name)
             })
             msg_compose.send_entity()
-        if res.partner_id.watchlist:
+        if res.partner_id.watchlist and channel:
             res.message_subscribe(channel_ids=[channel.id])
         return res
 
