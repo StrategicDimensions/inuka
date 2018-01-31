@@ -3,7 +3,7 @@
 
 import base64
 import io
-import xlrd
+import csv
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 
@@ -269,18 +269,21 @@ class SaleUpload(models.Model):
     def import_data(self):
         self.ensure_one()
         Partner = self.env['res.partner']
-        file_data = base64.decodestring(self.file)
         row_list = []
 
-        fp = io.BytesIO()
-        fp.write(file_data)
-        workbook = xlrd.open_workbook(file_contents=fp.getvalue())
-        sheet = workbook.sheet_by_index(0)
-        no_of_rows = sheet.nrows
-        row_list = []
-        keys = sheet.row_values(0)
-        for row in range(1, no_of_rows):
-            field = sheet.row_values(row)
+        try:
+            data = base64.b64decode(self.file)
+            file_input = io.StringIO(data.decode("utf-8"))
+            file_input.seek(0)
+            reader = csv.reader(file_input, delimiter=',', lineterminator='\r\n')
+            reader_info = []
+            reader_info.extend(reader)
+            keys = reader_info[0]
+        except Exception as e:
+            raise UserError(_("Invalid file. \n Note: file must be csv" % tools.ustr(e)))
+
+        for row in range(1, len(reader_info)):
+            field = reader_info[row]
             values = dict(zip(keys, field))
             row_list.append(values)
 
