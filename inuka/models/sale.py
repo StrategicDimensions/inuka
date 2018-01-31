@@ -132,11 +132,13 @@ class SaleOrder(models.Model):
 
     @api.multi
     def action_confirm(self):
-        super(SaleOrder, self).action_confirm()
         for order in self:
-            order.write({'pv': order.total_pv, 'order_total': order.amount_total})
+            res = order.carrier_id.rate_shipment(order)
+            order.get_delivery_price()
+            order.set_delivery_line()
+            order.write({'shipping_cost': res['price'],'pv': order.total_pv, 'order_total': order.amount_total})
             order.picking_ids.write({'bulk_master_id': order.bulk_master_id.id})
-        return True
+        return super(SaleOrder, self).action_confirm()
 
     @api.multi
     def action_cancel(self):
