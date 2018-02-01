@@ -29,13 +29,14 @@
                     </group>
                 </page>
                 <page string="MTD Performance" name="member" attrs="{'invisible': [('customer', '=', False)]}">
-                    <group string="Performance">
-                        <group string="PV Performance">
+                    <separator string="PV Performance"/>
+                    <group>
+                        <group>
                             <field name="personal_pv" string="Personal PV (MTD)" readonly="1"/>
                             <field name="pv_downline_1" string="PV Downline 1 (MTD)" readonly="1"/>
                             <field name="pv_downline_2" string="PV Downline 2 (MTD)" readonly="1"/>
                         </group>
-                        <group string="">
+                        <group>
                             <field name="pv_tot_group" string="Group PV (MTD)" readonly="1"/>
                             <field name="pv_downline_3" string="PV Downline 3 (MTD)" readonly="1"/>
                             <field name="pv_downline_4" string="PV Downline 4 (MTD)" readonly="1"/>
@@ -66,13 +67,14 @@
                     </group>
                 </page>
                 <page string="QTD Performance" attrs="{'invisible': [('customer', '=', False)]}">
+                    <separator string="PV Performance"/>
                     <group>
-                        <group string="PV Performance">
+                        <group>
                             <field name="personal_pv_qtd" readonly="1"/>
                             <field name="pv_downline_1_qtd" readonly="1"/>
                             <field name="pv_downline_2_qtd" readonly="1"/>
                         </group>
-                        <group string="">
+                        <group>
                             <field name="pv_tot_group_qtd" readonly="1"/>
                             <field name="pv_downline_3_qtd" readonly="1"/>
                             <field name="pv_downline_4_qtd" readonly="1"/>
@@ -103,13 +105,14 @@
                     </group>
                 </page>
                 <page string="YTD Performance" attrs="{'invisible': [('customer', '=', False)]}">
+                    <separator string="PV Performance"/>
                     <group>
-                        <group string="PV Performance">
+                        <group>
                             <field name="personal_pv_ytd" readonly="1"/>
                             <field name="pv_downline_1_ytd" readonly="1"/>
                             <field name="pv_downline_2_ytd" readonly="1"/>
                         </group>
-                        <group string="">
+                        <group>
                             <field name="pv_tot_group_ytd" readonly="1"/>
                             <field name="pv_downline_3_ytd" readonly="1"/>
                             <field name="pv_downline_4_ytd" readonly="1"/>
@@ -140,13 +143,14 @@
                     </group>
                 </page>
                 <page string="MTD (Odoo)" attrs="{'invisible': [('customer', '=', False)]}">
+                    <separator string="PV Performance"/>
                     <group>
-                        <group string="PV Performance">
+                        <group>
                             <field name="o_personal_pv_mtd" readonly="1"/>
                             <field name="o_pv_downline_1_mtd" readonly="1"/>
                             <field name="o_pv_downline_2_mtd" readonly="1"/>
                         </group>
-                        <group string="">
+                        <group>
                             <field name="o_pv_tot_group_mtd" readonly="1"/>
                             <field name="o_pv_downline_3_mtd" readonly="1"/>
                             <field name="o_pv_downline_4_mtd" readonly="1"/>
@@ -177,13 +181,14 @@
                     </group>
                 </page>
                 <page string="QTD (Odoo)" attrs="{'invisible': [('customer', '=', False)]}">
+                    <separator string="PV Performance"/>
                     <group>
-                        <group string="PV Performance">
+                        <group>
                             <field name="o_personal_pv_qtd" readonly="1"/>
                             <field name="o_pv_downline_1_qtd" readonly="1"/>
                             <field name="o_pv_downline_2_qtd" readonly="1"/>
                         </group>
-                        <group string="">
+                        <group>
                             <field name="o_pv_tot_group_qtd" readonly="1"/>
                             <field name="o_pv_downline_3_qtd" readonly="1"/>
                             <field name="o_pv_downline_4_qtd" readonly="1"/>
@@ -214,13 +219,14 @@
                     </group>
                 </page>
                 <page string="YTD (Odoo)" attrs="{'invisible': [('customer', '=', False)]}">
+                    <separator string="PV Performance"/>
                     <group>
-                        <group string="PV Performance">
+                        <group>
                             <field name="o_personal_pv_ytd" readonly="1"/>
                             <field name="o_pv_downline_1_ytd" readonly="1"/>
                             <field name="o_pv_downline_2_ytd" readonly="1"/>
                         </group>
-                        <group string="">
+                        <group>
                             <field name="o_pv_tot_group_ytd" readonly="1"/>
                             <field name="o_pv_downline_3_ytd" readonly="1"/>
                             <field name="o_pv_downline_4_ytd" readonly="1"/>
