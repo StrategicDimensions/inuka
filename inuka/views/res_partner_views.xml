@@ -274,38 +274,38 @@
                 </page>
                 <page string="YTD (Odoo)" attrs="{'invisible': [('customer', '=', False)]}">
                     <group>
-                        <group>
+                        <group string="PV Performance">
                             <field name="o_personal_pv_ytd" readonly="1"/>
                             <field name="o_pv_downline_1_ytd" readonly="1"/>
-                            <field name="o_pv_downline_3_ytd" readonly="1"/>
-                        </group>
-                        <group>
-                            <field name="o_pv_tot_group_ytd" readonly="1"/>
                             <field name="o_pv_downline_2_ytd" readonly="1"/>
+                        </group>
+                        <group string="">
+                            <field name="o_pv_tot_group_ytd" readonly="1"/>
+                            <field name="o_pv_downline_3_ytd" readonly="1"/>
                             <field name="o_pv_downline_4_ytd" readonly="1"/>
                         </group>
                     </group>
                     <group>
-                        <group>
-                            <field name="o_is_active_ytd" readonly="1"/>
-                            <field name="o_is_vr_earner_ytd" readonly="1"/>
-                            <field name="o_is_new_junior_ytd" readonly="1"/>
+                        <group string="Recruiting">
+                            <field name="o_new_members_ytd" readonly="1"/>
+                            <field name="o_new_junior_recruits_ytd" readonly="1"/>
+                            <field name="o_new_senior_recruits_ytd" readonly="1"/>
                         </group>
-                        <group>
-                            <field name="o_is_new_ytd" readonly="1"/>
-                            <field name="o_is_new_senior_ytd" readonly="1"/>
-                            <field name="o_is_new_ruby_ytd" readonly="1"/>
+                        <group string="Downline Activity">
+                            <field name="o_personal_members_ytd" readonly="1"/>
+                            <field name="o_vr_earner_ytd" readonly="1"/>
                         </group>
                     </group>
                     <group>
-                        <group>
-                            <field name="o_personal_members_ytd" readonly="1"/>
-                            <field name="o_vr_earner_ytd" readonly="1"/>
-                            <field name="o_new_junior_recruits_ytd" readonly="1"/>
+                        <group string="Member Activity">
+                            <field name="o_is_active_ytd" readonly="1"/>
+                            <field name="o_is_vr_earner_ytd" readonly="1"/>
+                            <field name="o_is_new_ytd" readonly="1"/>
+                            <field name="o_is_new_junior_ytd" readonly="1"/>
+                            <field name="o_is_new_senior_ytd" readonly="1"/>
+                            <field name="o_is_new_ruby_ytd" readonly="1"/>
                         </group>
                         <group>
-                            <field name="o_new_members_ytd" readonly="1"/>
-                            <field name="o_new_senior_recruits_ytd" readonly="1"/>
                         </group>
                     </group>
                 </page>
