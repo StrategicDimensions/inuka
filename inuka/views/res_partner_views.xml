@@ -1,65 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="view_res_partner_form_inherit_inuka" model="ir.ui.view">
-        <field name="name">res.partner.form.inherit.inuka</field>
-        <field name="model">res.partner</field>
-        <field name="inherit_id" ref="base.view_partner_form"/>
-        <field name="arch" type="xml">
-            <field name="company_type" position="attributes">
-                <attribute name="attrs">{'invisible': [('customer', '=', True)]}</attribute>
-            </field>
-            <field name="parent_id" position="attributes">
-                <attribute name="attrs">{'invisible': [('customer', '=', True)]}</attribute>
-            </field>
-            <field name="street" position="attributes">
-                <attribute name="required">1</attribute>
-            </field>
-            <field name="city" position="attributes">
-                <attribute name="required">1</attribute>
-            </field>
-            <field name="state_id" position="attributes">
-                <attribute name="required">1</attribute>
-            </field>
-            <field name="zip" position="attributes">
-                <attribute name="required">1</attribute>
-            </field>
-            <field name="country_id" position="attributes">
-                <attribute name="required">1</attribute>
-            </field>
-            <field name="user_id" position="attributes">
-                <attribute name="string">Mentor</attribute>
-            </field>
-            <field name="mobile" position="attributes">
-                <attribute name="required">1</attribute>
-            </field>
-            <field name="type" position="before">
-                <field name="first_name" attrs="{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}"/>
-                <field name="passport_no" attrs="{'invisible': [('customer', '=', False)]}"/>
-                <field name="join_date" attrs="{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}"/>
-                <field name="dob" attrs="{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}"/>
-                <field name="is_admin" invisible="1"/>
-            </field>
-            <field name="function" position="before">
-                <field name="last_name" attrs="{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}"/>
-            </field>
-            <field name="lang" position="before">
-                <field name="home_phone" widget="phone" attrs="{'invisible': [('customer', '=', False)]}"/>
-            </field>
-            <field name="lang" position="after">
-                <field name="upline" domain="[('customer', '=', True)]" attrs="{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}"/>
-                <field name="upline_id" attrs="{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}"/>
-                <field name="kit" attrs="{'invisible': ['|', ('customer', '=', False), ('status', 'not in', ('candidate'))], 'required': [('customer', '=', True)]}"/>
-            </field>
-            <field name="vat" position="replace"/>
-            <field name="function" position="replace"/>
-            <field name="website" position="replace"/>
-            <field name="ref" position="replace">
-                <field name="ref" attrs="{'readonly': [('is_admin', '=', False), ('customer', '=', True)]}"/>
-            </field>
-        </field>
-    </record>
-
     <record id="view_res_partner_property_form_inherit_inuka" model="ir.ui.view">
         <field name="name">res.partner.property.form.inherit.inuka</field>
         <field name="model">res.partner</field>
@@ -334,6 +275,65 @@
         </field>
     </record>
 
+    <record id="view_res_partner_form_inherit_inuka" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.inuka</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <field name="company_type" position="attributes">
+                <attribute name="attrs">{'invisible': [('customer', '=', True)]}</attribute>
+            </field>
+            <field name="parent_id" position="attributes">
+                <attribute name="attrs">{'invisible': [('customer', '=', True)]}</attribute>
+            </field>
+            <field name="street" position="attributes">
+                <attribute name="required">1</attribute>
+            </field>
+            <field name="city" position="attributes">
+                <attribute name="required">1</attribute>
+            </field>
+            <field name="state_id" position="attributes">
+                <attribute name="required">1</attribute>
+            </field>
+            <field name="zip" position="attributes">
+                <attribute name="required">1</attribute>
+            </field>
+            <field name="country_id" position="attributes">
+                <attribute name="required">1</attribute>
+            </field>
+            <field name="user_id" position="attributes">
+                <attribute name="string">Mentor</attribute>
+            </field>
+            <field name="mobile" position="attributes">
+                <attribute name="required">1</attribute>
+            </field>
+            <field name="type" position="before">
+                <field name="first_name" attrs="{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}"/>
+                <field name="passport_no" attrs="{'invisible': [('customer', '=', False)]}"/>
+                <field name="join_date" attrs="{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}"/>
+                <field name="dob" attrs="{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}"/>
+                <field name="is_admin" invisible="1"/>
+            </field>
+            <field name="function" position="before">
+                <field name="last_name" attrs="{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}"/>
+            </field>
+            <field name="lang" position="before">
+                <field name="home_phone" widget="phone" attrs="{'invisible': [('customer', '=', False)]}"/>
+            </field>
+            <field name="lang" position="after">
+                <field name="upline" domain="[('customer', '=', True)]" attrs="{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}"/>
+                <field name="upline_id" attrs="{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}"/>
+                <field name="kit" attrs="{'invisible': ['|', ('customer', '=', False), ('status', 'not in', ('candidate'))], 'required': [('customer', '=', True)]}"/>
+            </field>
+            <field name="vat" position="replace"/>
+            <field name="function" position="replace"/>
+            <field name="website" position="replace"/>
+            <field name="ref" position="replace">
+                <field name="ref" attrs="{'readonly': [('is_admin', '=', False), ('customer', '=', True)]}"/>
+            </field>
+        </field>
+    </record>
+
     <record id="view_res_partner_tree_inherit_inuka" model="ir.ui.view">
         <field name="name">res.partner.tree.inherit.inuka</field>
         <field name="model">res.partner</field>
@@ -359,11 +359,16 @@
         <field name="inherit_id" ref="sale.res_partner_view_buttons"/>
         <field name="priority" eval="20"/>
         <field name="arch" type="xml">
-            <button name="%(sale.act_res_partner_2_sale_order)d" position="after">
+            <button name="%(crm.crm_lead_opportunities)d" position="before">
                 <button class="oe_stat_button" type="object" name="view_downline_member"
                     attrs="{'invisible': [('customer', '=', False)]}"
                     icon="fa-users">
                     <field string="Downline" name="downline_count" widget="statinfo"/>
+                </button>
+                <button class="oe_stat_button" type="object" name="view_project"
+                    attrs="{'invisible': [('customer', '=', False)]}"
+                    icon="fa-puzzle-piece">
+                    <field string="Mentorship" name="project_count" widget="statinfo"/>
                 </button>
                 <button class="oe_stat_button" type="object" name="view_rewards"
                     attrs="{'invisible': [('customer', '=', False)]}"
@@ -374,11 +379,6 @@
                     attrs="{'invisible': [('customer', '=', False)]}"
                     icon="fa-calculator">
                     <field string="Performance History" name="performance_history_count" widget="statinfo"/>
-                </button>
-                <button class="oe_stat_button" type="object" name="view_project"
-                    attrs="{'invisible': [('customer', '=', False)]}"
-                    icon="fa-puzzle-piece">
-                    <field string="Mentorship" name="project_count" widget="statinfo"/>
                 </button>
                 <button class="oe_stat_button" type="object" name="view_sms_message"
                     attrs="{'invisible': [('customer', '=', False)]}"
