@@ -342,6 +342,10 @@
         </field>
     </record>
 
+    <!-- Hide the Send SMS and SMS icon on partner form -->
+    <delete model="ir.ui.view" search="[('name','=','res.partner.form.send.sms')]"/>
+    <delete model="ir.actions.act_window" search="[('name', '=', 'Send SMS'), ('src_model', '=', 'res.partner')]"/>
+
     <record id="view_res_partner_downline_tree" model="ir.ui.view">
         <field name="name">res.partner.downline.tree</field>
         <field name="model">res.partner</field>
