@@ -342,6 +342,26 @@
         </field>
     </record>
 
+    <record id="view_res_partner_downline_tree" model="ir.ui.view">
+        <field name="name">res.partner.downline.tree</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <tree string="Downline">
+                <field name="ref" string="Member ID"/>
+                <field name="display_name" string="Name"/>
+                <field name="status"/>
+                <field name="join_date"/>
+                <field name="state_id" string="Region"/>
+                <field name="personal_pv" string="Personal PV (MTD)"/>
+                <field name="pv_tot_group" string="Group PV (MTD)"/>
+                <field name="is_active_mtd"/>
+                <field name="personal_members" string="# of Active Downline (MTD)"/>
+                <field name="vr_earner"/>
+                <field name="new_members" string="# of New Members (MTD)"/>
+            </tree>
+        </field>
+    </record>
+
     <record id="view_res_partner_tree_inherit_inuka" model="ir.ui.view">
         <field name="name">res.partner.tree.inherit.inuka</field>
         <field name="model">res.partner</field>
