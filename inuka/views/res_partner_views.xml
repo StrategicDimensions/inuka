@@ -347,6 +347,17 @@
     <delete model="ir.ui.view" search="[('name','=','res.partner.form.send.sms')]"/>
     <delete model="ir.actions.act_window" search="[('name', '=', 'Send SMS'), ('src_model', '=', 'res.partner')]"/>
 
+    <!-- Default view for res.partner should be the list view -->
+    <record id="base.action_partner_form_view1" model="ir.actions.act_window.view">
+        <field eval="2" name="sequence"/>
+    </record>
+    <record id="base.action_partner_form_view2" model="ir.actions.act_window.view">
+        <field eval="1" name="sequence"/>
+    </record>
+    <record id="base.action_partner_tree_view1" model="ir.actions.act_window.view">
+        <field name="sequence" eval="0"/>
+    </record>
+
     <record id="view_res_partner_downline_tree" model="ir.ui.view">
         <field name="name">res.partner.downline.tree</field>
         <field name="model">res.partner</field>
