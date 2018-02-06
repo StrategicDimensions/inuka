@@ -310,7 +310,7 @@ class SaleUpload(models.Model):
         record_count = status_count = 0
         for data in row_list:
             if data.get('MEMBERID'):
-                if first_upload:
+                if self.first_upload:
                     try:
                         sql_query ="""UPDATE res_partner SET personal_pv = %s,
                                     pv_downline_1 = %s, pv_downline_2 = %s,
