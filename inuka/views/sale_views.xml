@@ -278,6 +278,7 @@
                     <group>
                         <field name="end_time" readonly="1"/>
                         <field name="create_date" string="Date" readonly="1"/>
+                        <field name="first_upload"/>
                     </group>
                 </group>
                 <group>
