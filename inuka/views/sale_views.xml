@@ -335,7 +335,7 @@
                             <field name="old_status"/>
                         </group>
                         <group>
-                            <field name="updated"/>
+                            <field name="active"/>
                             <field name="new_status"/>
                         </group>
                     </group>
@@ -352,7 +352,6 @@
                 <field name="partner_id"/>
                 <field name="old_status"/>
                 <field name="new_status"/>
-                <field name="updated"/>
             </tree>
         </field>
     </record>

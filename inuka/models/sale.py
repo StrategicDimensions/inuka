@@ -361,7 +361,6 @@ class SaleUploadIntermediate(models.Model):
     _rec_name = 'partner_id'
 
     partner_id = fields.Many2one("res.partner", string="Customer")
-    updated = fields.Boolean("Updated")
     old_status = fields.Selection([
         ('candidate', 'Candidate'),
         ('new', 'New'),
@@ -392,7 +391,11 @@ class SaleUploadIntermediate(models.Model):
         ('exective_diamond', 'Exective Diamond'),
         ('presidential', 'Presidential')
         ], string='New Status')
+    active = fields.Boolean(default=True)
 
     @api.model
     def update_status(self):
-        pass
+        records = self.search([], limit=20)
+        for record in records:
+            record.partner_id.write({'status': record.new_status})
+            record.write({'active': False})
