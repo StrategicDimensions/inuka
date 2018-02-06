@@ -349,3 +349,42 @@ class SaleUpload(models.Model):
         result = """%s records updated, %s status change updated""" %(record_count, status_count)
         self.write({'result': result, 'end_time': fields.Datetime.now(self), 'state': 'completed'})
         return True
+
+
+class SaleUploadIntermediate(models.Model):
+    _name = "sale.upload.intermediate"
+    _description = "Sale Upload Intermediate"
+    _rec_name = 'partner_id'
+
+    partner_id = fields.Many2one("res.partner", string="Customer")
+    updated = fields.Boolean("Updated")
+    old_status = fields.Selection([
+        ('candidate', 'Candidate'),
+        ('new', 'New'),
+        ('junior', 'Junior'),
+        ('senior', 'Senior'),
+        ('pearl', 'Pearl'),
+        ('ruby', 'Ruby'),
+        ('emerald', 'Emerald'),
+        ('sapphire', 'Sapphire'),
+        ('diamond', 'Diamond'),
+        ('double_diamond', 'Double Diamond'),
+        ('triple_diamond', 'Triple Diamond'),
+        ('exective_diamond', 'Exective Diamond'),
+        ('presidential', 'Presidential')
+        ], string='Old Status')
+    new_status = fields.Selection([
+        ('candidate', 'Candidate'),
+        ('new', 'New'),
+        ('junior', 'Junior'),
+        ('senior', 'Senior'),
+        ('pearl', 'Pearl'),
+        ('ruby', 'Ruby'),
+        ('emerald', 'Emerald'),
+        ('sapphire', 'Sapphire'),
+        ('diamond', 'Diamond'),
+        ('double_diamond', 'Double Diamond'),
+        ('triple_diamond', 'Triple Diamond'),
+        ('exective_diamond', 'Exective Diamond'),
+        ('presidential', 'Presidential')
+        ], string='New Status')
