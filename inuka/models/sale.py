@@ -273,6 +273,7 @@ class SaleUpload(models.Model):
     def import_data(self):
         self.ensure_one()
         Partner = self.env['res.partner']
+        Intermediate = self.env['sale.upload.intermediate']
         row_list = []
 
         try:
@@ -339,7 +340,12 @@ class SaleUpload(models.Model):
                             record_count += 1
 
                             if part.status != status_dict.get(data.get('STATUS')):
-                                part.write({'status': status_dict.get(data.get('STATUS'))})
+                                Intermediate.create({
+                                    'partner_id': part.id,
+                                    'old_status': part.status,
+                                    'new_status': status_dict.get(data.get('STATUS')),
+                                })
+#                                 part.write({'status': status_dict.get(data.get('STATUS'))})
                                 status_count += 1
                         except Exception as e:
                             result = """Error: %s""" %(str(e))
