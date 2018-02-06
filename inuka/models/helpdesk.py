@@ -49,7 +49,7 @@ class HelpdeskTicket(models.Model):
 
     @api.multi
     def import_bank_statement(self):
-        journal_id = self.env['account.journal'].search([('name', '=', 'FNB')], limit=1).id
+        journal_id = self.env['account.journal'].search([('name', '=', 'FNB Trading Account')], limit=1).id
         stage = self.env['helpdesk.stage'].search([('name', '=', 'Solved')], limit=1)
         for ticket in self:
             attachments = self.env['ir.attachment'].search([('res_id', '=', ticket.id), ('res_model', '=', 'helpdesk.ticket')])
