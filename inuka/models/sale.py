@@ -392,3 +392,7 @@ class SaleUploadIntermediate(models.Model):
         ('exective_diamond', 'Exective Diamond'),
         ('presidential', 'Presidential')
         ], string='New Status')
+
+    @api.model
+    def update_status(self):
+        pass
