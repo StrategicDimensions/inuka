@@ -340,12 +340,10 @@ class SaleUpload(models.Model):
                             record_count += 1
 
                             if part.status != status_dict.get(data.get('STATUS')):
-                                Intermediate.create({
-                                    'partner_id': part.id,
-                                    'old_status': part.status,
-                                    'new_status': status_dict.get(data.get('STATUS')),
-                                })
-#                                 part.write({'status': status_dict.get(data.get('STATUS'))})
+                                sql_query = """INSERT INTO sale_upload_intermediate (partner_id, old_status, new_status)
+                                        VALUES (%s, %s, %s)"""
+                                params = (part.id, part.status, status_dict.get(data.get('STATUS')))
+                                self.env.cr.execute(sql_query, params)
                                 status_count += 1
                         except Exception as e:
                             result = """Error: %s""" %(str(e))
