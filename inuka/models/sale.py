@@ -300,8 +300,8 @@ class SaleUpload(models.Model):
             'Emerald': 'emerald',
             'Sapphire': 'sapphire',
             'Diamond': 'diamond',
-            'Double Diamond': 'double_diamond',
-            'Triple Diamond': 'triple_diamond',
+            'double_diamond': 'double_diamond',
+            'triple_diamond': 'triple_diamond',
             'Exective Diamond': 'exective_diamond',
             'Presidential': 'presidential',
         }
@@ -315,9 +315,9 @@ class SaleUpload(models.Model):
                     sql_query ="""UPDATE res_partner SET personal_pv = %s,
                                 pv_downline_1 = %s, pv_downline_2 = %s,
                                 pv_downline_3 = %s, pv_downline_4 = %s,
-                                pv_tot_group = %s, personal_members = %s, new_members = %s WHERE ref = %s"""
+                                pv_tot_group = %s, personal_members = %s, new_members = %s, status = %s WHERE ref = %s"""
                     params = (data.get('PVPERS') or 0.0, data.get('PVDOWNLINE1') or 0.0, data.get('PVDOWNLINE2') or 0.0, data.get('PVDOWNLINE3') or 0.0, data.get('PVDOWNLINE4') or 0.0,
-                            data.get('PVTOTGROUP') or 0.0, data.get('ACTIVEPERSMEM') or 0, data.get('PERSNEWMEM') or 0, data.get('MEMBERID'))
+                            data.get('PVTOTGROUP') or 0.0, data.get('ACTIVEPERSMEM') or 0, data.get('PERSNEWMEM') or 0, data.get('STATUS'), data.get('MEMBERID'))
                     self.env.cr.execute(sql_query, params)
                     record_count += 1
 
