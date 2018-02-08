@@ -22,6 +22,11 @@ class Users(models.Model):
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
+    def _default_candidate(self):
+        if self.customer:
+            return 'candidate'
+        return False
+
     first_name = fields.Char("First Name")
     last_name = fields.Char("Last Name")
     passport_no = fields.Char("ID/Passport No")
@@ -42,7 +47,7 @@ class ResPartner(models.Model):
         ('triple_diamond', 'Triple Diamond'),
         ('exective_diamond', 'Exective Diamond'),
         ('presidential', 'Presidential')
-        ], string='Status', required=True, default='candidate', track_visibility='onchange')
+        ], string='Status', default=_default_candidate, track_visibility='onchange')
     upline = fields.Many2one("res.partner", string="Upline")
     upline_id = fields.Char(related="upline.ref", string="Upline ID")
     candidate_registrar = fields.Boolean("Candidate Registrar")

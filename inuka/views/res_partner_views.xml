@@ -13,7 +13,7 @@
                 </header>
             </xpath>
             <field name="category_id" position="after">
-                <field name="status" attrs="{'invisible':[('customer', '=', False)]}"/>
+                <field name="status" attrs="{'invisible':[('customer', '=', False)], 'required':[('customer', '=', True)]}"/>
             </field>
             <field name="trust" position="after">
                 <field name="credit_limit"/>
