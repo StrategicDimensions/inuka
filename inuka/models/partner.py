@@ -698,6 +698,7 @@ class ResPartner(models.Model):
         channel = self.env['mail.channel'].search([('name', '=', 'Escalations')], limit=1)
         tag = self.env['helpdesk.tag'].search([('name', '=', 'Status Change')], limit=1)
         user = self.env['res.users'].search([('login', '=', 'alma@inuka.co.za')], limit=1)
+        stage = self.env['helpdesk.stage'].search([('name', '=', 'New')], limit=1)
         for customer in self:
             ticket = HelpDeskTicket.create({
                 'name': """%s %s has achieved %s status""" %(customer.first_name, customer.last_name, customer.status),
@@ -710,6 +711,7 @@ class ResPartner(models.Model):
                 'partner_email': customer.email,
                 'ticket_type_id': ticket_type.id,
                 'tag_ids': [(6, 0, tag.ids)],
+                'stage_id': stage.id,
             })
             ticket.message_subscribe(channel_ids=[channel.id])
 
