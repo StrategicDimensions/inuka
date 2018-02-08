@@ -166,24 +166,24 @@ class ResPartner(models.Model):
     o_new_junior_recruits_qtd = fields.Integer(compute="_compute_qtd", string="O_# of New Junior Recruits (QTD)")
 
     # YTD Odoo Tab
-    o_personal_pv_ytd = fields.Float("O_Personal PV (YTD)")
-    o_pv_downline_1_ytd = fields.Float("O_PV Downline 1 (YTD)")
-    o_pv_downline_2_ytd = fields.Float("O_PV Downline 2 (YTD)")
-    o_pv_downline_3_ytd = fields.Float("O_PV Downline 3 (YTD)")
-    o_pv_downline_4_ytd = fields.Float("O_PV Downline 4 (YTD)")
-    o_pv_tot_group_ytd = fields.Float("O_Group PV (YTD)")
-    o_personal_members_ytd = fields.Integer("O_# of Active Downline (YTD)")
-    o_new_members_ytd = fields.Integer("O_# of New Members (YTD)")
+    o_personal_pv_ytd = fields.Float(compute="_compute_ytd", string="O_Personal PV (YTD)")
+    o_pv_downline_1_ytd = fields.Float(compute="_compute_ytd", string="O_PV Downline 1 (YTD)")
+    o_pv_downline_2_ytd = fields.Float(compute="_compute_ytd", string="O_PV Downline 2 (YTD)")
+    o_pv_downline_3_ytd = fields.Float(compute="_compute_ytd", string="O_PV Downline 3 (YTD)")
+    o_pv_downline_4_ytd = fields.Float(compute="_compute_ytd", string="O_PV Downline 4 (YTD)")
+    o_pv_tot_group_ytd = fields.Float(compute="_compute_ytd", string="O_Group PV (YTD)")
+    o_personal_members_ytd = fields.Integer(compute="_compute_ytd", string="O_# of Active Downline (YTD)")
+    o_new_members_ytd = fields.Integer(compute="_compute_ytd", string="O_# of New Members (YTD)")
 
-    o_is_active_ytd = fields.Boolean("O_Is Active (YTD)")
-    o_is_new_ytd = fields.Boolean("O_Is New (YTD)")
-    o_is_vr_earner_ytd = fields.Boolean("O_Is VR Earner (YTD)")
-    o_is_new_senior_ytd = fields.Boolean("O_Is New & Senior Beyond (YTD)")
-    o_is_new_junior_ytd = fields.Boolean("O_Is New & Junior Beyond (YTD))")
-    o_is_new_ruby_ytd = fields.Boolean("O_Is New & Ruby & Beyond (YTD)")
-    o_vr_earner_ytd = fields.Integer("O_# of VR Earners (YTD)")
-    o_new_senior_recruits_ytd = fields.Integer("O_# of New Senior Recruits (YTD)")
-    o_new_junior_recruits_ytd = fields.Integer("O_# of New Junior Recruits (YTD)")
+    o_is_active_ytd = fields.Boolean(compute="_compute_ytd", string="O_Is Active (YTD)")
+    o_is_new_ytd = fields.Boolean(compute="_compute_ytd", string="O_Is New (YTD)")
+    o_is_vr_earner_ytd = fields.Boolean(compute="_compute_ytd", string="O_Is VR Earner (YTD)")
+    o_is_new_senior_ytd = fields.Boolean(compute="_compute_ytd", string="O_Is New & Senior Beyond (YTD)")
+    o_is_new_junior_ytd = fields.Boolean(compute="_compute_ytd", string="O_Is New & Junior Beyond (YTD))")
+    o_is_new_ruby_ytd = fields.Boolean(compute="_compute_ytd", string="O_Is New & Ruby & Beyond (YTD)")
+    o_vr_earner_ytd = fields.Integer(compute="_compute_ytd", string="O_# of VR Earners (YTD)")
+    o_new_senior_recruits_ytd = fields.Integer(compute="_compute_ytd", string="O_# of New Senior Recruits (YTD)")
+    o_new_junior_recruits_ytd = fields.Integer(compute="_compute_ytd", string="O_# of New Junior Recruits (YTD)")
 
     performance_history_count = fields.Integer(compute="_compute_performance_history_count", string="Performance History Count")
     rewards_count = fields.Integer(compute="_compute_rewards_count", string="Rewards Count")
@@ -392,84 +392,74 @@ class ResPartner(models.Model):
         end_date = date(current_year+1, 6, 6)
         return start_date, end_date
 
-    @api.model
-    def compute_ytd(self):
+    @api.multi
+    def _compute_ytd(self):
         Invoice = self.env['account.invoice']
         first_date, last_date = self.get_year_interval(date.today())
-        partners = self.search([('customer', '=', True)], order='id desc')
-        for partner in partners:
+        for partner in self:
             invoices = Invoice.search([('partner_id', '=', partner.id), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
             personal_pv_year =  sum(invoices.mapped('total_pv'))
+            partner.o_personal_pv_ytd = personal_pv_year
 
             downline1_partner = partner.search([('upline', '=', partner.id), ('customer', '=', True)])
             downline1_invoices = Invoice.search([('partner_id', 'in', downline1_partner.ids), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
             pv_downline_1_year = sum(downline1_invoices.mapped('total_pv'))
+            partner.o_pv_downline_1_ytd = pv_downline_1_year
 
             downline2_partner = partner.search([('upline', 'in', downline1_partner.ids), ('customer', '=', True)])
             downline2_invoices = Invoice.search([('partner_id', 'in', downline2_partner.ids), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
             pv_downline_2_year = sum(downline2_invoices.mapped('total_pv'))
+            partner.o_pv_downline_2_ytd = pv_downline_2_year
 
             downline3_partner = partner.search([('upline', 'in', downline2_partner.ids), ('customer', '=', True)])
             downline3_invoices = Invoice.search([('partner_id', 'in', downline3_partner.ids), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
             pv_downline_3_year = sum(downline3_invoices.mapped('total_pv'))
+            partner.o_pv_downline_3_ytd = pv_downline_3_year
 
             downline4_partner = partner.search([('upline', 'in', downline3_partner.ids), ('customer', '=', True)])
             downline4_invoices = Invoice.search([('partner_id', 'in', downline4_partner.ids), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
             pv_downline_4_year = sum(downline4_invoices.mapped('total_pv'))
+            partner.o_pv_downline_4_ytd = pv_downline_4_year
 
             group_pv_year = personal_pv_year + pv_downline_1_year + pv_downline_2_year + pv_downline_3_year + pv_downline_4_year
+            partner.o_pv_tot_group_ytd = group_pv_year
 
             is_active_year = False
             if personal_pv_year >= 60:
                 is_active_year = True
+            partner.o_is_active_ytd = is_active_year
 
             is_new_year = False
             join_date = fields.Date.from_string(partner.join_date)
             if join_date and join_date >= first_date and join_date <= last_date:
                 is_new_year = True
+            partner.o_is_new_ytd = is_new_year
 
             is_vr_earner_year = False
             if personal_pv_year >= 160 and group_pv_year >= 540:
                 is_vr_earner_year = True
+            partner.o_is_vr_earner_ytd = is_vr_earner_year
 
             is_new_senior_year = False
             if is_new_year == True and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond', 'exective_diamond', 'presidential'):
                 is_new_senior_year = True
+            partner.o_is_new_senior_ytd = is_new_senior_year
 
             is_new_junior_year = False
             if is_new_year == True and partner.status in ('junior', 'senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond', 'exective_diamond', 'presidential'):
                 is_new_junior_year = True
+            partner.o_is_new_junior_ytd = is_new_junior_year
 
             is_new_ruby_year = False
             if is_new_year == True and partner.status in ('ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond', 'exective_diamond', 'presidential'):
                 is_new_ruby_year = True
+            partner.o_is_new_ruby_ytd = is_new_ruby_year
 
-            personal_members_year = len(downline1_partner.filtered(lambda partner: partner.o_is_active_ytd)) # of Active Downline (YTD)
-            new_members_year = len(downline1_partner.filtered(lambda partner: partner.o_is_new_ytd)) # of New Members (YTD)
-            vr_earner_year = len(downline1_partner.filtered(lambda partner: partner.o_is_vr_earner_ytd)) # of VR Earners (YTD)
-            new_senior_recruits_year = len(downline1_partner.filtered(lambda partner: partner.o_is_new_ytd and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Senior Recruits (YTD)
-            new_junior_recruits_year = len(downline1_partner.filtered(lambda partner: partner.o_is_new_ytd and partner.status in ('junior','senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Junior Recruits (YTD)
-
-            partner_dict = {
-                'o_personal_pv_ytd': personal_pv_year,
-                'o_pv_downline_1_ytd': pv_downline_1_year,
-                'o_pv_downline_2_ytd': pv_downline_2_year,
-                'o_pv_downline_3_ytd': pv_downline_3_year,
-                'o_pv_downline_4_ytd': pv_downline_4_year,
-                'o_pv_tot_group_ytd': group_pv_year,
-                'o_personal_members_ytd': personal_members_year,
-                'o_new_members_ytd': new_members_year,
-                'o_is_active_ytd': is_active_year,
-                'o_is_new_ytd': is_new_year,
-                'o_is_vr_earner_ytd': is_vr_earner_year,
-                'o_is_new_senior_ytd': is_new_senior_year,
-                'o_is_new_junior_ytd': is_new_junior_year,
-                'o_is_new_ruby_ytd': is_new_ruby_year,
-                'o_vr_earner_ytd': vr_earner_year,
-                'o_new_senior_recruits_ytd': new_senior_recruits_year,
-                'o_new_junior_recruits_ytd': new_junior_recruits_year,
-            }
-            partner.write(partner_dict)
+            partner.o_personal_members_ytd = len(downline1_partner.filtered(lambda partner: partner.o_is_active_ytd)) # of Active Downline (YTD)
+            partner.o_new_members_ytd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_ytd)) # of New Members (YTD)
+            partner.o_vr_earner_ytd = len(downline1_partner.filtered(lambda partner: partner.o_is_vr_earner_ytd)) # of VR Earners (YTD)
+            partner.o_new_senior_recruits_ytd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_ytd and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Senior Recruits (YTD)
+            partner.o_new_junior_recruits_ytd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_ytd and partner.status in ('junior','senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Junior Recruits (YTD)
 
     def _compute_is_admin(self):
         for partner in self:
