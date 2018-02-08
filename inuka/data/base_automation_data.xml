@@ -316,6 +316,7 @@ records.create_helpdesk_ticket()
         </field>
     </record>
 
+    <!--
     <record id="res_partner_compute_mtd" model="ir.cron">
         <field name="name">Calculate MTD</field>
         <field name="model_id" ref="model_res_partner"/>
@@ -327,6 +328,7 @@ records.create_helpdesk_ticket()
         <field name="doall" eval="False"/>
         <field name="nextcall" eval="(DateTime.now() + timedelta(days=0)).strftime('%Y-%m-%d 09:00:00')" />
     </record>
+    -->
 
     <record id="res_partner_compute_qtd" model="ir.cron">
         <field name="name">Calculate QTD</field>

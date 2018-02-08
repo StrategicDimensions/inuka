@@ -126,24 +126,24 @@ class ResPartner(models.Model):
     new_junior_recruits_ytd = fields.Integer("# of New Junior Recruits (YTD)")
 
     # MTD Odoo Tab
-    o_personal_pv_mtd = fields.Float("O_Personal PV (MTD)")
-    o_pv_downline_1_mtd = fields.Float("O_PV Downline 1 (MTD)")
-    o_pv_downline_2_mtd = fields.Float("O_PV Downline 2 (MTD)")
-    o_pv_downline_3_mtd = fields.Float("O_PV Downline 3 (MTD)")
-    o_pv_downline_4_mtd = fields.Float("O_PV Downline 4 (MTD)")
-    o_pv_tot_group_mtd = fields.Float("O_Group PV (MTD)")
-    o_personal_members_mtd = fields.Integer("O_# of Active Downline (MTD)")
-    o_new_members_mtd = fields.Integer("O_# of New Members (MTD)")
+    o_personal_pv_mtd = fields.Float(compute="_compute_mtd", string="O_Personal PV (MTD)")
+    o_pv_downline_1_mtd = fields.Float(compute="_compute_mtd", string="O_PV Downline 1 (MTD)")
+    o_pv_downline_2_mtd = fields.Float(compute="_compute_mtd", string="O_PV Downline 2 (MTD)")
+    o_pv_downline_3_mtd = fields.Float(compute="_compute_mtd", string="O_PV Downline 3 (MTD)")
+    o_pv_downline_4_mtd = fields.Float(compute="_compute_mtd", string="O_PV Downline 4 (MTD)")
+    o_pv_tot_group_mtd = fields.Float(compute="_compute_mtd", string="O_Group PV (MTD)")
+    o_personal_members_mtd = fields.Integer(compute="_compute_mtd", string="O_# of Active Downline (MTD)")
+    o_new_members_mtd = fields.Integer(compute="_compute_mtd", string="O_# of New Members (MTD)")
 
-    o_is_active_mtd = fields.Boolean("O_Is Active (MTD)")
-    o_is_new_mtd = fields.Boolean("O_Is New (MTD)")
-    o_is_vr_earner_mtd = fields.Boolean("O_Is VR Earner (MTD)")
-    o_is_new_senior_mtd = fields.Boolean("O_Is New & Senior Beyond (MTD)")
-    o_is_new_junior_mtd = fields.Boolean("O_Is New & Junior Beyond (MTD))")
-    o_is_new_ruby_mtd = fields.Boolean("O_Is New & Ruby & Beyond (MTD)")
-    o_vr_earner_mtd = fields.Integer("O_# of VR Earners (MTD)")
-    o_new_senior_recruits_mtd = fields.Integer("O_# of New Senior Recruits (MTD)")
-    o_new_junior_recruits_mtd = fields.Integer("O_# of New Junior Recruits (MTD)")
+    o_is_active_mtd = fields.Boolean(compute="_compute_mtd", string="O_Is Active (MTD)")
+    o_is_new_mtd = fields.Boolean(compute="_compute_mtd", string="O_Is New (MTD)")
+    o_is_vr_earner_mtd = fields.Boolean(compute="_compute_mtd", string="O_Is VR Earner (MTD)")
+    o_is_new_senior_mtd = fields.Boolean(compute="_compute_mtd", string="O_Is New & Senior Beyond (MTD)")
+    o_is_new_junior_mtd = fields.Boolean(compute="_compute_mtd", string="O_Is New & Junior Beyond (MTD))")
+    o_is_new_ruby_mtd = fields.Boolean(compute="_compute_mtd", string="O_Is New & Ruby & Beyond (MTD)")
+    o_vr_earner_mtd = fields.Integer(compute="_compute_mtd", string="O_# of VR Earners (MTD)")
+    o_new_senior_recruits_mtd = fields.Integer(compute="_compute_mtd", string="O_# of New Senior Recruits (MTD)")
+    o_new_junior_recruits_mtd = fields.Integer(compute="_compute_mtd", string="O_# of New Junior Recruits (MTD)")
 
     # QTD Odoo Tab
     o_personal_pv_qtd = fields.Float("O_Personal PV (QTD)")
@@ -214,84 +214,76 @@ class ResPartner(models.Model):
         last_date = next_first_date.replace(day = 6)
         return first_date, last_date
 
-    @api.model
-    def compute_mtd(self):
+    @api.multi
+#     @api.depends('invoice_ids', 'invoice_ids.type', 'invoice_ids.date_invoice', 'invoice_ids.state',\
+#                  'upline', 'customer', 'status')
+    def _compute_mtd(self):
         Invoice = self.env['account.invoice']
         first_date, last_date = self.get_month_interval(date.today())
-        partners = self.search([('customer', '=', True)], order='id desc')
-        for partner in partners:
+        for partner in self:
             invoices = Invoice.search([('partner_id', '=', partner.id), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
-            personal_pv_month =  sum(invoices.mapped('total_pv'))
+            personal_pv_month = sum(invoices.mapped('total_pv'))
+            partner.o_personal_pv_mtd = personal_pv_month
 
             downline1_partner = partner.search([('upline', '=', partner.id), ('customer', '=', True)])
             downline1_invoices = Invoice.search([('partner_id', 'in', downline1_partner.ids), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
             pv_downline_1_month = sum(downline1_invoices.mapped('total_pv'))
+            partner.o_pv_downline_1_mtd = pv_downline_1_month
 
             downline2_partner = partner.search([('upline', 'in', downline1_partner.ids), ('customer', '=', True)])
             downline2_invoices = Invoice.search([('partner_id', 'in', downline2_partner.ids), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
             pv_downline_2_month = sum(downline2_invoices.mapped('total_pv'))
+            partner.o_pv_downline_2_mtd = pv_downline_2_month
 
             downline3_partner = partner.search([('upline', 'in', downline2_partner.ids), ('customer', '=', True)])
             downline3_invoices = Invoice.search([('partner_id', 'in', downline3_partner.ids), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
             pv_downline_3_month = sum(downline3_invoices.mapped('total_pv'))
+            partner.o_pv_downline_3_mtd = pv_downline_3_month
 
             downline4_partner = partner.search([('upline', 'in', downline3_partner.ids), ('customer', '=', True)])
             downline4_invoices = Invoice.search([('partner_id', 'in', downline4_partner.ids), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
             pv_downline_4_month = sum(downline4_invoices.mapped('total_pv'))
+            partner.o_pv_downline_4_mtd = pv_downline_4_month
 
             group_pv_month = personal_pv_month + pv_downline_1_month + pv_downline_2_month + pv_downline_3_month + pv_downline_4_month
+            partner.o_pv_tot_group_mtd = group_pv_month
 
             is_active_month = False
             if personal_pv_month >= 5:
                 is_active_month = True
+            partner.o_is_active_mtd = is_active_month
 
             is_new_month = False
             join_date = fields.Date.from_string(partner.join_date)
             if join_date and join_date >= first_date and join_date <= last_date:
                 is_new_month = True
+            partner.o_is_new_mtd = is_new_month
 
             is_vr_earner_month = False
             if personal_pv_month >= 20 and group_pv_month >= 45:
                 is_vr_earner_month = True
+            partner.o_is_vr_earner_mtd = is_vr_earner_month
 
             is_new_senior_month = False
             if is_new_month == True and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond', 'exective_diamond', 'presidential'):
                 is_new_senior_month = True
+            partner.o_is_new_senior_mtd = is_new_senior_month
 
             is_new_junior_month = False
             if is_new_month == True and partner.status in ('junior', 'senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond', 'exective_diamond', 'presidential'):
                 is_new_junior_month = True
+            partner.o_is_new_junior_mtd = is_new_junior_month
 
             is_new_ruby_month = False
             if is_new_month == True and partner.status in ('ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond', 'exective_diamond', 'presidential'):
                 is_new_ruby_month = True
+            partner.o_is_new_ruby_mtd = is_new_ruby_month
 
-            personal_members_month = len(downline1_partner.filtered(lambda partner: partner.o_is_active_mtd)) # of Active Downline (MTD)
-            new_members_month = len(downline1_partner.filtered(lambda partner: partner.o_is_new_mtd)) # of New Members (MTD)
-            vr_earner_month = len(downline1_partner.filtered(lambda partner: partner.o_is_vr_earner_mtd)) # of VR Earners (MTD)
-            new_senior_recruits_month = len(downline1_partner.filtered(lambda partner: partner.o_is_new_mtd and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Senior Recruits (MTD)
-            new_junior_recruits_month = len(downline1_partner.filtered(lambda partner: partner.o_is_new_mtd and partner.status in ('junior','senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Junior Recruits (MTD)
-
-            partner_dict = {
-                'o_personal_pv_mtd': personal_pv_month,
-                'o_pv_downline_1_mtd': pv_downline_1_month,
-                'o_pv_downline_2_mtd': pv_downline_2_month,
-                'o_pv_downline_3_mtd': pv_downline_3_month,
-                'o_pv_downline_4_mtd': pv_downline_4_month,
-                'o_pv_tot_group_mtd': group_pv_month,
-                'o_personal_members_mtd': personal_members_month,
-                'o_new_members_mtd': new_members_month,
-                'o_is_active_mtd': is_active_month,
-                'o_is_new_mtd': is_new_month,
-                'o_is_vr_earner_mtd': is_vr_earner_month,
-                'o_is_new_senior_mtd': is_new_senior_month,
-                'o_is_new_junior_mtd': is_new_junior_month,
-                'o_is_new_ruby_mtd': is_new_ruby_month,
-                'o_vr_earner_mtd': vr_earner_month,
-                'o_new_senior_recruits_mtd': new_senior_recruits_month,
-                'o_new_junior_recruits_mtd': new_junior_recruits_month,
-            }
-            partner.write(partner_dict)
+            partner.o_personal_members_mtd = len(downline1_partner.filtered(lambda partner: partner.o_is_active_mtd)) # of Active Downline (MTD)
+            partner.o_new_members_mtd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_mtd)) # of New Members (MTD)
+            partner.o_vr_earner_mtd = len(downline1_partner.filtered(lambda partner: partner.o_is_vr_earner_mtd)) # of VR Earners (MTD)
+            partner.o_new_senior_recruits_mtd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_mtd and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Senior Recruits (MTD)
+            partner.o_new_junior_recruits_mtd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_mtd and partner.status in ('junior','senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Junior Recruits (MTD)
 
     @api.model
     def get_quarter_interval(self, current_date):
