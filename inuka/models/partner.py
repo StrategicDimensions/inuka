@@ -10,6 +10,7 @@ from random import randint
 from odoo import api, fields, models, _
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 from odoo.exceptions import ValidationError
+from odoo.tools import email_split
 
 
 class Users(models.Model):
@@ -896,6 +897,12 @@ class PerformanceHistory(models.Model):
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.user.company_id)
 
 
+def extract_email(email):
+    """ extract the email address from a user-friendly email address """
+    addresses = email_split(email)
+    return addresses[0] if addresses else ''
+
+
 class PortalWizardUser(models.TransientModel):
     _inherit = 'portal.wizard.user'
 
@@ -904,10 +911,13 @@ class PortalWizardUser(models.TransientModel):
         """ create a new user for wizard_user.partner_id
             :returns record of res.users
         """
+        partner = self.partner_id
         company_id = self.env.context.get('company_id')
         return self.env['res.users'].with_context(no_reset_password=True).create({
+            'name': partner.name,
             'email': extract_email(self.email),
-            'login': extract_email(self.email),
+            'login': partner.ref,
+            'password': partner.ref,
             'partner_id': self.partner_id.id,
             'company_id': company_id,
             'company_ids': [(6, 0, [company_id])],
