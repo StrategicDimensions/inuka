@@ -622,6 +622,8 @@ class ResPartner(models.Model):
                 })
                 msg_compose.send_entity()
 
+            related_partner = self.env['portal.wizard'].create({'user_ids': [(0,0,{'partner_id': res.id,'email': res.email, 'in_portal': True})]})
+            related_partner.action_apply()
         return res
 
     @api.model
@@ -892,3 +894,22 @@ class PerformanceHistory(models.Model):
     new_senior_recruits = fields.Integer("# of New Senior Recruits")
     new_junior_recruits = fields.Integer("# of New Junior Recruits")
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.user.company_id)
+
+
+class PortalWizardUser(models.TransientModel):
+    _inherit = 'portal.wizard.user'
+
+    @api.multi
+    def _create_user(self):
+        """ create a new user for wizard_user.partner_id
+            :returns record of res.users
+        """
+        company_id = self.env.context.get('company_id')
+        return self.env['res.users'].with_context(no_reset_password=True).create({
+            'email': extract_email(self.email),
+            'login': extract_email(self.email),
+            'partner_id': self.partner_id.id,
+            'company_id': company_id,
+            'company_ids': [(6, 0, [company_id])],
+            'groups_id': [(6, 0, [])],
+        })
