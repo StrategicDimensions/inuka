@@ -259,7 +259,8 @@ class SaleUpload(models.Model):
     @api.model
     def run(self):
         record = self.search([('state', 'in', ('new', 'inprogress'))], limit=1)
-        record.button_start()
+        if record:
+            record.button_start()
 
     @api.multi
     def button_start(self):
