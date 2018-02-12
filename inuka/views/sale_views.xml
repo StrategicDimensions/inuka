@@ -279,7 +279,7 @@
                     <group>
                         <field name="end_time" readonly="1"/>
                         <field name="create_date" string="Date" readonly="1"/>
-                        <field name="end_point"/>
+                        <field name="end_point" readonly="1"/>
                     </group>
                 </group>
                 <group>
