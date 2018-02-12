@@ -296,10 +296,10 @@ class SaleUpload(models.Model):
 
         if self.end_point == 0:
             start_point = 0
-            end_point = start_point + batch_size
+            end_point = start_point + self.batch_size
         else:
             start_point = self.end_point
-            end_point = start_point + batch_size
+            end_point = start_point + self.batch_size
 
         if end_point >= len(reader_info):
             end_point = len(reader_info)
