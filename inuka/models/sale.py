@@ -85,7 +85,7 @@ class SaleOrder(models.Model):
 
             if all(float_compare(line.qty_delivered, 0.000, precision_digits=precision) == 0 for line in order.order_line if line.product_uom_qty):
                 order.delivery_status = 'to_deliver'
-            elif all(float_compare(line.qty_delivered, line.product_uom_qty, precision_digits=precision) == 0 for line in order.order_line):
+            elif all(float_compare(line.qty_delivered, line.product_uom_qty, precision_digits=precision) == 0 for line in order.order_line if line.product_id.type != 'service'):
                 order.delivery_status = 'fully'
             else:
                 order.delivery_status = 'partially'
