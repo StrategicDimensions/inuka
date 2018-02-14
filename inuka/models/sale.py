@@ -74,6 +74,7 @@ class SaleOrder(models.Model):
         ('portal', 'Online Portal'),
         ('mobile', 'Mobile Application'),
     ], string="Channel")
+    team_id = fields.Many2one(string='Sales Team')
 
     @api.depends('state', 'order_line', 'order_line.qty_delivered', 'order_line.product_uom_qty')
     def _compute_delivery_status(self):
@@ -407,3 +408,16 @@ class SaleUploadIntermediate(models.Model):
         for record in records:
             record.partner_id.write({'status': record.new_status})
             record.write({'active': False})
+
+
+class Lead(models.Model):
+    _inherit = "crm.lead"
+
+    team_id = fields.Many2one('crm.team', string='Sales Team', oldname='section_id', default=lambda self: self.env['crm.team'].sudo()._get_default_team_id(user_id=self.env.uid),
+        index=True, track_visibility='onchange', help='When sending mails, the default email address is taken from the sales channel.')
+
+
+class SaleReport(models.Model):
+    _inherit = "sale.report"
+
+    team_id = fields.Many2one('crm.team', 'Sales Team', readonly=True, oldname='section_id')
