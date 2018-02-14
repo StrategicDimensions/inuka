@@ -97,3 +97,9 @@ class AccountInvoiceLine(models.Model):
         self.pv = self.product_id.pv * self.quantity
         self.unit_pv = self.product_id.pv
         super(AccountInvoiceLine, self)._set_additional_fields(invoice)
+
+
+class AccountInvoiceReport(models.Model):
+    _inherit = 'account.invoice.report'
+
+    team_id = fields.Many2one('crm.team', string='Sales Team')
