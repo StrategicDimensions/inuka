@@ -587,7 +587,8 @@ class ResPartner(models.Model):
             'product_id': product.id,
             'product_uom_qty': 1.0,
             'order_id': order.id,
-            'pv': product.categ_id.category_pv,
+            'pv': product.pv,
+            'unit_pv': product.pv,
         }
 
     @api.model
