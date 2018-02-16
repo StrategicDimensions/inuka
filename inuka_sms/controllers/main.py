@@ -3,7 +3,7 @@
 
 from dateutil.relativedelta import relativedelta
 
-from odoo import http
+from odoo import fields, http
 from odoo.http import request
 
 
