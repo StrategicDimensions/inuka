@@ -43,7 +43,7 @@ class SMSPushNotification(http.Controller):
             partner.message_post(body=msg)
         model_id = False
         if model:
-            model_id = request.env['ir.model'].sudo().search([('model', '=', model)], limit=1)
+            model_id = request.env['ir.model'].sudo().search([('model', '=', model)], limit=1).id
         inbound_sms = request.env['sms.message'].sudo().create({
             'sms_gateway_message_id': kwargs.get('replyMessageId'),
             'from_mobile': kwargs.get('from'),
@@ -53,7 +53,7 @@ class SMSPushNotification(http.Controller):
             'keyword': kwargs.get('keyword'),
             'direction': 'I',
             'by_partner_id': request.env.user.partner_id.id,
-            'model_id': model_id.id,
+            'model_id': model_id,
             'record_id': record_id,
             'record_name': record_name,
         })
