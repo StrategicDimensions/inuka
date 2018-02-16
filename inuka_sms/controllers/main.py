@@ -27,7 +27,7 @@ class SMSPushNotification(http.Controller):
         msg = "<b>SMS Received</b><ul>"
         msg += "<li>%s" % (kwargs.get('text'))
         msg += "</ul>"
-        partner = request.env['res.partner'].sudo().search([('mobile', '=', kwargs.get('fromNumber'))], limit=1)
+        partner = request.env['res.partner'].sudo().search([('mobile', '=', kwargs.get('from'))], limit=1)
         helpdesk_ticket = request.env['helpdesk.ticket'].sudo().search([('partner_id', '=', partner.id), ('create_date','>=', (date.today()-relativedelta(day=1)).strftime('%Y-%m-%d'))], limit=1, order="create_date desc")
         if helpdesk_ticket:
             stage = request.env['helpdesk.stage'].sudo().search([('name', '=', 'In Progress')], limit=1)
@@ -46,7 +46,7 @@ class SMSPushNotification(http.Controller):
             model_id = request.env['ir.model'].sudo().search([('model', '=', model)], limit=1)
         inbound_sms = request.env['sms.message'].sudo().create({
             'sms_gateway_message_id': kwargs.get('replyMessageId'),
-            'from_mobile': kwargs.get('fromNumber'),
+            'from_mobile': kwargs.get('from'),
             'to_mobile': kwargs.get('toNumber'),
             'message_date': kwargs.get('timestamp'),
             'sms_content': kwargs.get('text'),
