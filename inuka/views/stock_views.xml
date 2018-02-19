@@ -24,4 +24,15 @@
         </field>
     </record>
 
+    <record id="view_stock_picking_form_inherit_carrier_inuka" model="ir.ui.view">
+        <field name="name">stock.picking.form.inherit.carrier.inuka</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="delivery.view_picking_withcarrier_out_form"/>
+        <field name="arch" type="xml">
+            <label for="carrier_tracking_ref" position="attributes">
+                <attribute name="string">Waybill</attribute>
+            </label>
+        </field>
+    </record>
+
 </odoo>
