@@ -347,7 +347,7 @@ class SmsCompose(models.Model):
 
 
 class SmsAccount(models.Model):
-    _name = "sms.account"
+    _inherit = "sms.account"
 
     active = fields.Boolean()
     international = fields.Boolean()
