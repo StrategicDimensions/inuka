@@ -43,7 +43,7 @@ class HelpdeskTicket(models.Model):
             'partner_id': self.partner_id.id,
             'ticket_id': self.id,
         })
-        msg = "This Sales Order has been created from Ticket: %s" % (self.name)
+        msg = "This Sales Order has been created from Ticket: <a href=# data-oe-model=helpdesk.ticket data-oe-id=%d>%s</a>" % (self.id, self.name)
         saleorder.message_post(body=msg)
         view_id = self.env.ref('sale.view_order_form').id
         return {

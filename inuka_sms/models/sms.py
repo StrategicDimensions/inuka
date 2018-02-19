@@ -344,3 +344,10 @@ class SmsCompose(models.Model):
         if self.media_id:
             attachments.append((self.media_filename, base64.b64decode(self.media_id)) )
         self.env[self.model].search([('id','=', self.record_id)]).message_post(body=self.sms_content, subject="SMS Sent", message_type="comment", subtype_id=sms_subtype.id, attachments=attachments)
+
+
+class SmsAccount(models.Model):
+    _name = "sms.account"
+
+    active = fields.Boolean()
+    international = fields.Boolean()
