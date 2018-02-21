@@ -158,7 +158,7 @@ class MassSms(models.Model):
         participants = self.get_remaining_recipients()
         for participant in participants[:self.batch_size]:
             if participant.partner_id.mobile:
-                render_msg = self.env['sms.template'].render_template(self.sms_template_id.template_body, 'res.partner', participant.partner_id.id)
+                render_msg = self.env['sms.template'].render_template(self.sms_template_id.template_body, self.sms_template_id.model_id.model, participant.partner_id.id)
                 message = tools.html2plaintext(render_msg)
                 msg_compose = SmsCompose.create({
                     'record_id': participant.partner_id.id,

@@ -88,7 +88,7 @@ class HelpdeskTicket(models.Model):
                 fp = BytesIO()
                 fp.write(base64.b64decode(attachment.datas))
                 if not zipfile.is_zipfile(fp):
-                    raise UserError(_('File is not a zip file!'))
+                    continue
                 if zipfile.is_zipfile(fp):
                     with zipfile.ZipFile(fp, "r") as z:
                         with tempdir() as module_dir:
@@ -122,7 +122,7 @@ class HelpdeskTicket(models.Model):
                 fp = BytesIO()
                 fp.write(base64.b64decode(attachment.datas))
                 if not zipfile.is_zipfile(fp):
-                    raise UserError(_('File is not a zip file!'))
+                    continue
                 if zipfile.is_zipfile(fp):
                     with zipfile.ZipFile(fp, "r") as z:
                         with tempdir() as module_dir:
