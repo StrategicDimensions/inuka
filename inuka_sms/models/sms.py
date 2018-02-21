@@ -55,6 +55,12 @@ class SmsRecipients(models.Model):
     sms_list_id = fields.Many2one("sms.list", string="SMS List")
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.user.company_id)
 
+    @api.onchange('partner_id', 'mobile')
+    def _onchange_member(self):
+        if not self.partner_id and not self.mobile:
+            return
+        self.name = self.partner_id.name or self.mobile
+
 
 class MassSms(models.Model):
     _name = 'mass.sms'
