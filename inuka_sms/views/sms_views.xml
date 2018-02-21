@@ -189,7 +189,7 @@
                         </group>
                         <group>
                             <field name="recipient_ids" widget="many2many_tags" required="1"/>
-                            <field name="scheduled_date"/>
+                            <field name="scheduled_date" required="1"/>
                         </group>
                     </group>
                     <notebook>
