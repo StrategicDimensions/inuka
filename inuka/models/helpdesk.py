@@ -78,6 +78,8 @@ class HelpdeskTicket(models.Model):
         stage = self.env['helpdesk.stage'].search([('name', '=', 'Solved')], limit=1)
         for ticket in self:
             attachments = self.env['ir.attachment'].search([('res_id', '=', ticket.id), ('res_model', '=', 'helpdesk.ticket')])
+            if not attachments:
+                continue
 
             acc_number = ticket.name.split("[")[1][:-1]
             bank_account_id = ResPartnerBank.search([('acc_number', '=', acc_number)], limit=1).id
@@ -110,6 +112,8 @@ class HelpdeskTicket(models.Model):
         stage = self.env['helpdesk.stage'].search([('name', '=', 'Solved')], limit=1)
         for ticket in self:
             attachments = self.env['ir.attachment'].search([('res_id', '=', ticket.id), ('res_model', '=', 'helpdesk.ticket')])
+            if not attachments:
+                continue
 
             acc_number = ticket.name.split("[")[1][:-1]
             bank_account_id = ResPartnerBank.search([('acc_number', '=', acc_number)], limit=1).id
