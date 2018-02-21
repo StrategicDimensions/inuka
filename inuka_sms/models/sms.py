@@ -32,6 +32,7 @@ class SmsList(models.Model):
         recipients = self.env['sms.recipients'].search([('sms_list_id', '=', self.id)])
         action = self.env.ref('inuka_sms.action_sms_recipients_form').read()[0]
         action['domain'] = [('id', 'in', recipients.ids)]
+        action['context'] = {'default_sms_list_id': self.id}
         return action
 
 
