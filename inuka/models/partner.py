@@ -267,6 +267,7 @@ class ResPartner(models.Model):
         ('iphone', 'iPhone'),
     ], string="Device Type", readonly=True)
     is_device_live = fields.Boolean("Is Device Live", readonly=True)
+    mobile = fields.Char("Mobile", default=27)
 #     portal_password = fields.Char("Portal Password")
 
     _sql_constraints = [
@@ -286,11 +287,14 @@ class ResPartner(models.Model):
 #     @api.depends('invoice_ids', 'invoice_ids.type', 'invoice_ids.date_invoice', 'invoice_ids.state',\
 #                  'upline', 'customer', 'status')
     def _compute_mtd(self):
+        return
+
         Invoice = self.env['account.invoice']
         first_date, last_date = self.get_month_interval(date.today())
         for partner in self:
             invoices = Invoice.search([('partner_id', '=', partner.id), ('type', '=', 'out_invoice'), ('date_invoice', '>=', first_date), ('date_invoice', '<=', last_date), ('state', 'not in', ('draft', 'cancel'))])
             personal_pv_month = sum(invoices.mapped('total_pv'))
+
             partner.o_personal_pv_mtd = personal_pv_month
 
             downline1_partner = partner.search([('upline', '=', partner.id), ('customer', '=', True)])
@@ -347,11 +351,11 @@ class ResPartner(models.Model):
                 is_new_ruby_month = True
             partner.o_is_new_ruby_mtd = is_new_ruby_month
 
-            partner.o_personal_members_mtd = len(downline1_partner.filtered(lambda partner: partner.o_is_active_mtd)) # of Active Downline (MTD)
-            partner.o_new_members_mtd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_mtd)) # of New Members (MTD)
-            partner.o_vr_earner_mtd = len(downline1_partner.filtered(lambda partner: partner.o_is_vr_earner_mtd)) # of VR Earners (MTD)
-            partner.o_new_senior_recruits_mtd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_mtd and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Senior Recruits (MTD)
-            partner.o_new_junior_recruits_mtd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_mtd and partner.status in ('junior','senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Junior Recruits (MTD)
+            #partner.o_personal_members_mtd = len(downline1_partner.filtered(lambda partner: partner.o_is_active_mtd)) # of Active Downline (MTD)
+            #partner.o_new_members_mtd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_mtd)) # of New Members (MTD)
+            #partner.o_vr_earner_mtd = len(downline1_partner.filtered(lambda partner: partner.o_is_vr_earner_mtd)) # of VR Earners (MTD)
+            #partner.o_new_senior_recruits_mtd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_mtd and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Senior Recruits (MTD)
+            #partner.o_new_junior_recruits_mtd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_mtd and partner.status in ('junior','senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Junior Recruits (MTD)
 
     @api.model
     def get_quarter_interval(self, current_date):
@@ -382,6 +386,8 @@ class ResPartner(models.Model):
 
     @api.multi
     def _compute_qtd(self):
+        return
+
         Invoice = self.env['account.invoice']
         first_date, last_date = self.get_quarter_interval(date.today())
         for partner in self:
@@ -443,11 +449,11 @@ class ResPartner(models.Model):
                 is_new_ruby_quarter = True
             partner.o_is_new_ruby_qtd = is_new_ruby_quarter
 
-            partner.o_personal_members_qtd = len(downline1_partner.filtered(lambda partner: partner.o_is_active_qtd)) # of Active Downline (QTD)
-            partner.o_new_members_qtd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_qtd)) # of New Members (QTD)
-            partner.o_vr_earner_qtd = len(downline1_partner.filtered(lambda partner: partner.o_is_vr_earner_qtd)) # of VR Earners (QTD)
-            partner.o_new_senior_recruits_qtd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_qtd and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Senior Recruits (QTD)
-            partner.o_new_junior_recruits_qtd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_qtd and partner.status in ('junior','senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Junior Recruits (QTD)
+            #partner.o_personal_members_qtd = len(downline1_partner.filtered(lambda partner: partner.o_is_active_qtd)) # of Active Downline (QTD)
+            #partner.o_new_members_qtd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_qtd)) # of New Members (QTD)
+            #partner.o_vr_earner_qtd = len(downline1_partner.filtered(lambda partner: partner.o_is_vr_earner_qtd)) # of VR Earners (QTD)
+            #partner.o_new_senior_recruits_qtd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_qtd and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Senior Recruits (QTD)
+            #partner.o_new_junior_recruits_qtd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_qtd and partner.status in ('junior','senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Junior Recruits (QTD)
 
     @api.model
     def get_year_interval(self, current_date):
@@ -462,6 +468,8 @@ class ResPartner(models.Model):
 
     @api.multi
     def _compute_ytd(self):
+        return
+
         Invoice = self.env['account.invoice']
         first_date, last_date = self.get_year_interval(date.today())
         for partner in self:
@@ -523,11 +531,11 @@ class ResPartner(models.Model):
                 is_new_ruby_year = True
             partner.o_is_new_ruby_ytd = is_new_ruby_year
 
-            partner.o_personal_members_ytd = len(downline1_partner.filtered(lambda partner: partner.o_is_active_ytd)) # of Active Downline (YTD)
-            partner.o_new_members_ytd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_ytd)) # of New Members (YTD)
-            partner.o_vr_earner_ytd = len(downline1_partner.filtered(lambda partner: partner.o_is_vr_earner_ytd)) # of VR Earners (YTD)
-            partner.o_new_senior_recruits_ytd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_ytd and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Senior Recruits (YTD)
-            partner.o_new_junior_recruits_ytd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_ytd and partner.status in ('junior','senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Junior Recruits (YTD)
+            #partner.o_personal_members_ytd = len(downline1_partner.filtered(lambda partner: partner.o_is_active_ytd)) # of Active Downline (YTD)
+            #partner.o_new_members_ytd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_ytd)) # of New Members (YTD)
+            #partner.o_vr_earner_ytd = len(downline1_partner.filtered(lambda partner: partner.o_is_vr_earner_ytd)) # of VR Earners (YTD)
+            #partner.o_new_senior_recruits_ytd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_ytd and partner.status in ('senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Senior Recruits (YTD)
+            #partner.o_new_junior_recruits_ytd = len(downline1_partner.filtered(lambda partner: partner.o_is_new_ytd and partner.status in ('junior','senior', 'pearl', 'ruby', 'emerald', 'sapphire', 'diamond', 'double_diamond', 'triple_diamond','exective_diamond', 'presidential'))) # of New Junior Recruits (YTD)
 
     def _compute_is_admin(self):
         for partner in self:
@@ -548,15 +556,18 @@ class ResPartner(models.Model):
 
     @api.constrains('mobile')
     def _check_mobile(self):
-        for partner in self:
-            if partner.mobile:
-                if ' ' in partner.mobile:
-                    raise ValidationError(_('Mobile Number should not have any space.'))
-                mobile = partner.mobile.replace(' ', '')
-                if len(mobile) < 11:
-                    raise ValidationError(_('Mobile Number should not be less than 11 digits.'))
-                if self.search_count([('mobile', '=', partner.mobile)]) > 1:
-                    raise ValidationError(_('Mobile should be unique.'))
+        if self._context.get('from_user'):
+            return
+        else:
+            for partner in self:
+                if partner.mobile:
+                    if ' ' in partner.mobile:
+                        raise ValidationError(_('Mobile Number should not have any space.'))
+                    mobile = partner.mobile.replace(' ', '')
+                    if len(mobile) < 11:
+                        raise ValidationError(_('Mobile Number should not be less than 11 digits.'))
+                    if self.search_count([('mobile', '=', partner.mobile)]) > 1:
+                        raise ValidationError(_('Mobile should be unique.'))
 
     @api.onchange('first_name', 'last_name')
     def _onchange_first_name(self):
@@ -646,21 +657,27 @@ class ResPartner(models.Model):
         if vals.get('customer') and not context.get('from_user', False):
             first_name = vals.get('first_name', '')
             last_name = vals.get('last_name', '')
-            vals['ref'] = ''.join(random.choice(string.ascii_letters).upper() for x in range(3)) + (str(randint(100,999)))
+            #Comment out curtomer ref temporarly
+            #if not vals.get('ref'):
+                #vals['ref'] = ''.join(random.choice(string.ascii_letters).upper() for x in range(3)) + (str(randint(100,999)))
             vals['name'] = ''
             if first_name:
                 vals['name'] += (first_name)
             if last_name:
                 vals['name'] += ' ' + (last_name)
-            if vals['ref']:
-                 vals['name'] += ' (' + (vals['ref']) +')'
+            if vals.get('ref'):
+                 vals['name'] += ' (' + (vals.get('ref')) +')'
+            if not vals.get('status'):
+                vals['status'] = 'candidate'
         res = super(ResPartner, self).create(vals)
+        if self._context.get('from_user'):
+            res.mobile = ''
         if res.customer and not context.get('from_user', False):
             sale_order_vals = res._prepare_sale_order()
-            order = self.env['sale.order'].with_context(kit_order=True).create(sale_order_vals)
-            sale_order_line_vals = res._prepare_sale_order_line(order)
-            if sale_order_line_vals:
-                self.env['sale.order.line'].create(sale_order_line_vals)
+            #order = self.env['sale.order'].with_context(kit_order=True).create(sale_order_vals)
+            #sale_order_line_vals = res._prepare_sale_order_line(order)
+            #if sale_order_line_vals:
+                #self.env['sale.order.line'].create(sale_order_line_vals)
 
             if res.mobile:
                 sms_template = self.env.ref('sms_frame.sms_template_inuka_international')
@@ -672,7 +689,7 @@ class ResPartner(models.Model):
                     'to_number': res.mobile,
                     'sms_content': """ INUKA Welcomes YOU^Thank you for your Registration^ %s %s,your MemberID %s will be active once Kit payment is receipted^More info 27219499850""" %(res.first_name, res.last_name, res.ref)
                 })
-                msg_compose.send_entity()
+                #msg_compose.send_entity()
 
             if res.upline.mobile:
                 sms_template = self.env.ref('sms_frame.sms_template_inuka_international_referrer')
@@ -684,10 +701,10 @@ class ResPartner(models.Model):
                     'to_number': res.upline.mobile,
                     'sms_content': """ INUKA New Registration received^WELL DONE, %s^New MemberID %s for %s %s activated once kit is receipted^Info 27219499850""" %(res.upline.name, res.ref, res.first_name, res.last_name)
                 })
-                msg_compose.send_entity()
+                #msg_compose.send_entity()
 
-            related_partner = self.env['portal.wizard'].create({'user_ids': [(0,0,{'partner_id': res.id,'email': res.email, 'in_portal': True})]})
-            related_partner.action_apply()
+            #related_partner = self.env['portal.wizard'].create({'user_ids': [(0,0,{'partner_id': res.id,'email': res.email, 'in_portal': True})]})
+            #related_partner.action_apply()
         return res
 
     @api.model

@@ -1,0 +1,2 @@
+active,is_company,customer,supplier,name,first_name,last_name,dob,join_date,country_id,kit
+True,False,True,False,Mnikelo Ndinga,Mnikelo,Ndinga,1993-01-01,2000-01-01,base.za,Small Kit
