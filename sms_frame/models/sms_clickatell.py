@@ -5,7 +5,6 @@ from clickatell.http import Http
 
 from odoo import api, fields, models
 
-
 class SmsGatewayClickatell(models.Model):
     _name = "sms.gateway.clickatell"
 

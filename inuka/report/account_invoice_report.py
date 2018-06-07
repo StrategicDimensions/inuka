@@ -2,11 +2,17 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import fields, models
+import logging
+_logger = logging.getLogger(__name__)
 
 class AccountInvoiceReport(models.Model):
     _inherit = "account.invoice.report"
 
     pv = fields.Float("PV's", readonly=True)
+
+    def get_object(self):
+        _logger.info(["KKKKKKKKKKKKKKKKKKK", self._ids])
+        #self._context.update({})
 
     def _select(self):
         select_str = super(AccountInvoiceReport,self)._select()

@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
+
 import base64
 import io
 import csv
@@ -10,6 +11,8 @@ from dateutil.relativedelta import relativedelta
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 from odoo.tools.float_utils import float_compare
+import logging
+_logger = logging.getLogger(__name__)
 
 
 class SaleOrder(models.Model):
@@ -102,6 +105,7 @@ class SaleOrder(models.Model):
             amount_reserve = sum([x.amount for x in res_funds])
             order.reserve = - (order.partner_id.credit - order.partner_id.debit) + order.partner_id.credit_limit - amount_reserve
 
+
 #     @api.onchange('partner_id')
 #     def onchange_partner_id(self):
 #         super(SaleOrder, self).onchange_partner_id()
@@ -126,7 +130,7 @@ class SaleOrder(models.Model):
                 'to_number': res.partner_id.mobile,
                 'sms_content': """ INUKA thanks you for your order %s, an SMS with details will follow when your order (Ref: %s) is dispatched^More info on 27219499850""" %(res.partner_id.name, res.name)
             })
-            msg_compose.send_entity()
+            #msg_compose.send_entity()
         if res.partner_id.watchlist and channel:
             res.message_subscribe(channel_ids=[channel.id])
         return res
@@ -137,12 +141,24 @@ class SaleOrder(models.Model):
 
     @api.multi
     def action_confirm(self):
+        ReservedFund = self.env['reserved.fund']
         for order in self:
             if order.carrier_id.blocked_for_delivery:
                 raise UserError(_("Delivery Method not allowed. Please select a different delivery method to continue."))
             res = order.carrier_id.rate_shipment(order)
             order.get_delivery_price()
             order.set_delivery_line()
+            if (order.reserve + order.order_total) - order.amount_total < 0:
+                raise UserError(_("Insufficient Funds Available."))
+            else:
+                reserve = (order.reserve + order.order_total) - order.amount_total
+                ReservedFund.create({
+                    'date': fields.Datetime.now(),
+                    'desctiption': 'Reservation for %s for Order %s for an amount of %d by %s' % (order.partner_id.name, order.name, order.order_total, order.user_id.name),
+                    'amount': (order.amount_total - order.order_total),
+                    'order_id': order.id,
+                    'customer_id': order.partner_id.id,
+                })
             order.write({'shipping_cost': res['price'],'pv': order.total_pv, 'order_total': order.amount_total})
             order.picking_ids.write({'bulk_master_id': order.bulk_master_id.id})
         return super(SaleOrder, self).action_confirm()
@@ -306,9 +322,10 @@ class SaleUpload(models.Model):
             reader = csv.reader(file_input, delimiter=',', lineterminator='\r\n')
             reader_info = []
             reader_info.extend(reader)
-            keys = reader_info[0]
+            keys = reader_info.pop(0)
         except Exception as e:
-            raise UserError(_("Invalid file. \n Note: file must be csv" % tools.ustr(e)))
+            raise UserError(
+                _("Invalid file. \n Note: file must be csv" % tools.ustr(e)))
 
         if self.end_point == 0:
             start_point = 0
@@ -335,49 +352,91 @@ class SaleUpload(models.Model):
             'Emerald': 'emerald',
             'Sapphire': 'sapphire',
             'Diamond': 'diamond',
-            'double_diamond': 'double_diamond',
-            'triple_diamond': 'triple_diamond',
+            'Double Diamond': 'double_diamond',
+            'Triple Diamond': 'triple_diamond',
             'Exective Diamond': 'exective_diamond',
             'Presidential': 'presidential',
         }
 
         record_count = status_count = 0
         for data in row_list:
-            if data.get('MEMBERID'):
-                sql_query = """SELECT id, status FROM res_partner WHERE ref = %s LIMIT 1"""
-                params = (data.get('MEMBERID'),)
-                self.env.cr.execute(sql_query, params)
-                result = self.env.cr.fetchall()
-                if result:
-                    try:
-                        sql_query ="""UPDATE res_partner SET personal_pv = %s,
-                                    pv_downline_1 = %s, pv_downline_2 = %s,
-                                    pv_downline_3 = %s, pv_downline_4 = %s,
-                                    pv_tot_group = %s, personal_members = %s, new_members = %s WHERE ref = %s"""
-                        params = (data.get('PVPERS') or 0.0, data.get('PVDOWNLINE1') or 0.0, data.get('PVDOWNLINE2') or 0.0, data.get('PVDOWNLINE3') or 0.0, data.get('PVDOWNLINE4') or 0.0,
-                                data.get('PVTOTGROUP') or 0.0, data.get('ACTIVEPERSMEM') or 0, data.get('PERSNEWMEM') or 0, data.get('MEMBERID'))
-                        self.env.cr.execute(sql_query, params)
-                        record_count += 1
-    
-                        if result[0][1] != status_dict.get(data.get('STATUS')):
-                            sql_query = """INSERT INTO sale_upload_intermediate (partner_id, old_status, new_status, active)
-                                    VALUES (%s, %s, %s, %s)"""
-                            params = (result[0][0], result[0][1], status_dict.get(data.get('STATUS')), True)
-                            self.env.cr.execute(sql_query, params)
-                            self.env.cr.commit()
-                            status_count += 1
-                    except Exception as e:
-                        result = """Error: %s""" %(str(e))
-                        self.write({'result': result, 'end_time': fields.Datetime.now(self), 'state': 'error'})
-                        return True
+            ref = data.get('MEMBERID')
 
-        result = """%s - %s: %s records updated, %s status change updated""" %(start_point, end_point, record_count, status_count)
+            try:
+                sql_query = """UPDATE res_partner
+                               SET
+                               personal_pv = %s, pv_downline_1 = %s,
+                               pv_downline_2 = %s, pv_downline_3 = %s,
+                               pv_downline_4 = %s, pv_tot_group = %s,
+                               personal_members = %s, new_members = %s
+                               WHERE ref = %s
+                               RETURNING id, status;"""
+
+                params = (
+                    data.get('PVPERS') or 0.0,
+                    data.get('PVDOWNLINE1') or 0.0,
+                    data.get('PVDOWNLINE2') or 0.0,
+                    data.get('PVDOWNLINE3') or 0.0,
+                    data.get('PVDOWNLINE4') or 0.0,
+                    data.get('PVTOTGROUP') or 0.0,
+                    data.get('ACTIVEPERSMEM') or 0,
+                    data.get('PERSNEWMEM') or 0,
+                    ref,
+                )
+
+                self.env.cr.execute(sql_query, params)
+
+                results = self.env.cr.fetchall()
+
+                if not results:
+                    continue
+
+                record_count += 1
+
+                partner_id = results[0][0]
+                old_status = results[0][1]
+                new_status = status_dict.get(data.get('STATUS'))
+
+                if old_status != new_status:
+                    sql_query = """INSERT INTO sale_upload_intermediate
+                                   (partner_id, old_status, new_status, active)
+                                   VALUES (%s, %s, %s, %s);"""
+
+                    params = (partner_id, old_status, new_status, True)
+
+                    self.env.cr.execute(sql_query, params)
+
+                    status_count += 1
+            except Exception as e:
+                result = 'Error: %s' % (str(e))
+                self.write({
+                    'result': result,
+                    'end_time': fields.Datetime.now(self),
+                    'state': 'error'
+                })
+                return True
+
+        self.env.cr.commit()
+
+        result = '%s - %s: %s records updated, %s status change updated' % (
+            start_point, end_point, record_count, status_count)
+
         if self.result:
             result = self.result + '\n' + result
+
         if end_point == len(reader_info):
-            self.write({'result': result, 'end_time': fields.Datetime.now(self), 'state': 'completed'})
+            self.write({
+                'result': result,
+                'end_time': fields.Datetime.now(self),
+                'state': 'completed'
+            })
         else:
-            self.write({'end_point':end_point,'result': result, 'end_time': fields.Datetime.now(self), 'state': 'inprogress'})
+            self.write({
+                'end_point': end_point,
+                'result': result,
+                'end_time': fields.Datetime.now(self),
+                'state': 'inprogress'
+            })
 
         return True
 

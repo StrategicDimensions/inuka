@@ -440,7 +440,11 @@
         </field>
     </record>
 
-    <menuitem id="menu_sms_inuka_root" name="SMS" web_icon="fa fa-random,#f1c40f,#34495e"/>
+    <record id="sms" model="res.groups">
+        <field name="name">SMS</field>
+    </record>
+
+    <menuitem id="menu_sms_inuka_root" name="SMS" web_icon="fa fa-random,#f1c40f,#34495e" groups="sms"/>
 
     <menuitem id="menu_sms_customers" name="Customers" action="base.action_partner_form" parent="menu_sms_inuka_root" sequence="1"/>
 
