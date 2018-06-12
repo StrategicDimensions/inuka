@@ -688,7 +688,7 @@ class ResPartner(models.Model):
                     'to_number': res.mobile,
                     'sms_content': """ INUKA Welcomes YOU^Thank you for your Registration^ %s %s,your MemberID %s will be active once Kit payment is receipted^More info 27219499850""" %(res.first_name, res.last_name, res.ref)
                 })
-                #msg_compose.send_entity()
+                msg_compose.send_entity()
 
             if res.upline.mobile:
                 sms_template = self.env.ref('sms_frame.sms_template_inuka_international_referrer')
