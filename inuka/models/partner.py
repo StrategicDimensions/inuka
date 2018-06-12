@@ -657,9 +657,8 @@ class ResPartner(models.Model):
         if vals.get('customer') and not context.get('from_user', False):
             first_name = vals.get('first_name', '')
             last_name = vals.get('last_name', '')
-            #Comment out curtomer ref temporarly
-            #if not vals.get('ref'):
-                #vals['ref'] = ''.join(random.choice(string.ascii_letters).upper() for x in range(3)) + (str(randint(100,999)))
+            if not vals.get('ref'):
+                vals['ref'] = ''.join(random.choice(string.ascii_letters).upper() for x in range(3)) + (str(randint(100, 999)))
             vals['name'] = ''
             if first_name:
                 vals['name'] += (first_name)
