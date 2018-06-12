@@ -700,7 +700,7 @@ class ResPartner(models.Model):
                     'to_number': res.upline.mobile,
                     'sms_content': """ INUKA New Registration received^WELL DONE, %s^New MemberID %s for %s %s activated once kit is receipted^Info 27219499850""" %(res.upline.name, res.ref, res.first_name, res.last_name)
                 })
-                #msg_compose.send_entity()
+                msg_compose.send_entity()
 
             #related_partner = self.env['portal.wizard'].create({'user_ids': [(0,0,{'partner_id': res.id,'email': res.email, 'in_portal': True})]})
             #related_partner.action_apply()
