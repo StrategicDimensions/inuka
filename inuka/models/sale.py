@@ -105,6 +105,10 @@ class SaleOrder(models.Model):
             amount_reserve = sum([x.amount for x in res_funds])
             order.reserve = - (order.partner_id.credit - order.partner_id.debit) + order.partner_id.credit_limit - amount_reserve
 
+    @api.onchange('order_type')
+    def _onchange_bulk_master_id(self):
+        if self.order_type not in ('bulk', 'consolidated'):
+            self.bulk_master_id = False
 
 #     @api.onchange('partner_id')
 #     def onchange_partner_id(self):
@@ -167,6 +171,9 @@ class SaleOrder(models.Model):
     def action_cancel(self):
         super(SaleOrder, self).action_cancel()
         self.action_unlink_reserved_fund()
+        for order in self:
+            if order.order_type in ('bulk', 'consolidated'):
+                self.write({'bulk_master_id': False})
 
     @api.multi
     def action_add_reserved_fund(self):
