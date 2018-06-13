@@ -6,7 +6,6 @@ import zipfile
 import os
 from io import BytesIO
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
 from odoo.tools.osutil import tempdir
 
 
@@ -43,6 +42,8 @@ class HelpdeskTicket(models.Model):
             'partner_id': self.partner_id.id,
             'ticket_id': self.id,
         })
+        stage = self.env['helpdesk.stage'].search([('name', '=', 'Solved')], limit=1)
+        self.write({'stage_id': stage.id})
         msg = "This Sales Order has been created from Ticket {%s}: <a href=# data-oe-model=helpdesk.ticket data-oe-id=%d>{%s}</a>" % (self.id, self.id, self.name)
         saleorder.message_post(body=msg)
         view_id = self.env.ref('sale.view_order_form').id
@@ -159,7 +160,7 @@ class HelpdeskTicket(models.Model):
             'target': 'new',
             'type': 'ir.actions.act_window',
             'context': {'default_from_mobile_id': default_mobile.id, 'default_to_number': self.mobile, 'default_record_id': self.id, 'default_model': 'helpdesk.ticket'}
-         }
+        }
 
 
 class SaleOrder(models.Model):
