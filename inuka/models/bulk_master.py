@@ -150,7 +150,7 @@ class BulkMaster(models.Model):
                     'sms_template_id': sms_template.id,
                     'from_mobile_id': self.env.ref('sms_frame.sms_number_inuka_international').id,
                     'to_number': self.partner_id.mobile,
-                    'sms_content': """ INUKA Courier bulk dispatch^ %s %s, we dispatched today^ (Ref: %s)^Courier could call to confirm delivery^Allow 4-7 days^Info 27219499850""" %(self.partner_id.first_name, self.partner_id.last_name, self.name)
+                    'sms_content': """ INUKA Courier bulk dispatch^ %s %s, we dispatched today^ (Ref: %s)^Courier could call to confirm delivery^Allow 4-7 days^Info 27219499850""" % (self.partner_id.first_name, self.partner_id.last_name, self.name)
                 })
                 msg_compose.send_entity()
             for order in self:
@@ -162,7 +162,7 @@ class BulkMaster(models.Model):
                         'sms_template_id': sms_template.id,
                         'from_mobile_id': self.env.ref('sms_frame.sms_number_inuka_international').id,
                         'to_number': order.partner_id.mobile,
-                        'sms_content': """ INUKA Courier bulk dispatch^ %s %s, your order was sent today^Call %s %s on %s  to collect^Allow 4 - 7days^Info 27219499850""" %(order.partner_id.first_name, order.partner_id.last_name, self.partner_id.first_name, self.partner_id.last_name, self.partner_id.mobile)
+                        'sms_content': """ INUKA Courier bulk dispatch^ %s %s, your order was sent today^Call %s %s on %s  to collect^Allow 4 - 7days^Info 27219499850""" % (order.partner_id.first_name, order.partner_id.last_name, self.partner_id.first_name, self.partner_id.last_name, self.partner_id.mobile)
                     })
                     msg_compose.send_entity()
         elif self.bulk_type == 'consolidated':
@@ -174,7 +174,7 @@ class BulkMaster(models.Model):
                     'sms_template_id': sms_template.id,
                     'from_mobile_id': self.env.ref('sms_frame.sms_number_inuka_international').id,
                     'to_number': self.partner_id.mobile,
-                    'sms_content': """ INUKA Courier Dispatch^ %s %s, your orders were sent today^TrackNo %s ^Courier could call to confirm delivery^Allow 4-7days^Info 27219499850""" %(self.partner_id.first_name, self.partner_id.last_name, self.waybill)
+                    'sms_content': """ INUKA Courier Dispatch^ %s %s, your orders were sent today^TrackNo %s ^Courier could call to confirm delivery^Allow 4-7days^Info 27219499850""" % (self.partner_id.first_name, self.partner_id.last_name, self.waybill)
                 })
                 msg_compose.send_entity()
 
