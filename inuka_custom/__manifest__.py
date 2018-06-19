@@ -1,7 +1,7 @@
 {
     'name': "Inuka Customisations",
     'version': '1.0',
-    'depends': ['sale', 'inuka'],
+    'depends': ['sale', 'inuka', 'account_asset', 'purchase_requisition'],
     'licence': 'AGPL-3',
     'author': "Mziwakhe - Systemworks",
     'category': 'All',

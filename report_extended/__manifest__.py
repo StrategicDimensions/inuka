@@ -7,7 +7,7 @@
     'category': 'Tools',
     'complexity': 'normal',
     'data': [
-        'views/layouts.xml',
+        # 'views/layouts.xml',
     ],
     'depends': [
         'base', 'web',
