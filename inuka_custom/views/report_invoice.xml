@@ -6,11 +6,6 @@
         <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})"/>
           <div class="header o_background_header">
             <div class="pull-right col-xs-4" style="font-size: 16px;">
-            <span>Unit 5, Bellpark Building</span><br/>
-            <span>1 De Lange Street (Cnr Durban Road and De Lange Street)</span><br/>
-            <span>Bellville Central</span><br/>
-            <span>Western Cape</span><br/>
-            <span>7530 South Africa</span><br/>
             </div>
             <img t-if="o.company_id.get_company(o).logo" t-att-src="'data:image/png;base64,%s' % to_text(o.company_id.logo)" class="pull-left" style="max-width:400px; max-height:150;"/>
             <div class="pull-left company_address"><!--<style="font-size: 15px;">-->
