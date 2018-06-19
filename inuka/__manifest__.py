@@ -5,8 +5,8 @@
     'name': 'Inuka',
     'category': 'Purchases',
     'sequence': 60,
-    'summary': 'Inuka',
-    'description': "",
+    'summary': 'Inuka Custimizations',
+    'description': "Inuka",
     'website': 'https://www.odoo.com/',
     'depends': ['crm', 'purchase', 'delivery', 'base_automation', 'sms_frame', 'payment_mygate', 'account_bank_statement_import_ofx', 'inuka_pos', 'helpdesk', 'project'],
     'data': [
